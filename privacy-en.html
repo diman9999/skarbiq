@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy — SkarbIQ</title>
+<meta name="description" content="How the SkarbIQ app handles your data.">
+<link rel="alternate" hreflang="ru" href="./privacy.html">
+<link rel="alternate" hreflang="en" href="./privacy-en.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap">
+<style>
+:root {
+  --bg:        #FBFBF9;
+  --surface:   #FFFFFF;
+  --line:      #E6E8E6;
+  --text:      #101311;
+  --muted:     #5A605C;
+  --faint:     #8A918C;
+  --accent:    #1E7A4D;
+  --accent-on: #FFFFFF;
+  --tint:      rgba(30,122,77,0.07);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0B0F0D;
+    --surface:   #121815;
+    --line:      rgba(242,245,243,0.09);
+    --text:      #F2F5F3;
+    --muted:     #97A39B;
+    --faint:     #7A857E;
+    --accent:    #4FC98A;
+    --accent-on: #06100A;
+    --tint:      rgba(79,201,138,0.09);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #0B0F0D;
+  --surface:   #121815;
+  --line:      rgba(242,245,243,0.09);
+  --text:      #F2F5F3;
+  --muted:     #97A39B;
+  --faint:     #7A857E;
+  --accent:    #4FC98A;
+  --accent-on: #06100A;
+  --tint:      rgba(79,201,138,0.09);
+}
+
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+a { color: var(--accent); }
+a:hover { opacity: .78; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 22px 0;
+}
+.logo { font-weight: 800; font-size: 20px; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
+.top-right { display: flex; align-items: center; gap: 10px; }
+
+.lang {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--line); border-radius: 100px;
+  overflow: hidden; height: 44px;
+}
+.lang a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 52px; height: 44px; padding: 0 6px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  color: var(--muted);
+}
+.lang a:hover { background: var(--tint); opacity: 1; }
+.lang a[aria-current="true"] { background: var(--accent); color: var(--accent-on); }
+
+.theme-toggle {
+  width: 44px; height: 44px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--line);
+  border-radius: 100px; cursor: pointer; color: var(--text);
+}
+.theme-toggle:hover { background: var(--tint); }
+.theme-toggle .moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle .moon { display: block; }
+}
+
+h1 {
+  margin: 48px 0 10px; font-size: clamp(32px, 5.4vw, 44px);
+  font-weight: 800; letter-spacing: -.03em; line-height: 1.12;
+}
+.updated { margin: 0 0 48px; font-size: 15px; color: var(--faint); }
+
+h2 {
+  margin: 44px 0 14px; font-size: clamp(21px, 3vw, 25px);
+  font-weight: 800; letter-spacing: -.02em;
+}
+
+p { margin: 0 0 16px; font-size: 16px; line-height: 1.68; color: var(--muted); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+
+ul { margin: 0 0 16px; padding-left: 22px; }
+li { font-size: 16px; line-height: 1.68; color: var(--muted); margin-bottom: 9px; }
+
+.callout {
+  margin: 0 0 20px; padding: 22px 24px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.foot {
+  margin-top: 72px; padding: 28px 0 48px; border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--faint);
+}
+
+@media (max-width: 480px) {
+  .top { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <a class="logo" href="./">SkarbIQ</a>
+    <div class="top-right">
+      <nav class="lang" aria-label="Page language">
+        <a href="./privacy.html" lang="ru">RU</a>
+        <a href="./privacy-en.html" aria-current="true" lang="en">EN</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+        <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">SkarbIQ for iOS · Last updated [DATE]</p>
+
+  <div class="callout">
+    <p><strong>In short.</strong> The app does not collect your data and does not send it to us. Receipts, items, categories and settings are stored only on your device. We run no servers that hold anything about you, there is no sign-up, and there is no behavioural analytics.</p>
+  </div>
+
+  <h2>Who processes the data</h2>
+  <p>SkarbIQ is developed by an individual, [YOUR NAME]. You can get in touch at <a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a>.</p>
+
+  <h2>What the app creates</h2>
+  <p>As you use the app, the following is saved on your device:</p>
+  <ul>
+    <li><strong>Receipts and purchases</strong> — shop, date, total, the list of items with prices, and receipt codes.</li>
+    <li><strong>Categories and subcategories</strong> — both the built-in ones and any you create, together with the limits you set.</li>
+    <li><strong>Your own corrections</strong> — when you change an item's category, the app remembers it so that it can classify the same item on its own next time.</li>
+    <li><strong>Settings</strong> — your name if you entered one, notification preferences, and a counter of daily requests.</li>
+  </ul>
+  <p>All of this is kept in a local database on your iPhone and in storage shared between the app and its widget. None of it is sent to the developer or to anyone else.</p>
+
+  <h2>Camera and photo access</h2>
+  <p>The <strong>camera</strong> is used to read the QR code printed on a cash receipt and to photograph a paper receipt. <strong>Photo access</strong> is used to read a QR code from an image you choose yourself.</p>
+  <p>Images are processed on the device itself, using the operating system's own facilities. The app does not store receipt photographs in its database and does not transmit them anywhere.</p>
+
+  <h2>Requests to the receipt verification service</h2>
+  <p>To retrieve the contents of a purchase by its receipt code, the app opens the website <strong>ch.info-center.by</strong> in an embedded browser window. A request is only made when you act — after you have scanned a receipt and specified its date.</p>
+  <p>That service requires you to sign in to an account on the site itself. You sign in personally, on the site's genuine page: the app does not ask for, see or store your password. Session data (cookies) is kept by the system's browser storage on your device.</p>
+  <p>When the site is contacted, it learns your IP address and the information a browser would normally provide. How the site handles that data is governed by its owner's policy, not by this one.</p>
+
+  <div class="callout">
+    <p><strong>SkarbIQ is not affiliated with ch.info-center.by.</strong> The app is not an official client of that service and has no connection to its owner. It uses the publicly available receipt verification form in the same way a person would in a browser.</p>
+  </div>
+
+  <h2>Protection against automated requests</h2>
+  <p>The receipt verification page uses <strong>Google reCAPTCHA</strong>. When it loads, your browser contacts Google's servers, which may receive your IP address and technical details about your device. The terms are described in <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>.</p>
+
+  <h2>Notifications</h2>
+  <p>If you allow notifications, the app will alert you when a limit you have set is being approached and, if you wish, remind you to record receipts. Notifications are generated on the device. There are no push notifications from our servers — there are no servers either.</p>
+
+  <h2>Export and backups</h2>
+  <p>You can export your data to a CSV file or create a backup in JSON format. The file is created on your command, and you decide where to send or store it. The app does not upload these files anywhere automatically.</p>
+
+  <h2>Analytics and advertising</h2>
+  <p>The app contains no advertising, no ad networks and no behavioural analytics. It does not track you across other apps or websites and does not request permission to do so.</p>
+
+  <h2>Retention and deletion</h2>
+  <p>Your data stays on your device for as long as you want it to. You can remove it in two ways:</p>
+  <ul>
+    <li>in the app's settings — the "Clear all data" option;</li>
+    <li>by deleting the app from your device, which removes its database along with it.</li>
+  </ul>
+  <p>Because the developer holds no copies, deleted data cannot be recovered — unless you made a backup yourself beforehand.</p>
+
+  <h2>Children</h2>
+  <p>The app is not intended for children under 13 and does not knowingly collect data about them.</p>
+
+  <h2>Your rights</h2>
+  <p>Since the data never leaves your device, you control it directly: you can view, edit, export and delete it at any time without contacting the developer. If you have questions, write to <a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a>.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the updated version will appear on this page with a new date. Significant changes will be noted in the app's release notes.</p>
+
+  <footer class="foot">
+    <span>SkarbIQ · 2026</span>
+    <a href="./">Back to home</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'skarbiq-theme';
+
+  try {
+    var saved = localStorage.getItem(KEY);
+    if (saved === 'dark' || saved === 'light') {
+      root.setAttribute('data-theme', saved);
+    }
+  } catch (e) {}
+
+  function currentlyDark() {
+    var attr = root.getAttribute('data-theme');
+    if (attr === 'dark') return true;
+    if (attr === 'light') return false;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  var btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var next = currentlyDark() ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
