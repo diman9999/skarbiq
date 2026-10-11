@@ -157,14 +157,14 @@ li { font-size: 16px; line-height: 1.68; color: var(--muted); margin-bottom: 9px
   </header>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">SkarbIQ for iOS · Last updated 26.09.2026</p>
+  <p class="updated">SkarbIQ for iOS · Last updated 12 October 2026</p>
 
   <div class="callout">
-    <p><strong>In short.</strong> The app does not collect your data and does not send it to us. Receipts, items, categories and settings are stored only on your device. We run no servers that hold anything about you, there is no sign-up, and there is no behavioural analytics.</p>
+    <p><strong>In short.</strong> Receipts, purchases, categories and settings are stored only on your device. There is no sign-up, no behavioural analytics and no advertising. If you choose to turn on “Help improve categories”, the app will anonymously send shop and item names together with their categories — without prices, dates, receipt codes or anything that points to you. The app goes online only when you act: to load a receipt you have scanned.</p>
   </div>
 
   <h2>Who processes the data</h2>
-  <p>SkarbIQ is developed by an individual, Dzmitry Kandratovich. You can get in touch at <a href="mailto:kondor.dmitry@gmail.com">SUPPORT EMAIL</a>.</p>
+  <p>SkarbIQ is developed by an individual, [YOUR NAME]. You can get in touch at <a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a>.</p>
 
   <h2>What the app creates</h2>
   <p>As you use the app, the following is saved on your device:</p>
@@ -174,29 +174,49 @@ li { font-size: 16px; line-height: 1.68; color: var(--muted); margin-bottom: 9px
     <li><strong>Your own corrections</strong> — when you change an item's category, the app remembers it so that it can classify the same item on its own next time.</li>
     <li><strong>Settings</strong> — your name if you entered one, notification preferences, and a counter of daily requests.</li>
   </ul>
-  <p>All of this is kept in a local database on your iPhone and in storage shared between the app and its widget. None of it is sent to the developer or to anyone else.</p>
+  <p>All of this is kept in a local database on your iPhone and in storage shared between the app and its widget. None of it is shared with the developer or with third parties. The only exception is described under “Helping improve categories” and applies only with your consent.</p>
 
   <h2>Camera and photo access</h2>
   <p>The <strong>camera</strong> is used to read the QR code printed on a cash receipt and to photograph a paper receipt. <strong>Photo access</strong> is used to read a QR code from an image you choose yourself.</p>
   <p>Images are processed on the device itself, using the operating system's own facilities. The app does not store receipt photographs in its database and does not transmit them anywhere.</p>
 
   <h2>Requests to the receipt verification service</h2>
-  <p>To retrieve the contents of a purchase by its receipt code, the app opens the website <strong>ch.info-center.by</strong> in an embedded browser window. A request is only made when you act — after you have scanned a receipt and specified its date.</p>
-  <p>That service requires you to sign in to an account on the site itself. You sign in personally, on the site's genuine page: the app does not ask for, see or store your password. Session data (cookies) is kept by the system's browser storage on your device.</p>
+  <p>To retrieve the contents of a purchase by its receipt code, the app opens the website <strong>ch.info-center.by</strong> in an embedded browser window. A request is only made when you act — after you have scanned a receipt or entered its code.</p>
+  <p>The site may ask you to sign in to an account — for example, once the number of checks allowed without signing in has been used up. You sign in personally, on the site's genuine page: the app does not ask for, see or store your password. Session data (cookies) is kept by the system's browser storage on your device.</p>
   <p>When the site is contacted, it learns your IP address and the information a browser would normally provide. How the site handles that data is governed by its owner's policy, not by this one.</p>
 
   <div class="callout">
     <p><strong>SkarbIQ is not affiliated with ch.info-center.by.</strong> The app is not an official client of that service and has no connection to its owner. It uses the publicly available receipt verification form in the same way a person would in a browser.</p>
   </div>
 
+  <h2>Electronic receipts from retail chains</h2>
+  <p>If a paper receipt carries only a QR code linking to a chain's electronic receipt (Dobronom, Kopeechka, Mayak — idcheck.dobronom.by; Evroopt — r.eplus.by), the app — when you scan it — requests that receipt from the chain's service, just as a browser would when opening the link. Only the receipt identifier from the QR code is sent. No sign-in is required. The link itself is not stored in the app — only the loaded receipt is, just as with a regular scan.</p>
+  <p>For receipts from iKassa cloud tills (links to receipts.cloud.ikassa.by), the app opens the receipt page from that link and reads the purchase from it. If that fails, only the date is taken from the page and the receipt is loaded in the usual way via ch.info-center.by.</p>
+  <p>The chain's service receives your IP address and the information a browser would normally provide. Its handling of that data is governed by the respective chain's policy (Dobronom CJSC, Eurotorg LLC). SkarbIQ is not affiliated with these chains.</p>
+
   <h2>Protection against automated requests</h2>
   <p>The receipt verification page uses <strong>Google reCAPTCHA</strong>. When it loads, your browser contacts Google's servers, which may receive your IP address and technical details about your device. The terms are described in <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>.</p>
 
   <h2>Notifications</h2>
-  <p>If you allow notifications, the app will alert you when a limit you have set is being approached and, if you wish, remind you to record receipts. Notifications are generated on the device. There are no push notifications from our servers — there are no servers either.</p>
+  <p>If you allow notifications, the app will alert you when a limit you have set is being approached and, if you wish, remind you to record receipts. Notifications are generated on the device. The app does not use push notifications.</p>
 
   <h2>Export and backups</h2>
   <p>You can export your data to a CSV file or create a backup in JSON format. The file is created on your command, and you decide where to send or store it. The app does not upload these files anywhere automatically.</p>
+
+  <h2>Helping improve categories</h2>
+  <p>This feature stays off until you turn it on yourself — in the settings or in reply to a one-time question in the app. You can turn it off at any time: Settings → “Improving categories”.</p>
+  <p>While the feature is on, the app sends the developer records made up of the following fields:</p>
+  <ul>
+    <li>the shop name as printed on the receipt;</li>
+    <li>the item name as stored in the app, and its barcode if the till provided one;</li>
+    <li>the item's category and who chose it — the app or you;</li>
+    <li>the app version.</li>
+  </ul>
+  <p><strong>Never sent:</strong> prices, totals and discounts, purchase dates and times, receipt codes and electronic receipt links, your name, notes, manually entered expenses, or any device or account identifiers. When you turn the feature on, items from receipts saved earlier are sent as well.</p>
+  <p>Records are collected on the device and sent no more than once an hour — shuffled and without duplicates: the same item is sent only once. As a result, they cannot be used to reconstruct an individual purchase or to link records to a particular person.</p>
+  <p>The sole purpose is to help the app recognise item categories and shop names more accurately. Aggregated records may become part of the app's built-in category dictionary and ship in app updates.</p>
+  <p>Records are received by Google Apps Script and stored in a Google spreadsheet owned by the developer. As with any request over the internet, Google receives the device's IP address; the script does not see or store it. The date records were received is kept to the day. Processing on Google's side is governed by <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>. Records are kept for as long as they are needed to improve the category dictionary.</p>
+  <p>The legal basis for processing is your consent. If you withdraw it, records not yet sent are deleted from the device immediately. Records already sent cannot be deleted on request: they contain nothing that would distinguish them from other users' records.</p>
 
   <h2>Analytics and advertising</h2>
   <p>The app contains no advertising, no ad networks and no behavioural analytics. It does not track you across other apps or websites and does not request permission to do so.</p>
@@ -207,13 +227,13 @@ li { font-size: 16px; line-height: 1.68; color: var(--muted); margin-bottom: 9px
     <li>in the app's settings — the "Clear all data" option;</li>
     <li>by deleting the app from your device, which removes its database along with it.</li>
   </ul>
-  <p>Because the developer holds no copies, deleted data cannot be recovered — unless you made a backup yourself beforehand.</p>
+  <p>The developer holds no copies of your receipts, so deleted data cannot be recovered — unless you made a backup yourself beforehand. The “Clear all data” option also deletes any records not yet sent for improving categories.</p>
 
   <h2>Children</h2>
   <p>The app is not intended for children under 13 and does not knowingly collect data about them.</p>
 
   <h2>Your rights</h2>
-  <p>Since the data never leaves your device, you control it directly: you can view, edit, export and delete it at any time without contacting the developer. If you have questions, write to <a href="mailto:kondor.dmitry@gmail.com">SUPPORT EMAIL</a>.</p>
+  <p>Your receipts and purchases never leave your device, so you control them directly: you can view, edit, export and delete them at any time without contacting the developer. You can turn participation in improving categories on or off in the settings at any time. If you have questions, write to <a href="mailto:[SUPPORT EMAIL]">[SUPPORT EMAIL]</a>.</p>
 
   <h2>Changes</h2>
   <p>If this policy changes, the updated version will appear on this page with a new date. Significant changes will be noted in the app's release notes.</p>
