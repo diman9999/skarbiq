@@ -1,0 +1,753 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Тест-гид SkarbIQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@600;700&display=swap">
+<style>
+/* Layout: шапка-чек → липкая панель (поиск, фильтры, отчёт) → две колонки: разделы слева, проверки справа; на телефоне разделы — лентой чипов */
+:root {
+  --paper: #F2F5F1;
+  --card: #FFFFFF;
+  --ink: #13201A;
+  --muted: #5A6B61;
+  --line: #DCE4DE;
+  --accent: #0D5231;
+  --accent-soft: rgba(13, 82, 49, 0.08);
+  --ok: #217A4B;
+  --ok-soft: rgba(33, 122, 75, 0.12);
+  --bad: #B93A33;
+  --bad-soft: rgba(185, 58, 51, 0.10);
+  --pro: #9A6512;
+  --pro-soft: rgba(154, 101, 18, 0.12);
+  --dev: #4A5BA8;
+  --dev-soft: rgba(74, 91, 168, 0.10);
+  --font-display: "Unbounded", "Golos Text", system-ui, sans-serif;
+  --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1612; --card: #16221C; --ink: #E7EFE9; --muted: #95A79C; --line: #26352D;
+    --accent: #3FBE7A; --accent-soft: rgba(63, 190, 122, 0.13);
+    --ok: #4CC584; --ok-soft: rgba(76, 197, 132, 0.15);
+    --bad: #FF7B71; --bad-soft: rgba(255, 123, 113, 0.14);
+    --pro: #E9BC4F; --pro-soft: rgba(233, 188, 79, 0.14);
+    --dev: #93A4F5; --dev-soft: rgba(147, 164, 245, 0.14);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1612; --card: #16221C; --ink: #E7EFE9; --muted: #95A79C; --line: #26352D;
+  --accent: #3FBE7A; --accent-soft: rgba(63, 190, 122, 0.13);
+  --ok: #4CC584; --ok-soft: rgba(76, 197, 132, 0.15);
+  --bad: #FF7B71; --bad-soft: rgba(255, 123, 113, 0.14);
+  --pro: #E9BC4F; --pro-soft: rgba(233, 188, 79, 0.14);
+  --dev: #93A4F5; --dev-soft: rgba(147, 164, 245, 0.14);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--paper);
+}
+a { color: var(--accent); }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Шапка в духе кассового чека */
+.masthead { padding-block: 28px 8px; }
+.slip {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  padding: 24px 22px 18px;
+  position: relative;
+}
+.slip::after {
+  content: "";
+  position: absolute; left: -1px; right: -1px; bottom: -10px; height: 10px;
+  background:
+    linear-gradient(135deg, var(--card) 50%, transparent 50%) 0 0 / 14px 10px repeat-x,
+    linear-gradient(225deg, var(--card) 50%, transparent 50%) 0 0 / 14px 10px repeat-x;
+}
+.eyebrow {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+h1 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(26px, 5vw, 40px); line-height: 1.1; margin: 8px 0 10px;
+  text-wrap: balance; letter-spacing: -0.01em;
+}
+.lede { color: var(--muted); max-width: 64ch; margin: 0; }
+.receipt-line {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+  border-top: 1px dashed var(--line); margin-top: 16px; padding-top: 12px; flex-wrap: wrap;
+}
+.receipt-line strong { color: var(--ink); font-weight: 600; }
+
+.device {
+  margin-top: 26px;
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12px; color: var(--muted); }
+.field input {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 12px; min-width: 0; width: 100%;
+}
+
+/* Перед началом */
+.intro {
+  display: grid; gap: 12px; margin-top: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.note-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 16px; min-width: 0;
+}
+.note-card h3 { margin: 0 0 6px; font-size: 15px; }
+.note-card p, .note-card ul { margin: 0; color: var(--muted); font-size: 14px; }
+.note-card ul { padding-left: 18px; }
+.note-card li + li { margin-top: 3px; }
+.mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+/* Липкая панель */
+.toolbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  margin-top: 22px;
+}
+.toolbar .wrap { padding-block: 12px; display: flex; flex-direction: column; gap: 10px; }
+.toolrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.search {
+  flex: 1 1 260px; min-width: 0;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px 14px;
+}
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+  padding: 6px 12px; font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.btn {
+  border: none; border-radius: 12px; padding: 10px 16px; cursor: pointer;
+  background: var(--accent); color: var(--paper); font-weight: 600; white-space: nowrap;
+}
+.btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 500; }
+.progress { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.bar { flex: 1; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; display: flex; min-width: 80px; }
+.bar span { display: block; height: 100%; }
+.bar .ok { background: var(--ok); }
+.bar .bad { background: var(--bad); }
+.tally { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Колонки */
+.layout {
+  display: grid; gap: 28px; padding-block: 22px 60px;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: start;
+}
+.nav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 150px); display: flex; flex-direction: column; gap: 2px; }
+.nav a {
+  display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+  padding: 6px 10px; border-radius: 8px; text-decoration: none; color: var(--ink); font-size: 14px;
+}
+.nav a:hover { background: var(--accent-soft); }
+.nav .code { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-right: 6px; }
+.nav .count { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nav .count.done { color: var(--ok); }
+.nav .count.fail { color: var(--bad); }
+
+section.area { margin-bottom: 34px; scroll-margin-top: 170px; }
+.area-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+.area-code {
+  font-family: var(--font-mono); font-weight: 600; font-size: 13px;
+  color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px;
+}
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 21px; margin: 0; text-wrap: balance; }
+.area-where { color: var(--muted); font-size: 14px; margin: 2px 0 14px; max-width: 70ch; }
+
+.case {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 10px; min-width: 0;
+  border-left-width: 4px;
+}
+.case.is-ok { border-left-color: var(--ok); }
+.case.is-bad { border-left-color: var(--bad); }
+.case-top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.case-id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.case h3 { font-size: 16px; margin: 0; flex: 1 1 220px; min-width: 0; }
+.tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.02em; border-radius: 6px; padding: 2px 7px;
+  background: var(--accent-soft); color: var(--accent); white-space: nowrap;
+}
+.tag.pro { background: var(--pro-soft); color: var(--pro); }
+.tag.dev { background: var(--dev-soft); color: var(--dev); }
+.case ol { margin: 10px 0 0; padding-left: 20px; }
+.case ol li { margin-top: 3px; }
+.expect {
+  margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line);
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 10px;
+}
+.expect b { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.expect div { min-width: 0; }
+.status { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+.sbtn {
+  border: 1px solid var(--line); background: transparent; border-radius: 10px;
+  padding: 6px 12px; cursor: pointer; font-size: 13px;
+}
+.sbtn.ok[aria-pressed="true"] { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); font-weight: 600; }
+.sbtn.bad[aria-pressed="true"] { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); font-weight: 600; }
+.case textarea {
+  width: 100%; margin-top: 8px; min-height: 44px; resize: vertical;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 14px;
+}
+.limits { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.limits ul { margin: 0; padding-left: 18px; color: var(--muted); }
+.limits li + li { margin-top: 4px; }
+.empty { color: var(--muted); padding: 30px 0; text-align: center; }
+
+.sheet {
+  position: fixed; inset: auto 0 0 0; z-index: 20;
+  background: var(--card); border-top: 1px solid var(--line);
+  padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.12);
+}
+.sheet .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.sheet textarea { width: 100%; height: 180px; font-family: var(--font-mono); font-size: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.sheet .row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; align-items: center; }
+.sheet .msg { margin-right: auto; color: var(--muted); font-size: 13px; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .nav {
+    position: static; flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .nav a { border: 1px solid var(--line); background: var(--card); white-space: nowrap; flex: 0 0 auto; }
+  .nav .count { margin-left: 6px; }
+  section.area { scroll-margin-top: 150px; }
+}
+@media (max-width: 600px) {
+  .toolbar .wrap { padding-block: 10px; gap: 8px; }
+  .toolrow:first-child { flex-wrap: nowrap; }
+  .toolrow:first-child .btn { padding: 10px 12px; font-size: 14px; }
+  .toolrow:last-child { flex-direction: column; align-items: stretch; gap: 8px; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .chip { padding: 5px 11px; }
+  .tally { font-size: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+</style>
+
+<header class="wrap masthead">
+  <div class="slip">
+    <div class="eyebrow">TestFlight · сборка с SkarbIQ Pro</div>
+    <h1>Тест-гид SkarbIQ</h1>
+    <p class="lede">Все функции приложения и как их проверить. Выберите раздел, пройдите шаги и отметьте результат: «Работает» или «Не работает» с коротким описанием. В конце нажмите «Скопировать отчёт» и отправьте текст разработчику в Telegram.</p>
+    <div class="receipt-line"><span>Разделов: <strong id="statAreas">0</strong></span><span>Проверок: <strong id="statCases">0</strong></span><span>Валюта: <strong>BYN</strong></span><span>Отметки хранятся в этом браузере</span></div>
+  </div>
+
+  <div class="device">
+    <div class="field"><label for="devModel">iPhone</label><input id="devModel" placeholder="например, iPhone 13 mini" autocomplete="off"></div>
+    <div class="field"><label for="devIOS">Версия iOS</label><input id="devIOS" placeholder="например, 18.5" autocomplete="off"></div>
+    <div class="field"><label for="devBuild">Сборка приложения</label><input id="devBuild" placeholder="Настройки → О приложении" autocomplete="off"></div>
+    <div class="field"><label for="devName">Ваше имя</label><input id="devName" placeholder="как подписать отчёт" autocomplete="off"></div>
+  </div>
+
+  <div class="intro">
+    <div class="note-card">
+      <h3>Pro у тестировщиков включён</h3>
+      <p>Покупать ничего не нужно. Проверьте: Настройки → SkarbIQ Pro → «Pro активен · Тестовая сборка». Если видите замки, закройте приложение и откройте его с интернетом.</p>
+    </div>
+    <div class="note-card">
+      <h3>10 проверок чеков в сутки</h3>
+      <p>Сервис инфоцентра даёт 10 запросов в день. Не тратят лимит: бумажный чек (съёмка), электронные чеки Доброном и Евроопт, чеки Webkassa (Санта) и iKassa (Соседи).</p>
+    </div>
+    <div class="note-card">
+      <h3>Нужны данные для проверки?</h3>
+      <p>Попросите у разработчика тестовую копию базы и восстановите её: Настройки → Данные → Восстановить из копии → «Добавить к текущим». В ней есть чеки с изменениями цен.</p>
+    </div>
+    <div class="note-card">
+      <h3>Метки</h3>
+      <ul>
+        <li><span class="tag pro">Pro</span> функция из SkarbIQ Pro</li>
+        <li><span class="tag">лимит</span> тратит проверку инфоцентра</li>
+        <li><span class="tag dev">Xcode</span> проверяет разработчик: режим без Pro есть только в сборке из Xcode</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="toolrow">
+      <input class="search" id="search" type="search" placeholder="Поиск по проверкам: «лимит», «виджет», «история цены»…" autocomplete="off">
+      <button class="btn" id="copyReport" type="button">Скопировать отчёт</button>
+    </div>
+    <div class="toolrow">
+      <div class="chips" role="group" aria-label="Фильтр по статусу">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">Все</button>
+        <button class="chip" type="button" data-filter="todo" aria-pressed="false">Не проверено</button>
+        <button class="chip" type="button" data-filter="bad" aria-pressed="false">Не работает</button>
+        <button class="chip" type="button" data-filter="pro" aria-pressed="false">Pro</button>
+        <button class="chip" type="button" data-filter="nodev" aria-pressed="false">Без Xcode</button>
+      </div>
+      <div class="progress" style="flex:1 1 220px">
+        <div class="bar" aria-hidden="true"><span class="ok" id="barOk"></span><span class="bad" id="barBad"></span></div>
+        <span class="tally" id="tally">0 из 0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap layout">
+  <nav class="nav" id="nav" aria-label="Разделы"></nav>
+  <div id="content"></div>
+</main>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="inner">
+    <textarea id="reportText" readonly aria-label="Текст отчёта"></textarea>
+    <div class="row">
+      <span class="msg" id="sheetMsg"></span>
+      <span class="confirm" id="resetConfirm" hidden>Стереть все отметки?
+        <button class="btn ghost" type="button" id="resetNo">Нет</button>
+        <button class="btn" type="button" id="resetYes" style="background:var(--bad)">Стереть</button>
+      </span>
+      <button class="btn ghost" type="button" id="resetAll">Сбросить отметки</button>
+      <button class="btn ghost" type="button" id="closeSheet">Закрыть</button>
+      <button class="btn" type="button" id="copyAgain">Скопировать</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Тег: lim — тратит проверку, pro — Pro, dev — только в Xcode
+const AREAS = [
+  { code: "A", title: "Первый запуск", where: "Новая установка или после «Очистить все данные».", cases: [
+    { t: "Знакомство с приложением", s: ["Установите приложение начисто (или удалите и поставьте заново).", "Пролистайте 4 экрана кнопкой «Далее».", "На последнем нажмите «Начать».", "Разрешите уведомления в системном окне."], e: "Открывается главная «Мои расходы». После перезапуска знакомство больше не показывается. Кнопка «Пропустить» на первых трёх экранах сразу ведёт на главную." },
+    { t: "Стандартные категории", s: ["Откройте вкладку «Категории» → «Управление».", "Раскройте «Стандартные категории»."], e: "15 категорий: Продукты, Транспорт, Кафе и рестораны, Здоровье, Косметика и гигиена, Одежда, Для дома, Животные, Дети, Развлечения, Связь, Коммунальные, Образование, Маркетплейсы, Другое. У каждой есть подкатегории." },
+    { t: "Косметика попадает в свою категорию", s: ["На новой установке загрузите чек, где есть шампунь, зубная паста или крем.", "Сохраните чек и вернитесь на главную."], e: "Товары лежат в «Косметика и гигиена» с розовой иконкой, а не в «Не определено» и не серым кругом." }
+  ]},
+  { code: "B", title: "Главная", where: "Вкладка «Главная».", cases: [
+    { t: "Сумма за период", s: ["Нажмите на «Расходы за неделю ▾».", "Выберите «Месяц», затем «Год»."], e: "Меняются сумма, число чеков и «в среднем за день». Неделя считается с понедельника, месяц с 1-го числа, год с 1 января." },
+    { t: "Сэкономлено по акциям", s: ["Загрузите чек, где есть скидка по акции.", "Посмотрите на главную карточку."], e: "Под суммой зелёная строка «Сэкономлено по акциям X BYN». Если скидок за период не было, строки нет." },
+    { t: "Кнопки добавления", s: ["Нажмите «Добавить расход».", "Закройте экран, нажмите «Сканировать чек»."], e: "Первая кнопка открывает выбор способа (сканировать, снять бумажный чек, ввести код, добавить вручную). Вторая сразу открывает камеру." },
+    { t: "Блок «По категориям»", s: ["Посмотрите на блок после кнопок.", "Нажмите «Все»."], e: "До 5 категорий с суммой и процентом от расходов периода. «Все» открывает вкладку «Аналитика»." },
+    { t: "Лимиты на главной", s: ["Задайте лимит категории (Настройки → Лимиты категорий).", "Добавьте траты, чтобы дойти до 80%, затем превысить лимит."], e: "В блоке «Лимиты в этом месяце» карточка с «X из Y BYN». До 80% — процент серым, от 80% — оранжевый бейдж с процентом, после превышения — красный «Превышен». Самый заполненный лимит показан и в главной карточке." },
+    { t: "Последние операции", s: ["Прокрутите вниз до «Последние операции».", "Нажмите на чек.", "Нажмите «Все»."], e: "До 5 последних чеков за выбранный период. Тап раскрывает список товаров. «Все» открывает «Историю»." },
+    { t: "Неопределённые товары", s: ["Загрузите чек с необычным товаром, который приложение не узнало."], e: "На главной появляется оранжевая плашка «Не определено: X BYN». Тап открывает «Неразобранное». Когда всё разобрано, плашка исчезает." },
+    { t: "Прокрутка наверх", s: ["На любой вкладке прокрутите список вниз.", "Нажмите на эту же вкладку ещё раз."], e: "Список плавно возвращается наверх." }
+  ]},
+  { code: "C", title: "Сканирование QR-кода", where: "Главная → «Сканировать чек» или «Добавить расход» → «Сканировать чек».", cases: [
+    { t: "Обычный чек инфоцентра", tags: ["lim"], s: ["Наведите камеру на QR-код бумажного чека.", "На экране «Уточните дату чека» выберите дату с чека.", "Нажмите «Найти чек»."], e: "Открывается превью «Чек успешно загружен» с магазином, датой, итогом и товарами по категориям." },
+    { t: "Выбор даты", s: ["На экране даты нажмите «Вчера», затем любой день в ленте.", "Введите дату цифрами: 0610.", "Введите 3102."], e: "Чипы показывают 14 последних дней (Сегодня, Вчера, «Пт 9»…). Точка после дня ставится сама, под полем видно «вторник, 6 октября 2026». На 31.02 рамка красная и текст «Такой даты нет», кнопка «Найти чек» неактивна. Дату в будущем выбрать нельзя." },
+    { t: "Календарь вместо цифр", s: ["Настройки → «Ввод даты чека» → «Календарь».", "Отсканируйте чек снова."], e: "Вместо поля ДД.ММ показан системный календарь, чипы с днями остаются." },
+    { t: "Копирование кода чека", s: ["На экране даты нажмите на код чека (24 символа, по 4)."], e: "Лёгкая вибрация, код скопирован в буфер." },
+    { t: "Неверная дата", tags: ["lim"], s: ["Отсканируйте чек и нарочно выберите другую дату."], e: "Экран «Не удалось загрузить чек» с текстом «Чек с такой датой не найден… осталось N проверок на сегодня». «Попробовать снова» возвращает к камере." },
+    { t: "Повторный чек", s: ["Отсканируйте чек, который уже сохранён."], e: "Экран «Чек уже добавлен» с кнопками «Сканировать другой чек» и «На главную». Проверка инфоцентра не тратится." },
+    { t: "QR с фото из галереи", s: ["Нажмите «Выбрать из галереи».", "Выберите фото чека с QR-кодом.", "Затем выберите фото без QR."], e: "С первым фото чек загружается как при сканировании. Со вторым внизу появляется «QR-код не найден на фото» и исчезает через 3 секунды." },
+    { t: "Фонарик", s: ["На экране сканера нажмите значок фонарика справа вверху."], e: "Фонарик включается и выключается." },
+    { t: "Подсказка ручного ввода", s: ["Откройте сканер и 20 секунд ничего не сканируйте."], e: "Внизу появляется «Не удаётся отсканировать?» и кнопка «Ввести код вручную»." },
+    { t: "Нет доступа к камере", s: ["В Настройках iPhone запретите камеру для SkarbIQ.", "Откройте сканер."], e: "Экран «Нет доступа к камере» и кнопка «Открыть настройки», которая ведёт в настройки приложения." },
+    { t: "Электронный чек Доброном / Евроопт", s: ["Отсканируйте QR-ссылку электронного чека (idcheck.dobronom.by или r.eplus.by) из приложения сети."], e: "Превью открывается сразу, без выбора даты и без траты лимита. Повторный скан того же чека любым способом — «Чек уже добавлен»." },
+    { t: "Чеки Webkassa и iKassa", s: ["Отсканируйте QR чека Санты (webkassa.by) или Соседей (ikassa.by)."], e: "Превью открывается без выбора даты. Если чек не разобрался, приложение само идёт через инфоцентр с датой из чека." },
+    { t: "Проверка «я не робот»", tags: ["lim"], s: ["Сканируйте чеки подряд, пока сервис не попросит проверку."], e: "Поверх экрана «Подтвердите, что вы не робот» с картинками. После прохождения загрузка продолжается, «Отмена» возвращает к выбору способа." },
+    { t: "Вход в аккаунт инфоцентра", tags: ["lim"], s: ["Если появился экран «Лимит запросов исчерпан», нажмите «Войти в аккаунт инфоцентра».", "Войдите на открывшейся странице (код из СМС переходит по полям сам).", "Нажмите «Готово» и отсканируйте чек."], e: "Открывается настоящая страница инфоцентра с пометкой, что пароль приложение не видит. После входа чеки снова загружаются." }
+  ]},
+  { code: "D", title: "Ввод кода вручную", where: "«Добавить расход» → «Ввести код чека», или подсказка на сканере.", cases: [
+    { t: "Поле кода", s: ["Введите код с пробелами и строчными буквами.", "Скопируйте код и нажмите кнопку вставки справа от поля."], e: "Остаются только буквы и цифры заглавными, не больше 24. Счётчик «24/24» становится зелёным. Пустой буфер — «Буфер обмена пуст»." },
+    { t: "Поиск по коду", tags: ["lim"], s: ["Выберите дату с чека.", "Нажмите «Найти чек»."], e: "Кнопка активна только при 24 символах и правильной дате. Чек открывается в превью. При ошибке «Попробовать снова» возвращает к полю кода." },
+    { t: "Код при исчерпанном лимите", tags: ["lim"], s: ["Когда дневной лимит исчерпан, введите код чека вручную."], e: "Чек попадает в очередь («Чек в очереди»), как при сканировании QR." }
+  ]},
+  { code: "E", title: "Превью чека", where: "Экран после загрузки чека, до сохранения.", cases: [
+    { t: "Карточка чека", s: ["Загрузите любой чек."], e: "Галочка «Чек успешно загружен», магазин, дата и время, «Итого», при скидках — «Сэкономлено по акциям»." },
+    { t: "Товары по категориям", s: ["Нажмите на категорию, затем на подкатегорию.", "Найдите товар, купленный в нескольких штуках отдельными строками."], e: "Категории сворачиваются, подкатегории раскрываются со списком товаров. Одинаковые строки собраны в одну «N шт.», по тапу видно каждую позицию." },
+    { t: "Изменить товар до сохранения", s: ["Нажмите на бирку у товара.", "Впишите новое название, выберите категорию и подкатегорию.", "Нажмите «Применить»."], e: "Товар переезжает в выбранную категорию, рядом «Изменено» и «Было: старое название». Категория чека пересчитывается." },
+    { t: "Товары без категории", s: ["Загрузите чек с незнакомым товаром."], e: "Оранжевый баннер «N товаров без категории», в «Другое → Прочее» у товара кнопка «Выбрать»." },
+    { t: "Подсказка о ценах", tags: ["pro"], s: ["Загрузите чек из магазина, где вы уже покупали те же товары по другой цене."], e: "Под карточкой чека плашка «С прошлой покупки здесь N товаров подорожали, M подешевели» и «В этом чеке: +X из-за подорожания, −Y на снижении цен». Ниже до 3 товаров с «было … · дата» и ↑/↓, кнопка «Показать все». Если цены не менялись или магазин новый, плашки нет." },
+    { t: "Подсказка о ценах без Pro", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro» и откройте такой же чек."], e: "Виден только заголовок плашки и строка «Какие товары и на сколько — в SkarbIQ Pro», тап открывает экран Pro." },
+    { t: "Сохранение", s: ["Впишите заметку.", "Нажмите «Сохранить»."], e: "Экран закрывается, чек появляется на главной и в истории, виджет обновляется. Товары, которые вы поправили, в следующий раз определятся сами." },
+    { t: "Отмена", s: ["Нажмите «Отмена» в превью."], e: "Чек не сохраняется, открывается выбор способа добавления." }
+  ]},
+  { code: "F", title: "Бумажный чек (съёмка)", where: "«Добавить расход» → «Снять бумажный чек». Работает без интернета и без лимита.", cases: [
+    { t: "Один чек", s: ["Снимите чек целиком камерой документов, можно в несколько страниц.", "Дождитесь распознавания."], e: "Экран проверки: «Сумма сошлась» (зелёным) или «Сумма не сошлась» с расхождением. Видны магазин, дата, код, позиции, «Прочитано неуверенно» для сомнительных строк. «Продолжить» ведёт в обычное превью." },
+    { t: "Без интернета", s: ["Включите авиарежим.", "Снимите бумажный чек и сохраните."], e: "Распознавание и сохранение работают без сети." },
+    { t: "Два чека рядом в одном кадре", s: ["Положите два чека рядом и снимите одним кадром."], e: "Ошибка «В кадр попало несколько чеков рядом. Снимите каждый чек отдельно…»." },
+    { t: "Несколько чеков за одну съёмку", s: ["Снимите несколько чеков отдельными страницами."], e: "Список «Сошлось N из M», у каждого чека магазин, дата, число позиций. Тап открывает проверку конкретного чека." },
+    { t: "Переснять", s: ["На экране проверки нажмите «Переснять чек»."], e: "Снова открывается камера документов." }
+  ]},
+  { code: "G", title: "Очередь чеков", where: "Появляется, когда закончились 10 проверок в сутки. Значок с числом справа вверху на главной.", cases: [
+    { t: "Чек уходит в очередь", tags: ["lim"], s: ["Израсходуйте дневной лимит.", "Отсканируйте ещё один чек и выберите дату."], e: "Экран «Чек в очереди» с объяснением. На главной справа вверху значок с числом чеков в очереди." },
+    { t: "Список очереди", s: ["Нажмите на значок очереди на главной."], e: "Сверху статус «Осталось N из 10 проверок на сегодня» или «Суточный лимит проверок исчерпан». У каждого чека дата и короткий код, кнопки «Загрузить», календарь и корзина. «Загрузить» неактивна, пока лимит исчерпан." },
+    { t: "Загрузка из очереди", tags: ["lim"], s: ["На следующий день откройте очередь.", "Нажмите «Загрузить»."], e: "Открывается превью чека. После сохранения чек пропадает из очереди." },
+    { t: "Смена даты и удаление", s: ["Нажмите календарь у чека, выберите другую дату, «Сохранить».", "Нажмите корзину у другого чека."], e: "Дата меняется. Удалённый чек исчезает из списка, при пустой очереди — «Очередь пуста»." },
+    { t: "Лимит очереди без Pro", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro».", "Положите в очередь 3 чека, затем попробуйте четвёртый."], e: "Четвёртый не встаёт в очередь: сообщение о пределе бесплатной версии и подсказка про SkarbIQ Pro." }
+  ]},
+  { code: "H", title: "Расход без чека", where: "«Добавить расход» → «Добавить вручную», или кнопка «+» на виджете.", cases: [
+    { t: "Обязательные поля", s: ["Нажмите «Сохранить» с пустой суммой.", "Введите сумму, оставьте пустыми товар и категорию, сохраните."], e: "Сначала «Введите корректную сумму», затем «Введите название или выберите категорию»." },
+    { t: "Название из категории", s: ["Введите сумму, выберите «Связь» → «Мобильная связь», товар и магазин не заполняйте.", "Сохраните."], e: "В истории расход называется «Мобильная связь», без значка QR. На главной он в «Связи»." },
+    { t: "Расход по категории без подкатегории", s: ["Введите сумму, выберите «Коммунальные», подкатегорию оставьте «Без подкатегории».", "Сохраните и откройте главную."], e: "Расход учтён в «Коммунальных» и не появляется в «Не определено»." },
+    { t: "Подсказки магазинов", s: ["Начните вводить название магазина, где уже были чеки."], e: "Под полем список прошлых магазинов, совпадение подсвечено. Тап подставляет название." },
+    { t: "Автокатегория по названию", s: ["Оставьте «Без категории», впишите товар «Молоко».", "Сохраните."], e: "Товар попадает в «Продукты → Молочное и яйца»." },
+    { t: "Обновление виджета", s: ["Добавьте расход вручную.", "Сразу выйдите на домашний экран и посмотрите виджет."], e: "Сумма в виджете уже включает новый расход." }
+  ]},
+  { code: "I", title: "История", where: "Вкладка «История».", cases: [
+    { t: "Список по дням", s: ["Откройте «Историю»."], e: "Чеки сгруппированы по дням, новые сверху, у дня указана сумма. Ручные расходы без значка QR, у смешанных чеков подпись «Несколько категорий»." },
+    { t: "Раскрытие чека", s: ["Нажмите на чек.", "Нажмите «Редактировать» внизу списка товаров."], e: "Тап раскрывает товары с ценами и «× N». «Редактировать» открывает детали чека." },
+    { t: "Свайп: изменить и удалить", s: ["Смахните чек влево.", "Нажмите корзину, затем «Удалить».", "Раскройте другой чек и смахните его."], e: "Появляются карандаш и корзина. После подтверждения чек плавно исчезает, сумма дня пересчитывается, пустой день пропадает. У раскрытого чека кнопки стоят столбиком." },
+    { t: "Поиск", s: ["Потяните список вниз, чтобы появилось поле поиска.", "Введите 2–3 буквы названия товара."], e: "Подсказки (до 5), чеки с этим товаром раскрываются сами, совпавшие товары подсвечены жёлтым. Ищется по магазину, товару и заметке." },
+    { t: "Фильтры и сортировка", s: ["Нажмите значок фильтра справа вверху.", "Выберите «Дороже» и категорию «Продукты».", "Нажмите «Сбросить» слева вверху."], e: "Значок фильтра становится закрашенным, список меняется. «Сбросить» возвращает всё как было." },
+    { t: "Ничего не найдено", s: ["Введите в поиск бессмыслицу."], e: "«Ничего не найдено» и кнопка «Сбросить фильтры»." }
+  ]},
+  { code: "J", title: "Детали чека", where: "История → раскройте чек → «Редактировать», или смахните чек влево → карандаш.", cases: [
+    { t: "Шапка", s: ["Откройте детали чека со скидкой."], e: "Магазин, дата и время, «Итого», зелёная «Сэкономлено по акциям», подпись «Загружено из чека» или «Добавлено вручную»." },
+    { t: "Исправить категорию товара", s: ["Нажмите на товар.", "Выберите категорию и подкатегорию, «Применить».", "Нажмите «Сохранить»."], e: "У товара новая категория и «Изменено». Если такой товар есть в других чеках со старой категорией, появляется вопрос «Применить к другим чекам?» с кнопками «Исправить везде» и «Только в этом чеке»." },
+    { t: "Одинаковые товары в чеке", s: ["Откройте чек, где товар повторяется несколькими строками.", "Измените категорию одной строки и сохраните."], e: "Категория меняется у всех одинаковых строк этого чека." },
+    { t: "Переименовать товар", s: ["Нажмите на товар, впишите новое название.", "Примените и сохраните."], e: "В чеке и истории товар показан под новым названием." },
+    { t: "Заметка", s: ["Впишите заметку и нажмите «Сохранить».", "Найдите чек поиском по слову из заметки."], e: "Заметка сохранилась, поиск находит чек." },
+    { t: "Кнопка истории цены", tags: ["pro"], s: ["Нажмите на круглую зелёную кнопку с графиком у товара."], e: "Открывается «История цены» этого товара. У ручных расходов кнопки нет." }
+  ]},
+  { code: "K", title: "Аналитика", where: "Вкладка «Аналитика».", cases: [
+    { t: "Периоды", s: ["Переключайте Неделя / Месяц / Квартал / Год."], e: "Цифры меняются. Периоды календарные: неделя с понедельника, квартал январь–март, апрель–июнь и т. д." },
+    { t: "Карточки", s: ["Посмотрите на четыре карточки под переключателем."], e: "Итого, В день, Чеков, Сэкономлено (показывается и при нуле)." },
+    { t: "Диаграмма по категориям", s: ["Нажмите на сектор диаграммы или строку категории."], e: "Открывается экран категории. Сумма процентов около 100%." },
+    { t: "Режим «Подробно»", s: ["Переключите диаграмму на «Подробно».", "Нажмите на строку."], e: "Секторы по подкатегориям, оттенки одной категории различимы. Тап подсвечивает сектор. «Прочее» из Продуктов и «Прочее» из Другого — разные строки." },
+    { t: "Расходы по дням", s: ["Настройки → «Расходы по дням» → включить.", "Вернитесь в «Аналитику», выберите «Год»."], e: "Появляется столбчатый график. За год он показывает недели («Расходы по неделям»)." },
+    { t: "Где чаще всего тратили", s: ["Выберите «Месяц» и прокрутите к блоку магазинов."], e: "До 6 сетей с суммой и числом чеков. Разные адреса одной сети («Маяк» в разных деревнях) собраны в одну строку." },
+    { t: "Экран категории", s: ["Откройте категорию «Продукты»."], e: "Сумма за период и доля от всех расходов, подкатегории, «Где покупали», «Чаще всего покупали» (штучные товары считаются по количеству: × 2 — две покупки), «Чеки с этой категорией» (до 10)." },
+    { t: "Переход к истории цены", tags: ["pro"], s: ["На экране категории нажмите на товар в «Чаще всего покупали»."], e: "Открывается история цены товара. Для товара, который был только в ручных расходах, — «Нет данных»." }
+  ]},
+  { code: "L", title: "История цены", where: "Детали чека → кнопка с графиком у товара, или Аналитика → категория → «Чаще всего покупали».", cases: [
+    { t: "Последняя цена и изменение", tags: ["pro"], s: ["Откройте товар, который покупали несколько раз в одном магазине по разной цене."], e: "Крупно последняя цена, рядом ↑ (оранжевый) или ↓ (зелёный) с разницей и процентом. Подпись «дата, магазин · здесь стоит X с даты, раньше было Y». Сравнение — с прошлой ценой в том же магазине." },
+    { t: "График", tags: ["pro"], s: ["Посмотрите на график под ценой."], e: "Своя линия для каждого магазина, цена держится ступенькой до следующей покупки, подорожания отмечены оранжевой точкой. Под графиком легенда магазинов." },
+    { t: "Минимум, максимум, средняя", tags: ["pro"], s: ["Сверьте три плитки с покупками внизу."], e: "Значения совпадают с ценами в списке покупок (цена с полки, без учёта скидки)." },
+    { t: "Где дешевле", tags: ["pro"], s: ["Откройте товар, купленный в двух сетях по разной цене за последние 2 месяца."], e: "Магазины по возрастанию цены, у каждого дата и число покупок. «−X» у магазина, где дешевле на 0,05 и больше (и не меньше 1%). Цена старше 60 дней — дата оранжевая, без «−», внизу пояснение." },
+    { t: "Список покупок", tags: ["pro"], s: ["Прокрутите к «Покупки»."], e: "Дата, магазин, «× 2» для нескольких штук, «по акции −X» и «оплачено Y» для скидок, ↑/↓ там, где цена менялась. Сверху итог «N раз», а если штук больше, чем покупок, — «N раз · M шт.». Больше 10 покупок — кнопка «Показать все N»." },
+    { t: "Весовой товар", tags: ["pro"], s: ["Откройте банан, сыр на развес или другой весовой товар."], e: "«Последняя цена за кг», в покупках вес в кг, итог «N раз · X кг»." },
+    { t: "Один товар из разных сетей", tags: ["pro"], s: ["Откройте товар со штрихкодом, купленный в Копеечке и Евроопте (например, вода «Дарида» 1,5 л)."], e: "Покупки из разных сетей в одной истории. Товар другого объёма (1 л) — отдельная история." },
+    { t: "Мало данных", tags: ["pro"], s: ["Откройте товар, купленный один раз."], e: "Цена, «куплено 1 раз» и подсказка, что график появится после следующей покупки." },
+    { t: "Без Pro", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro» (Настройки → SkarbIQ Pro) и откройте историю цены."], e: "Видна только последняя цена. Ниже размытый блок с замком и заголовком «Есть магазин, где дешевле», «Цена менялась N раз» или «Вся история цены». «Открыть в Pro» ведёт на экран Pro." }
+  ]},
+  { code: "M", title: "Изменения цен", where: "Аналитика → внизу карточка «Изменения цен».", cases: [
+    { t: "Ваша корзина", tags: ["pro"], s: ["Выберите «Месяц» и прокрутите вниз."], e: "«Ваша корзина ±X% к прошлому месяцу» (рост оранжевым, снижение зелёным) и «По N товарам, которые вы покупали в обоих периодах»." },
+    { t: "Подорожали и подешевели", tags: ["pro"], s: ["Посмотрите списки в карточке.", "Нажмите «Все изменения (N)».", "Нажмите на товар."], e: "До 3 подорожавших и 2 подешевевших с «магазин · было → стало» и процентом. Полный список открывается отдельным экраном, тап по товару — история цены." },
+    { t: "Другие периоды", tags: ["pro"], s: ["Переключите Неделя, Квартал, Год."], e: "Сравнение с прошлой неделей, прошлым кварталом, прошлым годом. Если сравнить не с чем, карточки нет." },
+    { t: "Без Pro", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro» и вернитесь в аналитику."], e: "Видна корзина и одна строка, ниже «Ещё N изменений — в SkarbIQ Pro», тап открывает экран Pro." }
+  ]},
+  { code: "N", title: "Категории", where: "Вкладка «Категории».", cases: [
+    { t: "Товары", s: ["Откройте «Товары»."], e: "Все купленные товары по категориям и подкатегориям, у категории число товаров и сумма. Категории сворачиваются по тапу." },
+    { t: "Управление", s: ["Откройте «Управление», раскройте «Стандартные категории» и любую категорию."], e: "Подкатегории с пометкой «стандартная», у категорий и подкатегорий с лимитом подпись «Лимит: …»." },
+    { t: "Добавить подкатегорию", s: ["Раскройте категорию → «Добавить подкатегорию».", "Попробуйте добавить уже существующее название."], e: "Новая подкатегория появляется в списке. Повтор не добавляется." },
+    { t: "Своя категория", s: ["Нажмите «+» справа вверху.", "Задайте название, иконку и цвет, «Сохранить».", "Попробуйте создать категорию с тем же названием."], e: "Категория появляется в «Мои категории». Повтор — ошибка «Категория «…» уже существует»." },
+    { t: "Переименовать свою категорию", s: ["Нажмите карандаш у своей категории, измените название, сохраните."], e: "Товары и лимиты остаются при категории под новым названием, аналитика не разваливается." },
+    { t: "Удаление", s: ["Нажмите красный минус у своей подкатегории, подтвердите.", "Смахните свою категорию влево → «Удалить»."], e: "Перед удалением спрашивается подтверждение, строка плавно исчезает. Стандартные подкатегории и категории удалить нельзя." }
+  ]},
+  { code: "O", title: "Неразобранное", where: "Главная → плашка «Не определено: X BYN».", cases: [
+    { t: "Разбор группы", s: ["Откройте «Неразобранное».", "Нажмите «Выбрать категорию» у товара, выберите категорию и подкатегорию."], e: "Одинаковые товары собраны в группу (сколько раз, сумма, магазины). Выбор применяется ко всей группе, группа исчезает из списка." },
+    { t: "Оставить в «Прочем»", s: ["Нажмите «Прочее» у другой группы.", "Закройте и снова откройте главную."], e: "Группа исчезает и больше не возвращается." },
+    { t: "Запоминание", s: ["Загрузите новый чек с только что разобранным товаром."], e: "Товар сразу попадает в выбранную категорию." }
+  ]},
+  { code: "P", title: "Лимиты", where: "Настройки → «Лимиты категорий» и «Лимиты подкатегорий».", cases: [
+    { t: "Лимит категории", s: ["Нажмите категорию в «Добавить лимит».", "Введите сумму (можно с запятой), «Сохранить»."], e: "Карточка с полосой, «Потрачено …» и «Осталось …» или «Превышен на …» красным. Месяц календарный." },
+    { t: "Изменить и удалить", s: ["Нажмите на карточку лимита.", "Измените сумму, затем откройте снова и нажмите «Удалить лимит»."], e: "Сумма меняется. После удаления категория возвращается в список «Добавить лимит»." },
+    { t: "Лимит подкатегории", s: ["Откройте «Лимиты подкатегорий» → категорию → подкатегорию."], e: "Категории раскрываются, у каждой видно число подкатегорий без лимита. Лимит подкатегории работает так же." },
+    { t: "Одинаковые цифры везде", s: ["Сравните сумму лимита на главной, в настройках лимитов и в виджете."], e: "Потрачено и остаток совпадают на всех трёх экранах." }
+  ]},
+  { code: "Q", title: "Уведомления", where: "Настройки → «Уведомления». Нужны разрешённые уведомления.", cases: [
+    { t: "Лимит почти исчерпан и превышен", s: ["Задайте небольшой лимит категории.", "Добавьте траты до 80%, затем больше лимита."], e: "Сначала уведомление «…почти на нуле / тает», затем «…лимит сломан» с суммами. Каждое приходит один раз за месяц на лимит." },
+    { t: "Выключение уведомлений о лимитах", s: ["Выключите «Уведомления о лимитах».", "Превысьте другой лимит."], e: "Уведомление о лимите не приходит." },
+    { t: "Напоминание записать чек", s: ["Включите «Напоминать записать чек», поставьте время через 2 минуты."], e: "В это время приходит напоминание. Тексты меняются день ото дня." }
+  ]},
+  { code: "R", title: "Доход в месяц", where: "Настройки → «Доход в месяц».", cases: [
+    { t: "Включить доход", tags: ["pro"], s: ["Включите «Учитывать доход», введите сумму.", "Вернитесь на главную."], e: "В главной карточке «Осталось до конца месяца X из Y» и «≈ Z в день». Доход всегда считается за календарный месяц, какой бы период ни был выбран." },
+    { t: "С регулярными платежами", tags: ["pro"], s: ["Добавьте регулярный платёж со сроком в этом месяце."], e: "Бледная часть полосы — деньги на платежи, строка «Из них X — на регулярные платежи». Если всё уйдёт на платежи — «всё уйдёт на платежи»." },
+    { t: "Превышение дохода", tags: ["pro"], s: ["Поставьте доход меньше трат месяца."], e: "«Доход превышен на X» красным. Если включено «Предупреждать», приходят уведомления на 80% и при превышении." },
+    { t: "Доход в виджете", tags: ["pro"], s: ["Посмотрите на виджет при включённом доходе."], e: "Вместо «средний расход» строка дохода с остатком." },
+    { t: "Без Pro", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro», выключите доход и откройте экран снова."], e: "Вместо тумблера кнопка с замком «Pro», тап открывает экран Pro. Уже включённый доход можно выключить." }
+  ]},
+  { code: "S", title: "Регулярные платежи", where: "Настройки → «Регулярные платежи».", cases: [
+    { t: "Создать платёж", tags: ["pro"], s: ["Нажмите «Добавить платёж».", "Введите сумму, выберите категорию, название можно не вписывать.", "Задайте периодичность, дату, напоминание, режим, «Сохранить»."], e: "Платёж в «Активных». Без названия он называется по подкатегории или категории. Без суммы — «Введите сумму», без категории — «Выберите категорию»." },
+    { t: "Сводка и список", tags: ["pro"], s: ["Посмотрите экран платежей."], e: "«Осталось оплатить в <месяце>» с суммой и числом платежей, время напоминаний, разделы «Активные» и «Неактивные». Свайп влево — удаление с подтверждением." },
+    { t: "К оплате на главной", tags: ["pro"], s: ["Создайте платёж «После подтверждения» с датой сегодня.", "Откройте главную."], e: "Блок «К оплате» с суммой и строкой «Сегодня». Просроченный — «Срок был …» красным." },
+    { t: "Оплачено, Позже, Пропустить", tags: ["pro"], s: ["Нажмите на платёж в «К оплате».", "Поправьте сумму, нажмите «Оплачено».", "С другим платежом попробуйте «Позже» и «Пропустить»."], e: "«Оплачено» — расход в истории, платёж уходит на следующий срок (разовый становится неактивным). «Позже» — убирает с главной до завтра. «Пропустить» — расход не создаётся, срок переносится." },
+    { t: "Автоматический режим", tags: ["pro"], s: ["Создайте платёж «Автоматически» с датой сегодня или раньше.", "Сохраните."], e: "Расход сразу записан в историю с датой платежа. Если приложение не открывали несколько сроков, записывается каждый пропущенный." },
+    { t: "Напоминание с кнопками", tags: ["pro"], s: ["Поставьте время напоминаний на ближайшие минуты.", "Создайте платёж с напоминанием «В день платежа» и датой сегодня.", "Дождитесь уведомления, удерживайте его."], e: "«Сегодня платёж 💳» с кнопками «Оплачено» и «Напомнить завтра». У автоматических платежей кнопок нет, текст «Расход запишется сам»." },
+    { t: "31-е число", tags: ["pro"], s: ["Создайте ежемесячный платёж на 31 января и оплатите его."], e: "Следующий срок 28 февраля (29 в високосный год), после оплаты — снова 31 марта." },
+    { t: "История оплат", tags: ["pro"], s: ["Откройте оплаченный платёж."], e: "Внизу «История оплат» с датами и суммами (до 12)." },
+    { t: "Бесплатно — 2 платежа", tags: ["pro", "dev"], s: ["В Xcode включите «Как без Pro», создайте 2 платежа."], e: "Кнопка добавления становится бледной с замком и подписью «Бесплатно — 2 платежа. Больше — в SkarbIQ Pro»." }
+  ]},
+  { code: "T", title: "Улучшение категорий", where: "Настройки → «Улучшение категорий» и вопрос на главной после первого чека.", cases: [
+    { t: "Вопрос на главной", s: ["Загрузите первый чек на чистой установке."], e: "Один раз появляется «Помочь улучшить категории?» с кнопками «Помогать» и «Не сейчас». После ответа больше не спрашивает." },
+    { t: "Экран настройки", s: ["Откройте экран, включите и выключите тумблер."], e: "Пример записи, списки «Что отправляется» и «Что не отправляется никогда», «Ждут отправки: N». После выключения очередь очищается (N = 0)." }
+  ]},
+  { code: "U", title: "Данные", where: "Настройки → «Данные».", cases: [
+    { t: "Экспорт CSV", tags: ["pro"], s: ["Нажмите «Экспортировать данные».", "Выберите «Детальный (с товарами)» и «Этот месяц», «Экспортировать».", "Откройте файл в Excel или Google Таблицах."], e: "Предпросмотр показывает число чеков и сумму. Файл открывается таблицей, по одной строке на товар, разделитель «;»." },
+    { t: "Экспорт за прошлый месяц", tags: ["pro"], s: ["Выберите период «Прошлый месяц» и экспортируйте."], e: "В файле только чеки прошлого месяца, без текущего." },
+    { t: "Резервная копия", s: ["Нажмите «Сохранить резервную копию», сохраните файл в «Файлы»."], e: "Сохраняется файл SkarbIQ-дата.json." },
+    { t: "Восстановление «Добавить»", s: ["Нажмите «Восстановить из копии», выберите файл, «Добавить к текущим»."], e: "«Готово: Добавлено N чеков…, пропущено дубликатов: M». Уже имеющиеся чеки не задваиваются." },
+    { t: "Восстановление «Заменить»", s: ["Очистите данные, затем восстановите копию с «Заменить текущие данные»."], e: "Чеки, регулярные платежи, доход и лимиты категорий и подкатегорий вернулись как были в копии." },
+    { t: "Очистить все данные", s: ["Нажмите «Очистить все данные» → «Удалить»."], e: "«Все данные удалены». Чеков 0, стандартные категории на месте, платежей и очереди нет, доход выключен, виджет пустой." }
+  ]},
+  { code: "V", title: "SkarbIQ Pro", where: "Настройки → строка «SkarbIQ Pro», а также все кнопки с замком.", cases: [
+    { t: "Экран Pro у тестировщика", s: ["Откройте Настройки → SkarbIQ Pro."], e: "Список возможностей Pro, «Бесплатно навсегда: …» и карточка «Pro активен · Тестовая сборка: Pro включён бесплатно». В строке настроек — «Активен»." },
+    { t: "Покупка в тестовом режиме", tags: ["dev"], s: ["В Xcode со StoreKit-конфигурацией включите «Как без Pro».", "Нажмите «Купить за $2.99», подтвердите тестовую покупку."], e: "Экран закрывается, замки пропадают, в настройках «Активен». «Восстановить покупки» после удаления транзакции сообщает «Покупок SkarbIQ Pro на этом Apple ID не найдено»." }
+  ]},
+  { code: "W", title: "Виджет", where: "Домашний экран → долгое нажатие → «+» → SkarbIQ → «Мои расходы», маленький и средний.", cases: [
+    { t: "Маленький виджет", s: ["Добавьте маленький виджет."], e: "Плашки «За <месяц>», «N чеков» и «−скидки», крупно сумма месяца, «средний расход» в день (или строка дохода), кнопки «+» и QR." },
+    { t: "Средний виджет", s: ["Добавьте средний виджет."], e: "Слева то же, справа траты недели по категориям (4 строки, или 2 и карточка ближайшего лимита). Пустая неделя — шутка «За неделю ни одного чека…». Тап по правой части открывает «Аналитику»." },
+    { t: "Кнопки виджета", s: ["Нажмите «+» на виджете, затем QR."], e: "«+» открывает ручной расход, QR — сразу камеру." },
+    { t: "Обновление", s: ["Сохраните чек, удалите чек, поменяйте лимит.", "Посмотрите на виджет после каждого шага."], e: "Цифры меняются вслед за приложением. Тема виджета следует системной теме iPhone." }
+  ]},
+  { code: "X", title: "Настройки и оформление", where: "Вкладка «Настройки».", cases: [
+    { t: "Имя", s: ["Впишите имя в верхней карточке."], e: "В кружке появляется первая буква имени." },
+    { t: "Тема", s: ["Внешний вид → Светлая, Тёмная, Системная."], e: "Тема меняется сразу во всём приложении. «Системная» следует настройке iPhone." },
+    { t: "О приложении", s: ["Нажмите «О приложении»."], e: "Версия и сборка, «Написать разработчику» открывает письмо, «Политика конфиденциальности» открывает сайт." },
+    { t: "Русские системные кнопки", s: ["Откройте экраны с кнопкой возврата и системные окна (выбор фото, поиск в истории)."], e: "Системные надписи на русском: «Назад», «Отмена», «Готово», а не Back и Cancel." },
+    { t: "Обе темы на всех экранах", s: ["Пройдите основные экраны в светлой и тёмной теме."], e: "Текст везде читается, нет белых пятен в тёмной теме и серого текста на сером." }
+  ]}
+];
+
+const LIMITS = [
+  "Сервис инфоцентра даёт 10 проверок в сутки, лимит обновляется после полуночи.",
+  "Автоматические регулярные платежи записываются при открытии приложения, а не в фоне. Напоминания приходят вовремя.",
+  "Бумажный чек распознаётся без скидок по акциям: на снимке их не отличить.",
+  "Колбасы из старых чеков остались в «Мясо и птица». Новые покупки идут в «Колбасы и деликатесы».",
+  "Один товар из разных сетей склеивается в истории цены по штрихкоду или одинаковому названию. Если у сети нет штрихкода и название другое, это будут разные товары.",
+  "Подсказка о ценах в превью сравнивает только с прошлой покупкой в этом же магазине."
+];
+
+const STORE_KEY = "skarbiq-test-guide-v1";
+let state = { marks: {}, notes: {}, device: {} };
+try { const raw = localStorage.getItem(STORE_KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+let filter = "all";
+let query = "";
+const allCases = [];
+AREAS.forEach(area => area.cases.forEach((c, i) => {
+  c.id = area.code + (i + 1);
+  c.area = area;
+  c.tags = c.tags || [];
+  allCases.push(c);
+}));
+
+const TAG_LABEL = { pro: ["Pro", "pro"], lim: ["лимит", ""], dev: ["Xcode", "dev"] };
+
+function el(tag, attrs, children) {
+  const n = document.createElement(tag);
+  if (attrs) for (const k in attrs) {
+    if (k === "text") n.textContent = attrs[k];
+    else if (k === "class") n.className = attrs[k];
+    else n.setAttribute(k, attrs[k]);
+  }
+  (children || []).forEach(ch => ch && n.appendChild(ch));
+  return n;
+}
+
+function matches(c) {
+  if (filter === "todo" && state.marks[c.id]) return false;
+  if (filter === "bad" && state.marks[c.id] !== "bad") return false;
+  if (filter === "pro" && !c.tags.includes("pro")) return false;
+  if (filter === "nodev" && c.tags.includes("dev")) return false;
+  if (query) {
+    const hay = (c.id + " " + c.t + " " + c.s.join(" ") + " " + c.e + " " + c.area.title + " " + c.area.where).toLowerCase();
+    if (!hay.includes(query)) return false;
+  }
+  return true;
+}
+
+function renderCase(c) {
+  const mark = state.marks[c.id];
+  const card = el("article", { class: "case" + (mark === "ok" ? " is-ok" : mark === "bad" ? " is-bad" : ""), id: "case-" + c.id });
+  const tags = el("div", { class: "tags" }, c.tags.map(t => el("span", { class: "tag " + TAG_LABEL[t][1], text: TAG_LABEL[t][0] })));
+  card.appendChild(el("div", { class: "case-top" }, [el("span", { class: "case-id", text: c.id }), el("h3", { text: c.t }), tags]));
+  card.appendChild(el("ol", null, c.s.map(step => el("li", { text: step }))));
+  card.appendChild(el("div", { class: "expect" }, [el("b", { text: "Ожидаемо" }), el("div", { text: c.e })]));
+
+  const ok = el("button", { class: "sbtn ok", type: "button", "aria-pressed": String(mark === "ok"), text: "Работает" });
+  const bad = el("button", { class: "sbtn bad", type: "button", "aria-pressed": String(mark === "bad"), text: "Не работает" });
+  const clear = el("button", { class: "sbtn", type: "button", text: "Сбросить" });
+  clear.hidden = !mark;
+  ok.addEventListener("click", () => setMark(c.id, mark === "ok" ? null : "ok"));
+  bad.addEventListener("click", () => setMark(c.id, mark === "bad" ? null : "bad"));
+  clear.addEventListener("click", () => setMark(c.id, null));
+  card.appendChild(el("div", { class: "status" }, [ok, bad, clear]));
+
+  if (mark || state.notes[c.id]) {
+    const ta = el("textarea", { id: "note-" + c.id, placeholder: mark === "bad" ? "Что пошло не так: что нажали, что увидели" : "Заметка (необязательно)" });
+    ta.value = state.notes[c.id] || "";
+    ta.addEventListener("input", () => { state.notes[c.id] = ta.value; save(); });
+    card.appendChild(ta);
+  }
+  return card;
+}
+
+function setMark(id, value) {
+  if (value) state.marks[id] = value; else delete state.marks[id];
+  save();
+  const c = allCases.find(x => x.id === id);
+  const old = document.getElementById("case-" + id);
+  if (old && c) {
+    const fresh = renderCase(c);
+    old.replaceWith(fresh);
+  }
+  updateStats();
+}
+
+function render() {
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+  let shown = 0;
+  AREAS.forEach(area => {
+    const visible = area.cases.filter(matches);
+    if (!visible.length) return;
+    shown += visible.length;
+    const sec = el("section", { class: "area", id: "area-" + area.code });
+    sec.appendChild(el("div", { class: "area-head" }, [el("span", { class: "area-code", text: area.code }), el("h2", { text: area.title })]));
+    sec.appendChild(el("p", { class: "area-where", text: area.where }));
+    visible.forEach(c => sec.appendChild(renderCase(c)));
+    content.appendChild(sec);
+  });
+  if (!shown) content.appendChild(el("p", { class: "empty", text: "Под эти условия проверок нет. Измените поиск или фильтр." }));
+
+  const lim = el("section", { class: "area", id: "area-limits" });
+  lim.appendChild(el("div", { class: "area-head" }, [el("span", { class: "area-code", text: "—" }), el("h2", { text: "Так задумано" })]));
+  lim.appendChild(el("p", { class: "area-where", text: "Это не ошибки. Сообщать о них не нужно." }));
+  lim.appendChild(el("div", { class: "limits" }, [el("ul", null, LIMITS.map(t => el("li", { text: t })))]));
+  content.appendChild(lim);
+  updateStats();
+}
+
+function updateStats() {
+  const total = allCases.length;
+  const okN = allCases.filter(c => state.marks[c.id] === "ok").length;
+  const badN = allCases.filter(c => state.marks[c.id] === "bad").length;
+  document.getElementById("tally").textContent = (okN + badN) + " из " + total + " · работает " + okN + " · не работает " + badN;
+  document.getElementById("barOk").style.width = (okN / total * 100) + "%";
+  document.getElementById("barBad").style.width = (badN / total * 100) + "%";
+
+  const nav = document.getElementById("nav");
+  nav.innerHTML = "";
+  AREAS.forEach(area => {
+    const n = area.cases.length;
+    const done = area.cases.filter(c => state.marks[c.id]).length;
+    const fails = area.cases.filter(c => state.marks[c.id] === "bad").length;
+    const a = el("a", { href: "#area-" + area.code });
+    a.appendChild(el("span", null, [el("span", { class: "code", text: area.code }), document.createTextNode(area.title)]));
+    a.appendChild(el("span", { class: "count" + (fails ? " fail" : done === n ? " done" : ""), text: done + "/" + n }));
+    a.addEventListener("click", ev => {
+      const target = document.getElementById("area-" + area.code);
+      if (!target) { ev.preventDefault(); filter = "all"; query = ""; document.getElementById("search").value = ""; syncChips(); render(); setTimeout(() => { const t = document.getElementById("area-" + area.code); if (t) t.scrollIntoView(); }, 0); }
+    });
+    nav.appendChild(a);
+  });
+  const limA = el("a", { href: "#area-limits" });
+  limA.appendChild(el("span", null, [el("span", { class: "code", text: "—" }), document.createTextNode("Так задумано")]));
+  nav.appendChild(limA);
+}
+
+function syncChips() {
+  document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.filter === filter)));
+}
+
+function buildReport() {
+  const d = state.device;
+  const lines = ["SkarbIQ — отчёт тестировщика"];
+  if (d.devName) lines.push("Тестировщик: " + d.devName);
+  const dev = [d.devModel, d.devIOS && ("iOS " + d.devIOS), d.devBuild && ("сборка " + d.devBuild)].filter(Boolean).join(", ");
+  if (dev) lines.push("Устройство: " + dev);
+  const okC = allCases.filter(c => state.marks[c.id] === "ok");
+  const badC = allCases.filter(c => state.marks[c.id] === "bad");
+  lines.push("Проверено: " + (okC.length + badC.length) + " из " + allCases.length + " · ✅ " + okC.length + " · ❌ " + badC.length);
+  if (badC.length) {
+    lines.push("", "Не работает:");
+    badC.forEach(c => {
+      lines.push("❌ " + c.id + " " + c.area.title + " → " + c.t);
+      const note = (state.notes[c.id] || "").trim();
+      if (note) lines.push("   " + note.replace(/\n+/g, " "));
+    });
+  }
+  const okNotes = okC.filter(c => (state.notes[c.id] || "").trim());
+  if (okNotes.length) {
+    lines.push("", "Замечания:");
+    okNotes.forEach(c => lines.push("💬 " + c.id + " " + c.t + ": " + state.notes[c.id].trim().replace(/\n+/g, " ")));
+  }
+  if (okC.length) lines.push("", "Работает: " + okC.map(c => c.id).join(", "));
+  return lines.join("\n");
+}
+
+function copyText(text, msgEl) {
+  const ta = document.getElementById("reportText");
+  ta.value = text;
+  const fallback = () => { ta.focus(); ta.select(); msgEl.textContent = "Текст выделен — скопируйте его вручную."; };
+  try {
+    navigator.clipboard.writeText(text).then(
+      () => { msgEl.textContent = "Отчёт скопирован. Вставьте его в чат с разработчиком."; },
+      fallback
+    );
+  } catch (e) { fallback(); }
+}
+
+document.getElementById("copyReport").addEventListener("click", () => {
+  const sheet = document.getElementById("sheet");
+  sheet.hidden = false;
+  document.getElementById("resetConfirm").hidden = true;
+  copyText(buildReport(), document.getElementById("sheetMsg"));
+});
+document.getElementById("copyAgain").addEventListener("click", () => copyText(buildReport(), document.getElementById("sheetMsg")));
+document.getElementById("closeSheet").addEventListener("click", () => { document.getElementById("sheet").hidden = true; });
+document.getElementById("resetAll").addEventListener("click", () => { document.getElementById("resetConfirm").hidden = false; });
+document.getElementById("resetNo").addEventListener("click", () => { document.getElementById("resetConfirm").hidden = true; });
+document.getElementById("resetYes").addEventListener("click", () => {
+  state.marks = {}; state.notes = {}; save();
+  document.getElementById("resetConfirm").hidden = true;
+  document.getElementById("reportText").value = buildReport();
+  document.getElementById("sheetMsg").textContent = "Отметки стёрты.";
+  render();
+});
+
+document.getElementById("search").addEventListener("input", ev => { query = ev.target.value.trim().toLowerCase(); render(); });
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => { filter = b.dataset.filter; syncChips(); render(); }));
+
+["devModel", "devIOS", "devBuild", "devName"].forEach(id => {
+  const input = document.getElementById(id);
+  input.value = state.device[id] || "";
+  input.addEventListener("input", () => { state.device[id] = input.value; save(); });
+});
+
+document.getElementById("statAreas").textContent = AREAS.length;
+document.getElementById("statCases").textContent = allCases.length;
+render();
+if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
+</script>
+
+</body></html>
