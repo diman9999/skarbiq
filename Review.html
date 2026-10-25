@@ -185,6 +185,14 @@ body {
   /* «конфиденциальности» иначе не помещается рядом с иконкой */
   .title-row h1 { font-size: clamp(22px, 6.2vw, 32px); hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
 }
+
+.shot-path { font-weight: 600; }
+.steps b { color: var(--text); }
+.box + .box { margin-top: 14px; }
+.box h3 { margin: 0 0 6px; font-size: 18px; }
+.box ul { margin: 6px 0 0; padding-left: 20px; }
+.box li { margin: 4px 0; }
+.card.small .qr { width: 180px; height: 180px; }
 </style>
 </head>
 <body>
@@ -192,77 +200,72 @@ body {
 
   <div class="brand">SkarbIQ</div>
   <div class="title-row" style="margin:18px 0 12px"><h1>Review guide</h1><img class="app-icon" src="icon.png" alt="SkarbIQ icon"></div>
-  <p class="lead">SkarbIQ reads Belarusian fiscal receipts by their QR code and sorts every purchased item into spending categories. The app UI is in Russian. No account is needed in the app.</p>
-  <p class="lead">Below are real receipt QR codes you can scan from this screen with the app.</p>
+  <p class="lead">SkarbIQ reads Belarusian fiscal receipts by their QR code and sorts every purchased item into spending categories. The app UI is in Russian. No account is needed.</p>
 
-  <h2>How to test</h2>
+  <div class="note"><b>Receipt loading works only from Belarus.</b> Receipts are loaded from ch.info-center.by, the public receipt verification service of the Belarusian tax authority, and from the e-receipt services of Belarusian retail chains. These services accept connections from Belarusian networks only. Outside Belarus, scanning a receipt QR code shows a message explaining this — that is expected behavior, not a bug. To review every feature, please load the built-in demo data as described below.</div>
+
+  <h2>1. Load demo data</h2>
   <ol class="steps">
-    <li>Open SkarbIQ and tap <span class="ru">Сканировать чек</span> (Scan receipt).</li>
-    <li>Point the iPhone camera at one of the QR codes below.</li>
-    <li>For codes 1–3 the app asks for the purchase date. Tap the matching day or type it as <b>DD.MM</b> (the date is shown under each code), then tap <span class="ru">Найти чек</span> (Find receipt).</li>
-    <li>The receipt preview shows every item with its category. Tap <span class="ru">Сохранить</span> (Save).</li>
-    <li>Open the <span class="ru">Аналитика</span> (Analytics) tab to see spending by category.</li>
+    <li>Open the <span class="ru">Настройки</span> (Settings) tab — the last tab at the bottom.</li>
+    <li>Tap <span class="ru">Данные</span> (Data).</li>
+    <li>Tap <span class="ru">Загрузить демо-данные</span> (Load demo data), then <span class="ru">Загрузить</span> (Load).</li>
   </ol>
+  <p>About 190 receipts from the last six months are added, plus three recurring payments and a monthly income. Dates are shifted so the latest receipt is from yesterday. The same button also appears on the error screen after a failed scan: <span class="ru">Посмотреть на демо-данных</span> (View with demo data).</p>
 
-  <h2>Receipts to scan</h2>
-  <div class="grid">
+  <h2>2. What to look at</h2>
 
-    <!-- 1. Обычный фискальный чек: замени src и дату -->
-    <div class="card">
-      <div class="num">Receipt 1 · fiscal</div>
-      <img class="qr" src="QR_1.png" alt="QR code of receipt 1">
-      <div class="date-label">Purchase date</div>
-      <div class="date">10.10.2026</div>
-      <div class="type">Standard Belarusian fiscal receipt</div>
-    </div>
-
-    <!-- 2. Обычный фискальный чек: замени src и дату -->
-    <div class="card">
-      <div class="num">Receipt 2 · fiscal</div>
-      <img class="qr" src="QR_2.png" alt="QR code of receipt 2">
-      <div class="date-label">Purchase date</div>
-      <div class="date">04.10.2026</div>
-      <div class="type">Standard Belarusian fiscal receipt</div>
-    </div>
-
-    <!-- 3. Обычный фискальный чек: замени src и дату -->
-    <div class="card">
-      <div class="num">Receipt 3 · fiscal</div>
-      <img class="qr" src="QR_3.png" alt="QR code of receipt 3">
-      <div class="date-label">Purchase date</div>
-      <div class="date">04.10.2026</div>
-      <div class="type">Standard Belarusian fiscal receipt</div>
-    </div>
-
-    <!-- 4. Чек iKassa («Соседи»): замени src, дата не нужна -->
-    <div class="card">
-      <div class="num">Receipt 4 · cloud register</div>
-      <img class="qr" src="QR_4.png" alt="QR code of receipt 4">
-      <div class="date-label">Purchase date</div>
-      <div class="date">not needed</div>
-      <span class="badge">Loads directly, no date</span>
-      <div class="type">Receipt from an iKassa cloud cash register</div>
-    </div>
-
-  </div>
-
-  <div class="note">
-    Receipts 1–3 are loaded from the public receipt verification site <b>ch.info-center.by</b>, which belongs to a third party. That site may show a captcha. After several checks it may ask to sign in — this is the site's own limit, not part of SkarbIQ. If that happens, please use receipt 4 or the manual entry below.
-  </div>
-
-  <h2>Without a receipt or network</h2>
   <div class="box">
-    <p>Tap <span class="ru">Добавить расход</span> (Add expense) → <span class="ru">Добавить вручную</span> (Add manually), enter an amount and a category, and save. This works fully offline.</p>
+    <h3><span class="ru">Главная</span> · Home</h3>
+    <p>Spending for the week or month, savings from promotions, monthly income progress, spending by category, latest receipts.</p>
   </div>
+  <div class="box">
+    <h3><span class="ru">Аналитика</span> · Analytics</h3>
+    <ul>
+      <li>Spending by category and subcategory for a week, month, quarter or year. Tap a category for details.</li>
+      <li><span class="ru">Изменения цен</span> (Price changes): how much the user’s basket became more expensive compared with the previous period, item by item.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3><span class="ru">История</span> · History</h3>
+    <ul>
+      <li>Tap a receipt to expand its items; swipe left to edit or delete. The search field finds receipts by store or product name.</li>
+      <li>Open a receipt and tap the chart icon next to an item (for example, a cookie or milk item) — <span class="ru">История цены</span> (Price history): price chart, minimum and maximum, the store where it is cheaper now, all purchases.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3><span class="ru">Настройки</span> · Settings</h3>
+    <ul>
+      <li><span class="ru">Регулярные платежи</span> (Recurring payments): reminders and automatic recording of bills.</li>
+      <li><span class="ru">Доход в месяц</span> (Monthly income), <span class="ru">Лимиты категорий</span> (Category limits) with notifications at 80% and 100%.</li>
+      <li><span class="ru">Данные → Экспортировать</span> (Export to CSV), backups.</li>
+    </ul>
+  </div>
+
+  <h2>3. In-app purchases</h2>
+  <div class="box">
+    <p>Open <span class="ru">Настройки → SkarbIQ Pro</span>. Three options are offered:</p>
+    <ul>
+      <li><b>Monthly</b> auto-renewable subscription,</li>
+      <li><b>Yearly</b> auto-renewable subscription with a 7-day free trial for new subscribers,</li>
+      <li><b>Lifetime</b> — a one-time non-consumable purchase.</li>
+    </ul>
+    <p>Pro unlocks price analytics (price history, price changes, price hints on new receipts), monthly income and unlimited recurring payments, CSV export and an unlimited receipt queue. Subscription terms, Terms of Use and Privacy Policy links are shown on the same screen; <span class="ru">Восстановить покупки</span> restores purchases.</p>
+    <p>Everything else — scanning, categories, spending analytics, limits, widget and backups — is free.</p>
+  </div>
+
+  <h2>4. Without receipts</h2>
+  <p>Tap <span class="ru">Добавить расход</span> (Add expense) on Home → <span class="ru">Добавить вручную</span> (Add manually), enter an amount and a category, save. Works fully offline.</p>
 
   <h2>Good to know</h2>
   <div class="box">
-    <p>• Electronic receipts from some Belarusian retail chains are served only to Belarusian IP addresses, so they are not included here.</p>
-    <p>• Settings → <span class="ru">Улучшение категорий</span> (Improving categories) is off by default. When enabled, it anonymously sends item names and their categories — no prices, dates or identifiers.</p>
-    <p>• All receipts and purchases are stored only on the device. <a href="privacy-en.html">Privacy policy</a></p>
+    <ul>
+      <li>Paper receipt recognition is temporarily disabled while it is being improved; its button is shown as inactive.</li>
+      <li><span class="ru">Улучшение категорий</span> (Improving categories) in Settings is off by default. When enabled, it anonymously sends item names and their categories — no prices, dates or identifiers.</li>
+      <li>All receipts and purchases are stored only on the device. There is no account and no server of ours. <a href="privacy-en.html">Privacy policy</a></li>
+    </ul>
   </div>
 
-  <footer>SkarbIQ · Review guide · Contact: <a href="mailto:kondor.dmitry@gmail.com">[SUPPORT EMAIL]</a></footer>
+  <footer>SkarbIQ · Review guide · Contact: <a href="mailto:kondor.dmitry@gmail.com">kondor.dmitry@gmail.com</a></footer>
 
 </div>
 </body>
