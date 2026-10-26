@@ -1,0 +1,26 @@
+{
+  "id": "1.5",
+  "title": "Версия 1.5",
+  "minBuild": 0,
+  "items": [
+    {
+      "icon": "lightbulb.fill",
+      "color": "#E0B12D",
+      "title": "Подсказки по делу",
+      "text": "Короткие подсказки появятся там, где пригодятся, — по одной и не чаще раза за запуск."
+    },
+    {
+      "icon": "square.grid.2x2.fill",
+      "color": "#2E9E5B",
+      "title": "Что умеет SkarbIQ",
+      "text": "Все возможности в одном месте, с поиском. Настройки → «Что умеет SkarbIQ»."
+    },
+    {
+      "icon": "chart.line.uptrend.xyaxis",
+      "color": "#E07B2D",
+      "title": "История цены — только по чекам",
+      "text": "Ручные траты больше не попадают в историю цен.",
+      "action": "howTo:priceHistory"
+    }
+  ]
+}
