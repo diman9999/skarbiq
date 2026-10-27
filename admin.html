@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>SkarbIQ — редактор</title>
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Редактор словаря категорий и «Что нового». Одна колонка, вкладки сверху, панель публикации снизу */
+:root {
+  --bg: #F5F7F4; --surface: #FFFFFF; --sunk: #EEF2ED; --line: #DDE3DC;
+  --text: #111613; --muted: #56605A; --faint: #8B938D;
+  --accent: #1E7A4D; --accent-soft: rgba(30,122,77,.10); --on-accent: #FFFFFF;
+  --warn: #9A6206; --warn-soft: rgba(224,155,45,.15);
+  --bad: #B3382B; --bad-soft: rgba(179,56,43,.10);
+  --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0C110E; --surface: #141B17; --sunk: #101612; --line: rgba(240,245,242,.10);
+    --text: #EDF2EE; --muted: #A2ADA6; --faint: #77827B;
+    --accent: #4FC98A; --accent-soft: rgba(79,201,138,.12); --on-accent: #07110B;
+    --warn: #E8B04F; --warn-soft: rgba(232,176,79,.13);
+    --bad: #F07A6C; --bad-soft: rgba(240,122,108,.12);
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 1px; }
+
+/* Шапка */
+header.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top, 0px); }
+.top-in { display: flex; align-items: center; gap: 12px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-weight: 800; font-size: 18px; letter-spacing: -.02em; margin-right: auto; }
+.brand small { font-weight: 600; color: var(--faint); font-size: 13px; margin-left: 6px; }
+.tabs { display: flex; gap: 4px; background: var(--sunk); border: 1px solid var(--line); border-radius: 11px; padding: 3px; }
+.tabs button { border: 0; background: none; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 14px; color: var(--muted); white-space: nowrap; }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.tabs .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); margin-left: 6px; vertical-align: 1px; }
+
+/* Общие блоки */
+.banner { margin: 14px 0 0; padding: 10px 14px; border-radius: 12px; font-size: 14px; background: var(--warn-soft); }
+.banner.ok { background: var(--accent-soft); }
+.banner.bad { background: var(--bad-soft); }
+h2 { font-size: 22px; letter-spacing: -.02em; margin: 26px 0 4px; font-weight: 800; }
+h3 { font-size: 16px; margin: 0; font-weight: 700; }
+.sub { color: var(--muted); margin: 0 0 14px; font-size: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.grow { flex: 1 1 200px; min-width: 0; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 700; color: var(--muted); flex: 1 1 180px; min-width: 0; }
+input[type=text], input[type=number], input[type=password], input[type=search], select, textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font-size: 15px; font-weight: 500; }
+textarea { resize: vertical; min-height: 64px; line-height: 1.45; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 13px; font-weight: 700; font-size: 14px; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn.danger { color: var(--bad); }
+.btn.danger.armed { background: var(--bad); color: #fff; border-color: var(--bad); }
+.btn.small { padding: 5px 9px; font-size: 13px; border-radius: 8px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+.mono { font-family: var(--mono); font-size: 13px; }
+.count { font-family: var(--mono); font-size: 11.5px; color: var(--faint); font-weight: 500; }
+.count.over { color: var(--bad); font-weight: 600; }
+
+/* Проверка товара */
+.tester { display: grid; gap: 10px; }
+.result { border-radius: 12px; padding: 12px 14px; background: var(--sunk); border: 1px solid var(--line); font-size: 14.5px; }
+.result .path { font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
+.result .why { color: var(--muted); margin-top: 4px; }
+.result.fallback .path { color: var(--bad); }
+.tokens { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.tok { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border-radius: 5px; background: var(--surface); border: 1px solid var(--line); }
+.tok.hit { border-color: var(--accent); color: var(--accent); }
+
+/* Правила */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 10px; }
+.toolbar input { flex: 1 1 220px; min-width: 0; }
+.toolbar select { flex: 0 1 220px; min-width: 0; width: auto; }
+.rules { display: grid; gap: 8px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.rule.changed { border-color: color-mix(in srgb, var(--warn) 60%, var(--line)); }
+.rule.new { border-color: var(--accent); }
+.rule.hl { box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
+.rule-head { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; gap: 10px; align-items: start; padding: 12px 14px; cursor: pointer; }
+.idx { font-family: var(--mono); font-size: 12.5px; color: var(--faint); padding-top: 2px; }
+.rule-path { font-weight: 700; }
+.rule-retail { font-size: 12.5px; color: var(--muted); }
+.rule-note { font-size: 13px; color: var(--faint); margin-top: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 2px 8px; border-radius: 7px; background: var(--sunk); border: 1px solid var(--line); max-width: 100%; overflow-wrap: anywhere; }
+.chip.eq { font-family: var(--mono); font-size: 12px; }
+.chip.added { border-color: var(--accent); color: var(--accent); }
+.chip button { border: 0; background: none; padding: 0 0 0 2px; color: var(--faint); font-size: 15px; line-height: 1; }
+.chip button:hover { color: var(--bad); }
+.tag-ch { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; background: var(--warn-soft); color: var(--warn); }
+.tag-ch.new { background: var(--accent-soft); color: var(--accent); }
+.editor { border-top: 1px solid var(--line); padding: 14px; display: grid; gap: 12px; }
+.kw-add { display: flex; gap: 6px; }
+.kw-add input { flex: 1; min-width: 0; }
+.warns { display: grid; gap: 4px; }
+.warn-line { font-size: 13px; color: var(--warn); }
+.bad-line { font-size: 13px; color: var(--bad); }
+.check { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 14px; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.moves { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.moves input { width: 76px; }
+.empty { padding: 26px; text-align: center; color: var(--faint); }
+
+/* Что нового */
+.wn-grid { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 18px; align-items: start; }
+@media (max-width: 760px) { .wn-grid { grid-template-columns: minmax(0,1fr); } }
+.items { display: grid; gap: 10px; }
+.item { display: grid; gap: 10px; }
+.item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.swatches { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.sw { width: 28px; height: 28px; border-radius: 8px; border: 2px solid transparent; padding: 0; }
+.sw[aria-pressed="true"] { border-color: var(--text); }
+.swatches input { width: 104px; }
+.phone { position: sticky; top: 80px; border: 1px solid var(--line); border-radius: 30px; background: var(--surface); padding: 22px 16px 16px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+.phone .ver { text-align: center; font-size: 11px; font-weight: 800; letter-spacing: .1em; color: var(--accent); }
+.phone .ttl { text-align: center; font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin: 2px 0 18px; }
+.p-item { display: grid; grid-template-columns: 40px minmax(0,1fr); gap: 12px; margin-bottom: 16px; }
+.p-icon { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; }
+.p-icon span { width: 14px; height: 14px; border-radius: 4px; }
+.p-item b { display: block; font-size: 15px; line-height: 1.3; }
+.p-item p { margin: 3px 0 0; font-size: 13px; color: var(--muted); line-height: 1.4; overflow-wrap: anywhere; }
+.p-item .p-act { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.p-btn { background: var(--accent); color: var(--on-accent); text-align: center; font-weight: 700; border-radius: 13px; padding: 13px; margin-top: 8px; }
+.p-link { text-align: center; font-size: 13px; font-weight: 700; color: var(--accent); padding: 10px 0 0; }
+
+/* Панель публикации */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px); box-shadow: 0 -6px 20px rgba(0,0,0,.06); }
+.dock-in { display: flex; gap: 10px; align-items: center; padding-block: 10px; flex-wrap: wrap; }
+.dock-text { flex: 1 1 200px; min-width: 0; font-size: 14px; }
+.dock-text b { font-weight: 800; }
+
+/* Окно публикации */
+.sheet-bg { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.35); display: grid; place-items: end center; padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
+.sheet { width: 100%; max-width: 620px; max-height: 85vh; overflow: auto; background: var(--surface); border-radius: 18px; padding: 18px; border: 1px solid var(--line); }
+.sheet h3 { font-size: 19px; margin-bottom: 8px; }
+.diff { margin: 10px 0 14px; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+.diff li { padding: 7px 10px; border-radius: 9px; background: var(--sunk); overflow-wrap: anywhere; }
+.diff .plus { color: var(--accent); font-weight: 700; }
+.diff .minus { color: var(--bad); font-weight: 700; }
+
+.help ol { padding-left: 20px; margin: 6px 0; }
+.help li { margin-bottom: 5px; }
+a { color: var(--accent); overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">SkarbIQ<small>редактор</small></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="rules" aria-selected="true">Категории<span class="dot" id="dotRules" hidden></span></button>
+      <button role="tab" data-tab="wn" aria-selected="false">Что нового<span class="dot" id="dotWn" hidden></span></button>
+      <button role="tab" data-tab="access" aria-selected="false">Доступ</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="status"></div>
+
+  <!-- Категории -->
+  <section id="tab-rules">
+    <h2>Проверка товара</h2>
+    <p class="sub">Покажет, куда приложение положит товар по словарю. Личная история человека (его прошлые правки) здесь не учитывается.</p>
+    <div class="card tester">
+      <div class="row">
+        <label class="f grow">Название из чека<input type="text" id="tProduct" placeholder="Пакет-майка 40x10x65 «МАЯК»" autocomplete="off"></label>
+        <label class="f grow">Магазин (необязательно)<input type="text" id="tStore" placeholder="Евроопт / Кафе «Лидо»" autocomplete="off"></label>
+      </div>
+      <div id="tResult"></div>
+    </div>
+
+    <h2>Правила <span class="faint" id="rulesMeta" style="font-size:14px;font-weight:600"></span></h2>
+    <p class="sub">Срабатывает первое подходящее правило: сначала по первому слову названия, потом по всему названию. Ключ «=слово» — только точное слово, без «=» — начало слова.</p>
+    <div class="toolbar">
+      <input type="search" id="rSearch" placeholder="Найти слово, категорию или заметку">
+      <select id="rCat"><option value="">Все категории</option></select>
+      <button class="btn primary" id="rAdd" type="button">+ Правило</button>
+    </div>
+    <div class="rules" id="rulesList"></div>
+
+    <h2>Признаки общепита</h2>
+    <p class="sub">Если одно из этих слов есть в названии магазина, товары с правилами для «Продуктов» уходят в «Кафе и рестораны», а у правил с вариантом «в рознице» берётся основной вариант.</p>
+    <div class="card">
+      <div class="chips" id="catChips"></div>
+      <div class="kw-add" style="margin-top:10px">
+        <input type="text" id="catInput" placeholder="Добавить слово и нажать Enter">
+        <button class="btn" id="catAdd" type="button">Добавить</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Что нового -->
+  <section id="tab-wn" hidden>
+    <div class="wn-grid">
+      <div>
+        <h2>Выпуск</h2>
+        <p class="sub">Лист показывается один раз на каждый новый идентификатор. Поправили опечатку — оставьте прежний. Хотите, чтобы все увидели снова, — «Новый выпуск».</p>
+        <div class="card" style="display:grid;gap:12px">
+          <div class="row">
+            <label class="f grow">Идентификатор<input type="text" id="wId" class="mono"></label>
+            <button class="btn" id="wNewId" type="button" style="align-self:flex-end">Новый выпуск</button>
+          </div>
+          <div class="row">
+            <label class="f grow">Строка над заголовком <span class="count" id="wTitleCount"></span><input type="text" id="wTitle" placeholder="Версия 1.4"></label>
+            <label class="f" style="flex:0 1 150px">С какой сборки<input type="number" id="wBuild" min="0" step="1"></label>
+          </div>
+          <div id="wIdWarn"></div>
+        </div>
+
+        <h2>Пункты</h2>
+        <p class="sub">2–4 пункта читаются лучше всего.</p>
+        <div class="items" id="wItems"></div>
+        <button class="btn" id="wAddItem" type="button" style="margin-top:10px">+ Пункт</button>
+      </div>
+      <div>
+        <h2>Так увидят</h2>
+        <p class="sub">Иконка в приложении будет настоящая — здесь только цвет.</p>
+        <div class="phone" id="wPreview"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Доступ -->
+  <section id="tab-access" hidden>
+    <h2>Доступ к публикации</h2>
+    <p class="sub">Читать файлы можно без токена. Чтобы публиковать, нужен токен GitHub с правом записи только в этот репозиторий. Он хранится только в этом браузере.</p>
+    <div class="card" style="display:grid;gap:12px">
+      <label class="f">Токен GitHub<input type="password" id="token" placeholder="github_pat_…" autocomplete="off"></label>
+      <div class="row">
+        <button class="btn primary" id="tokenSave" type="button">Сохранить и проверить</button>
+        <button class="btn danger" id="tokenForget" type="button">Забыть токен</button>
+      </div>
+      <div id="tokenState"></div>
+    </div>
+    <div class="card help" style="margin-top:12px">
+      <h3>Как получить токен (один раз)</h3>
+      <ol>
+        <li>Откройте <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+        <li><b>Token name</b>: SkarbIQ editor. <b>Expiration</b>: 1 год.</li>
+        <li><b>Repository access</b>: Only select repositories → <b>diman9999/skarbiq</b>.</li>
+        <li><b>Permissions → Repository permissions → Contents</b>: Read and write. Остальное не трогайте.</li>
+        <li><b>Generate token</b>, скопируйте и вставьте сюда. На каждом устройстве — один раз.</li>
+      </ol>
+      <p class="muted" style="margin:6px 0 0">Если токен утечёт, им можно только менять файлы этого сайта. Отозвать его — там же, в настройках GitHub.</p>
+    </div>
+  </section>
+</main>
+
+<div class="dock" id="dock" hidden>
+  <div class="wrap dock-in">
+    <div class="dock-text" id="dockText"></div>
+    <button class="btn" id="dockUndo" type="button">Отменить всё</button>
+    <button class="btn primary" id="dockPublish" type="button">Опубликовать</button>
+  </div>
+</div>
+
+<div class="sheet-bg" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h3 id="sheetTitle">Опубликовать</h3>
+    <div id="sheetBody"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:6px">
+      <button class="btn" id="sheetCancel" type="button">Назад</button>
+      <button class="btn primary" id="sheetGo" type="button">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+// ---------- Настройки ----------
+const OWNER = 'diman9999', REPO = 'skarbiq', BRANCH = 'main';
+const RULES_PATH = 'category-rules-t2.json';
+const WN_PATH = 'whats-new.json';
+const TAXONOMY_VERSION = 2;
+
+// Набор категорий 2 — как в DefaultCategories.swift
+const TAXONOMY = {"Продукты":["Молочное и яйца","Мясо и птица","Колбасы и деликатесы","Рыба и морепродукты","Хлеб и выпечка","Овощи и фрукты","Крупы и бакалея","Полуфабрикаты","Готовая еда","Консервы и соления","Сладости","Снеки и орехи","Масло и соусы","Вода, соки и напитки","Чай и кофе","Алкоголь","Прочее"],"Транспорт":["Автомобиль","Общественный транспорт","Такси","Парковка","Топливо"],"Кафе и рестораны":["В заведении","Кофе и напитки","Фастфуд","Доставка еды"],"Здоровье":["Аптека","Медицинские услуги","Спорт и фитнес"],"Косметика и гигиена":["Гигиена","Уход за лицом","Уход за телом","Уход за волосами","Декоративная косметика","Парфюмерия"],"Одежда":["Одежда","Обувь","Аксессуары"],"Для дома":["Бытовая химия","Посуда и кухня","Текстиль","Хозтовары","Инструменты","Мебель и декор"],"Животные":["Корм","Ветеринария","Аксессуары для питомцев"],"Дети":["Детское питание","Детская гигиена","Детские товары"],"Развлечения":["Кино и театр","Игры","Спорт","Книги и музыка","Путешествия"],"Связь":["Мобильная связь","Интернет","ТВ"],"Коммунальные":["Электричество","Вода","Газ","Отопление"],"Образование":["Курсы","Книги","Канцелярия","Школа и университет"],"Маркетплейсы":["Ozon","Wildberries","AliExpress","Другие"],"Другое":["Упаковка","Электроника","Табак","Подарки","Прочее"]};
+
+// Для «Что нового» — то, что знает приложение
+const HINTS = [
+  ['firstScan','Первый скан'], ['swipeReceipt','Смахнуть чек'], ['itemCategory','Категория товара'],
+  ['priceHistory','История цены'], ['searchItems','Поиск по товарам'], ['checksLeft','Мало проверок'],
+  ['queue','Чек в очереди'], ['unclassified','Неразобранное'], ['recurringSuggestion','Сделать регулярным'],
+  ['categoryLimit','Лимит на категорию'], ['widget','Виджет']
+];
+const TABS = [['0','Главная'],['1','Аналитика'],['2','История'],['3','Категории'],['4','Настройки']];
+const SCREENS = [['recurring','Регулярные платежи'],['income','Доход в месяц'],['limits','Лимиты категорий'],['subcategoryLimits','Лимиты подкатегорий'],['data','Данные'],['widget','Как поставить виджет']];
+const PALETTE = ['#E0B12D','#2E9E5B','#E07B2D','#2F80ED','#8E5BD9','#E5484D','#14A3B8','#8A8F98'];
+const ICONS = ['lightbulb.fill','sparkles','star.fill','gift.fill','bolt.fill','chart.line.uptrend.xyaxis','chart.bar.fill','chart.pie.fill','cart.fill','bag.fill','qrcode.viewfinder','tag.fill','magnifyingglass','calendar.badge.clock','banknote.fill','target','bell.fill','square.grid.2x2.fill','tray.full.fill','arrow.up.right','checkmark.seal.fill','wand.and.stars','externaldrive.fill','hand.draw.fill','wrench.and.screwdriver.fill','list.bullet.rectangle','storefront.fill','fork.knife'];
+
+// ---------- Мелочи ----------
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const len = s => Array.from(s || '').length;
+const clone = o => JSON.parse(JSON.stringify(o));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+// ---------- Нормализация и сопоставление — как ProductNameNormalizer.swift ----------
+const SEPARATORS = new Set(Array.from(' \t\n"\'«»“”„‘’()[]{}<>/\\|-–—_,;:.!?*+=&#№~`^%@'));
+const NOISE = new Set(['г','гр','кг','мг','мл','л','шт','уп','пак','пач','мкм','мм','см','м','%','ж','б','пэт','пнд','тм','в','с','и','на','для','из','по','от','до']);
+
+function tokens(name) {
+  const s = String(name).toLowerCase().replace(/ё/g, 'е');
+  const out = []; let cur = '';
+  for (const ch of s) {
+    if (SEPARATORS.has(ch)) { out.push(cur); cur = ''; } else cur += ch;
+  }
+  out.push(cur);
+  return out
+    .map(t => t.replace(/\p{N}/gu, ''))
+    .filter(t => t.length > 0 && len(t) > 1 && !NOISE.has(t));
+}
+function matchAt(keyword, keyTokens, toks, start) {
+  const exact = keyword.startsWith('=') && keyTokens.length === 1;
+  for (let i = 0; i < keyTokens.length; i++) {
+    const w = toks[start + i], k = keyTokens[i];
+    if (exact ? w !== k : !w.startsWith(k)) return false;
+  }
+  return true;
+}
+function matches(keyword, toks) {
+  const kt = tokens(keyword);
+  if (!kt.length || toks.length < kt.length) return false;
+  for (let s = 0; s <= toks.length - kt.length; s++) if (matchAt(keyword, kt, toks, s)) return true;
+  return false;
+}
+function matchesAtStart(keyword, toks) {
+  const kt = tokens(keyword);
+  if (!kt.length || toks.length < kt.length) return false;
+  return matchAt(keyword, kt, toks, 0);
+}
+function venueOf(storeName, catering) {
+  if (!storeName) return { kind: 'retail' };
+  const t = tokens(storeName);
+  if (!t.length) return { kind: 'retail' };
+  for (const k of catering) if (matches(k, t)) return { kind: 'catering', keyword: k };
+  return { kind: 'retail' };
+}
+// Как CategoryMatcher.match без истории пользователя. limit — смотреть только правила до этого номера
+function matchProduct(product, storeName, doc, limit) {
+  const rules = limit == null ? doc.rules : doc.rules.slice(0, limit);
+  const venue = venueOf(storeName, doc.cateringKeywords);
+  const toks = tokens(product);
+  let hit = null;
+  if (toks.length) {
+    outer1: for (let i = 0; i < rules.length; i++)
+      for (const k of rules[i].keywords) if (matchesAtStart(k, toks)) { hit = { i, k, pass: 'start' }; break outer1; }
+    if (!hit) outer2: for (let i = 0; i < rules.length; i++)
+      for (const k of rules[i].keywords) if (matches(k, toks)) { hit = { i, k, pass: 'any' }; break outer2; }
+  }
+  let cat, sub, how = [];
+  if (hit) {
+    const r = rules[hit.i];
+    if (venue.kind === 'retail' && r.retail && r.retail.length === 2) { cat = r.retail[0]; sub = r.retail[1]; how.push('вариант «в рознице»'); }
+    else { cat = r.category; sub = r.sub; }
+  } else if (venue.kind === 'catering') { cat = 'Продукты'; sub = 'Прочее'; how.push('общепит, правила нет'); }
+  else return { toks, venue, hit: null, cat: 'Другое', sub: 'Прочее', fallback: true, how };
+  if (venue.kind === 'catering' && cat === 'Продукты') {
+    const delivery = String(storeName || '').toLowerCase().includes('доставк');
+    cat = 'Кафе и рестораны'; sub = delivery ? 'Доставка еды' : 'В заведении';
+    how.push('общепит: еда → «Кафе и рестораны»');
+  }
+  return { toks, venue, hit, cat, sub, fallback: false, how };
+}
+
+// ---------- GitHub ----------
+const tokenKey = 'skarbiq-admin-token';
+let token = store.get(tokenKey) || '';
+
+function b64decode(b64) {
+  const bin = atob(b64.replace(/\s/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function b64encode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+async function gh(path, opts) {
+  const res = await fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + path, Object.assign({
+    headers: Object.assign({ 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+      token ? { 'Authorization': 'Bearer ' + token } : {})
+  }, opts || {}));
+  if (!res.ok) {
+    let msg = ''; try { msg = (await res.json()).message || ''; } catch (e) {}
+    const err = new Error(msg || ('HTTP ' + res.status)); err.status = res.status; throw err;
+  }
+  return res.json();
+}
+async function loadFile(path) {
+  if (token) {
+    const j = await gh('/contents/' + path + '?ref=' + BRANCH + '&t=' + Date.now(), { cache: 'no-store' });
+    return { text: b64decode(j.content), sha: j.sha };
+  }
+  // Без токена — с самого сайта (только чтение)
+  const res = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return { text: await res.text(), sha: null };
+}
+async function saveFile(path, text, sha, message) {
+  const body = { message, content: b64encode(text), branch: BRANCH };
+  if (sha) body.sha = sha;
+  const j = await gh('/contents/' + path, { method: 'PUT', headers: {
+    'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'
+  }, body: JSON.stringify(body) });
+  return j.content.sha;
+}
+
+// ---------- Форматирование JSON — в стиле файлов на сайте ----------
+function strList(arr, indent, width) {
+  const lines = []; let line = '';
+  arr.forEach((s, i) => {
+    const piece = JSON.stringify(s) + (i < arr.length - 1 ? ',' : '');
+    if (line && len(indent + line + ' ' + piece) > width) { lines.push(indent + line); line = piece; }
+    else line = line ? line + ' ' + piece : piece;
+  });
+  if (line) lines.push(indent + line);
+  return lines.join('\n');
+}
+function serializeRules(doc) {
+  const out = ['{'];
+  out.push('  "version": ' + doc.version + ',');
+  out.push('  "taxonomy": ' + doc.taxonomy + ',');
+  if (doc.description != null) out.push('  "description": ' + JSON.stringify(doc.description) + ',');
+  out.push('  "rules": [');
+  doc.rules.forEach((r, i) => {
+    const f = [];
+    if (r.note) f.push('      "note": ' + JSON.stringify(r.note));
+    f.push('      "keywords": [\n' + strList(r.keywords, '        ', 88) + '\n      ]');
+    f.push('      "category": ' + JSON.stringify(r.category));
+    f.push('      "sub": ' + JSON.stringify(r.sub));
+    if (r.retail && r.retail.length === 2) f.push('      "retail": [' + JSON.stringify(r.retail[0]) + ', ' + JSON.stringify(r.retail[1]) + ']');
+    out.push('    {\n' + f.join(',\n') + '\n    }' + (i < doc.rules.length - 1 ? ',' : ''));
+  });
+  out.push('  ],');
+  out.push('  "cateringKeywords": [\n' + strList(doc.cateringKeywords, '    ', 84) + '\n  ]');
+  out.push('}');
+  return out.join('\n') + '\n';
+}
+function serializeWn(doc) {
+  const o = { id: doc.id, title: doc.title };
+  if (doc.minBuild != null && doc.minBuild !== '') o.minBuild = Number(doc.minBuild);
+  o.items = doc.items.map(it => {
+    const x = { icon: it.icon, color: it.color, title: it.title, text: it.text };
+    if (it.action) x.action = it.action;
+    return x;
+  });
+  return JSON.stringify(o, null, 2) + '\n';
+}
+
+// ---------- Состояние ----------
+let uid = 0;
+const S = {
+  rules: { orig: null, cur: null, sha: null, loaded: false },
+  wn: { orig: null, cur: null, sha: null, loaded: false },
+  open: null,          // _id открытого правила
+  highlight: null,     // _id подсвеченного правила
+  tab: 'rules'
+};
+function stripIds(doc) {
+  const d = clone(doc);
+  d.rules.forEach(r => { delete r._id; });
+  return d;
+}
+const rulesDirty = () => S.rules.loaded && serializeRules(stripIds(S.rules.cur)) !== serializeRules(stripIds(S.rules.orig));
+const wnDirty = () => S.wn.loaded && serializeWn(S.wn.cur) !== serializeWn(S.wn.orig);
+
+// Черновик — на случай случайно закрытой вкладки
+function saveDraft() {
+  if (S.rules.loaded) rulesDirty() ? store.set('skarbiq-draft-rules', JSON.stringify({ base: S.rules.orig.version, doc: stripIds(S.rules.cur) })) : store.del('skarbiq-draft-rules');
+  if (S.wn.loaded) wnDirty() ? store.set('skarbiq-draft-wn', JSON.stringify({ base: S.wn.orig.id, doc: S.wn.cur })) : store.del('skarbiq-draft-wn');
+}
+
+// ---------- Загрузка ----------
+function setStatus(html, kind) { $('#status').innerHTML = html ? '<div class="banner ' + (kind || '') + '">' + html + '</div>' : ''; }
+
+async function loadAll() {
+  setStatus('Загружаю файлы…', 'ok');
+  const problems = [];
+  try {
+    const f = await loadFile(RULES_PATH);
+    const doc = JSON.parse(f.text);
+    doc.rules.forEach(r => { r._id = ++uid; });
+    S.rules.orig = doc; S.rules.sha = f.sha; S.rules.loaded = true;
+    S.rules.cur = clone(doc);
+    const draft = store.get('skarbiq-draft-rules');
+    if (draft) {
+      try {
+        const d = JSON.parse(draft);
+        if (d.base === doc.version) { d.doc.rules.forEach(r => { r._id = ++uid; }); matchIds(d.doc, doc); S.rules.cur = d.doc; problems.push('Восстановлен неопубликованный черновик словаря.'); }
+        else store.del('skarbiq-draft-rules');
+      } catch (e) { store.del('skarbiq-draft-rules'); }
+    }
+  } catch (e) { problems.push('Словарь не загрузился: ' + esc(e.message)); }
+  try {
+    const f = await loadFile(WN_PATH);
+    const doc = JSON.parse(f.text);
+    doc.items = doc.items || [];
+    S.wn.orig = doc; S.wn.sha = f.sha; S.wn.loaded = true;
+    S.wn.cur = clone(doc);
+    const draft = store.get('skarbiq-draft-wn');
+    if (draft) {
+      try {
+        const d = JSON.parse(draft);
+        if (d.base === doc.id) { S.wn.cur = d.doc; problems.push('Восстановлен неопубликованный черновик «Что нового».'); }
+        else store.del('skarbiq-draft-wn');
+      } catch (e) { store.del('skarbiq-draft-wn'); }
+    }
+  } catch (e) { problems.push('«Что нового» не загрузилось: ' + esc(e.message)); }
+
+  const ro = !token ? 'Режим чтения: публиковать можно после того, как добавите токен во вкладке «Доступ».' : '';
+  setStatus([ro].concat(problems).filter(Boolean).join('<br>'), problems.some(p => p.includes('не загруз')) ? 'bad' : '');
+  renderAll();
+}
+// У черновика — те же _id, что у оригинала, если правило не менялось по составу (для подсветки изменений)
+function matchIds(draftDoc, origDoc) {
+  const key = r => JSON.stringify([r.keywords, r.category, r.sub, r.retail || null, r.note || '']);
+  const pool = new Map();
+  origDoc.rules.forEach(r => { const k = key(r); if (!pool.has(k)) pool.set(k, []); pool.get(k).push(r._id); });
+  draftDoc.rules.forEach(r => { const l = pool.get(key(r)); if (l && l.length) r._id = l.shift(); });
+}
+
+// ---------- Проверки ----------
+function validateRules(doc) {
+  const errors = [], warns = [];
+  if (doc.taxonomy !== TAXONOMY_VERSION) errors.push('Набор категорий в файле — ' + doc.taxonomy + ', а редактор знает ' + TAXONOMY_VERSION + '.');
+  if (!doc.rules.length) errors.push('Нет ни одного правила.');
+  if (!doc.cateringKeywords.length) errors.push('Список общепита пуст — приложение отбросит такой файл.');
+  const seen = new Map();
+  doc.rules.forEach((r, i) => {
+    const n = '#' + (i + 1);
+    if (!r.keywords.length) errors.push(n + ': нет ни одного ключевого слова.');
+    if (!TAXONOMY[r.category] || !TAXONOMY[r.category].includes(r.sub)) errors.push(n + ': нет подкатегории «' + r.category + ' / ' + r.sub + '».');
+    if (r.retail && (!TAXONOMY[r.retail[0]] || !TAXONOMY[r.retail[0]].includes(r.retail[1]))) errors.push(n + ': вариант для розницы — несуществующая подкатегория.');
+    r.keywords.forEach(k => {
+      if (!tokens(k).length) warns.push(n + ': ключ «' + k + '» никогда не сработает — после очистки от цифр, единиц и предлогов от него ничего не остаётся.');
+      const norm = k.toLowerCase().trim();
+      if (seen.has(norm) && seen.get(norm) !== i) warns.push('Ключ «' + k + '» есть и в #' + (seen.get(norm) + 1) + ', и в ' + n + ' — сработает только первый.');
+      else seen.set(norm, i);
+    });
+  });
+  return { errors, warns };
+}
+// Ключ уже перехватывает правило выше?
+function keywordShadow(doc, ruleIndex, keyword) {
+  const probe = keyword.replace(/^=/, '');
+  if (!tokens(probe).length) return null;
+  const m = matchProduct(probe, '', doc, ruleIndex);
+  return m.hit ? m.hit : null;
+}
+function validateWn(doc) {
+  const errors = [];
+  if (!String(doc.id || '').trim()) errors.push('Пустой идентификатор.');
+  if (!doc.items.length) errors.push('Нет ни одного пункта — лист не покажется.');
+  if (doc.minBuild !== '' && doc.minBuild != null && !(Number.isInteger(Number(doc.minBuild)) && Number(doc.minBuild) >= 0)) errors.push('«С какой сборки» — целое число от 0.');
+  doc.items.forEach((it, i) => {
+    const n = 'Пункт ' + (i + 1);
+    if (!it.icon.trim()) errors.push(n + ': нет иконки.');
+    if (!/^#[0-9A-Fa-f]{6}$/.test(it.color)) errors.push(n + ': цвет должен быть в виде #RRGGBB.');
+    if (!it.title.trim()) errors.push(n + ': нет заголовка.');
+    if (!it.text.trim()) errors.push(n + ': нет текста.');
+  });
+  return { errors };
+}
+
+// ---------- Отрисовка: правила ----------
+const catOptions = (sel) => Object.keys(TAXONOMY).map(c => '<option' + (c === sel ? ' selected' : '') + '>' + esc(c) + '</option>').join('');
+const subOptions = (cat, sel) => (TAXONOMY[cat] || []).map(s => '<option' + (s === sel ? ' selected' : '') + '>' + esc(s) + '</option>').join('');
+
+function origRule(id) { return S.rules.orig.rules.find(r => r._id === id); }
+function ruleState(r) {
+  const o = origRule(r._id);
+  if (!o) return 'new';
+  const a = JSON.stringify([r.keywords, r.category, r.sub, r.retail || null, r.note || '']);
+  const b = JSON.stringify([o.keywords, o.category, o.sub, o.retail || null, o.note || '']);
+  return a === b ? '' : 'changed';
+}
+
+function renderTester() {
+  const p = $('#tProduct').value, s = $('#tStore').value, box = $('#tResult');
+  if (!S.rules.loaded) { box.innerHTML = ''; return; }
+  if (!p.trim()) { box.innerHTML = '<div class="result"><span class="muted">Введите название — например «Пакет-майка 40x10x65 «МАЯК»» или «534930 Майонез ПРОВАН. 180г».</span></div>'; return; }
+  const m = matchProduct(p, s, S.rules.cur);
+  const hitKey = m.hit ? tokens(m.hit.k) : [];
+  const tk = m.toks.length ? m.toks.map(t => '<span class="tok' + (hitKey.some(k => t.startsWith(k)) ? ' hit' : '') + '">' + esc(t) + '</span>').join('') : '<span class="faint">после очистки слов не осталось</span>';
+  let why;
+  if (m.hit) {
+    why = 'Правило <a href="#" data-goto="' + S.rules.cur.rules[m.hit.i]._id + '">#' + (m.hit.i + 1) + '</a>, ключ «' + esc(m.hit.k) + '» — ' + (m.hit.pass === 'start' ? 'по первому слову' : 'по всему названию') + '.';
+  } else if (!m.fallback) why = 'Ни одно правило не подошло.';
+  else why = 'Ни одно правило не подошло — товар попадёт в «Неразобранное».';
+  if (m.how.length) why += ' ' + esc(m.how.join('; ')) + '.';
+  const venue = m.venue.kind === 'catering' ? '<div class="why">Магазин — общепит (слово «' + esc(m.venue.keyword) + '»).</div>' : (s.trim() ? '<div class="why">Магазин — розница.</div>' : '');
+  box.innerHTML = '<div class="result' + (m.fallback ? ' fallback' : '') + '"><div class="path">' + esc(m.cat) + ' / ' + esc(m.sub) + '</div><div class="why">' + why + '</div>' + venue + '<div class="tokens">' + tk + '</div></div>';
+}
+
+function renderRules() {
+  if (!S.rules.loaded) { $('#rulesList').innerHTML = '<div class="empty">Словарь не загружен.</div>'; return; }
+  const doc = S.rules.cur;
+  $('#rulesMeta').textContent = '· ' + doc.rules.length + ' · версия на сайте ' + S.rules.orig.version;
+  const q = $('#rSearch').value.trim().toLowerCase(), cf = $('#rCat').value;
+  const list = doc.rules.map((r, i) => ({ r, i })).filter(({ r }) => {
+    if (cf && r.category !== cf && !(r.retail && r.retail[0] === cf)) return false;
+    if (!q) return true;
+    return r.keywords.some(k => k.toLowerCase().includes(q)) || (r.category + ' / ' + r.sub).toLowerCase().includes(q) || (r.note || '').toLowerCase().includes(q);
+  });
+  if (!list.length) { $('#rulesList').innerHTML = '<div class="empty">Ничего не нашлось.</div>'; return; }
+  $('#rulesList').innerHTML = list.map(({ r, i }) => ruleHtml(r, i)).join('');
+}
+
+function ruleHtml(r, i) {
+  const st = ruleState(r), open = S.open === r._id;
+  const o = origRule(r._id);
+  const chips = r.keywords.map(k => '<span class="chip' + (k.startsWith('=') ? ' eq' : '') + (o && !o.keywords.includes(k) ? ' added' : '') + '">' + esc(k) + (open ? '<button type="button" data-kwdel="' + esc(k) + '" aria-label="Убрать">×</button>' : '') + '</span>').join('');
+  let h = '<div class="rule ' + st + (S.highlight === r._id ? ' hl' : '') + '" id="rule-' + r._id + '">';
+  h += '<div class="rule-head" data-toggle="' + r._id + '"><div class="idx">#' + (i + 1) + '</div><div style="min-width:0">';
+  h += '<div class="rule-path">' + esc(r.category) + ' / ' + esc(r.sub) + '</div>';
+  if (r.retail) h += '<div class="rule-retail">в рознице: ' + esc(r.retail[0]) + ' / ' + esc(r.retail[1]) + '</div>';
+  if (!open) h += '<div class="chips">' + chips + '</div>';
+  if (r.note && !open) h += '<div class="rule-note">' + esc(r.note) + '</div>';
+  h += '</div><div>' + (st === 'new' ? '<span class="tag-ch new">новое</span>' : st === 'changed' ? '<span class="tag-ch">изменено</span>' : '') + '</div></div>';
+  if (open) h += editorHtml(r, i, chips);
+  return h + '</div>';
+}
+
+function editorHtml(r, i, chips) {
+  const doc = S.rules.cur;
+  const warns = [];
+  r.keywords.forEach(k => {
+    const sh = keywordShadow(doc, i, k);
+    if (sh) { const rr = doc.rules[sh.i]; warns.push('«' + esc(k) + '» раньше перехватывает правило #' + (sh.i + 1) + ' (' + esc(rr.category) + ' / ' + esc(rr.sub) + ', ключ «' + esc(sh.k) + '»).'); }
+    if (!tokens(k).length) warns.push('«' + esc(k) + '» после очистки пустой — не сработает никогда.');
+  });
+  let h = '<div class="editor" data-rule="' + r._id + '">';
+  h += '<div><div class="chips" style="margin-top:0">' + (chips || '<span class="faint">Пока нет слов</span>') + '</div>';
+  h += '<div class="kw-add" style="margin-top:8px"><input type="text" data-kwinput placeholder="Слово или фраза, Enter — добавить. «=» — точное слово" autocomplete="off"><button class="btn" type="button" data-kwadd>Добавить</button></div>';
+  h += '<div class="warns" style="margin-top:6px">' + warns.map(w => '<div class="warn-line">' + w + '</div>').join('') + '</div></div>';
+  h += '<div class="row"><label class="f">Категория<select data-f="category">' + catOptions(r.category) + '</select></label><label class="f">Подкатегория<select data-f="sub">' + subOptions(r.category, r.sub) + '</select></label></div>';
+  h += '<label class="check"><input type="checkbox" data-f="hasRetail"' + (r.retail ? ' checked' : '') + '> В рознице — другая категория</label>';
+  if (r.retail) h += '<div class="row"><label class="f">В рознице: категория<select data-f="rcat">' + catOptions(r.retail[0]) + '</select></label><label class="f">подкатегория<select data-f="rsub">' + subOptions(r.retail[0], r.retail[1]) + '</select></label></div>';
+  h += '<label class="f">Заметка (для себя, приложение её не читает)<textarea data-f="note" rows="2">' + esc(r.note || '') + '</textarea></label>';
+  h += '<div class="moves"><button class="btn small" type="button" data-move="-1">↑ Выше</button><button class="btn small" type="button" data-move="1">↓ Ниже</button>';
+  h += '<span class="faint" style="font-size:13px">на место</span><input type="number" min="1" max="' + doc.rules.length + '" value="' + (i + 1) + '" data-moveto><button class="btn small" type="button" data-movego>Переставить</button></div>';
+  h += '<div class="row"><button class="btn small" type="button" data-dup>Дублировать</button>' + (origRule(r._id) ? '<button class="btn small" type="button" data-revert>Вернуть как было</button>' : '') + '<span style="flex:1"></span><button class="btn small danger" type="button" data-del>Удалить правило</button><button class="btn small" type="button" data-close>Свернуть</button></div>';
+  return h + '</div>';
+}
+
+function renderCatering() {
+  if (!S.rules.loaded) return;
+  const o = new Set(S.rules.orig.cateringKeywords);
+  $('#catChips').innerHTML = S.rules.cur.cateringKeywords.map(k => '<span class="chip' + (o.has(k) ? '' : ' added') + '">' + esc(k) + '<button type="button" data-catdel="' + esc(k) + '" aria-label="Убрать">×</button></span>').join('');
+}
+
+// ---------- Отрисовка: Что нового ----------
+function actionParts(a) {
+  if (!a) return { kind: '' };
+  const p = a.split(':');
+  if (p[0] === 'howTo') return { kind: 'howTo', hint: p[1] || '' };
+  if (p[0] === 'tab') return { kind: 'tab', tab: p[1] || '0', hint: p[2] || '' };
+  if (p[0] === 'screen') return { kind: 'screen', screen: p[1] || '' };
+  return { kind: 'raw', raw: a };
+}
+function buildAction(parts) {
+  if (parts.kind === 'howTo') return 'howTo:' + (parts.hint || HINTS[0][0]);
+  if (parts.kind === 'tab') return 'tab:' + (parts.tab || '0') + (parts.hint ? ':' + parts.hint : '');
+  if (parts.kind === 'screen') return 'screen:' + (parts.screen || SCREENS[0][0]);
+  return '';
+}
+const opt = (list, sel, empty) => (empty ? '<option value="">' + empty + '</option>' : '') + list.map(([v, t]) => '<option value="' + v + '"' + (v === sel ? ' selected' : '') + '>' + esc(t) + '</option>').join('');
+
+function renderWnForm() {
+  if (!S.wn.loaded) { $('#wItems').innerHTML = '<div class="empty">Файл не загружен.</div>'; return; }
+  const d = S.wn.cur;
+  if (document.activeElement !== $('#wId')) $('#wId').value = d.id;
+  if (document.activeElement !== $('#wTitle')) $('#wTitle').value = d.title;
+  if (document.activeElement !== $('#wBuild')) $('#wBuild').value = d.minBuild == null ? '' : d.minBuild;
+  $('#wItems').innerHTML = d.items.map((it, i) => {
+    const a = actionParts(it.action);
+    let act = '<label class="f">Кнопка<select data-wf="akind">' + opt([['howTo','«Как это?» — подсказка крупно'],['tab','«Попробовать» — вкладка'],['screen','«Открыть» — экран']], a.kind, 'Без кнопки') + '</select></label>';
+    if (a.kind === 'howTo') act += '<label class="f">Подсказка<select data-wf="ahint">' + opt(HINTS, a.hint) + '</select></label>';
+    if (a.kind === 'tab') act += '<label class="f">Вкладка<select data-wf="atab">' + opt(TABS, a.tab) + '</select></label><label class="f">и подсказка на ней<select data-wf="ahint">' + opt(HINTS, a.hint, 'без подсказки') + '</select></label>';
+    if (a.kind === 'screen') act += '<label class="f">Экран<select data-wf="ascreen">' + opt(SCREENS, a.screen) + '</select></label>';
+    const tl = len(it.title), xl = len(it.text);
+    return '<div class="card item" data-item="' + i + '">' +
+      '<div class="item-head"><h3>Пункт ' + (i + 1) + '</h3><div class="row" style="gap:6px"><button class="btn small" type="button" data-imove="-1" aria-label="Выше">↑</button><button class="btn small" type="button" data-imove="1" aria-label="Ниже">↓</button><button class="btn small danger" type="button" data-idel>Удалить</button></div></div>' +
+      '<label class="f">Заголовок <span class="count' + (tl > 40 ? ' over' : '') + '">' + tl + ' / 40</span><input type="text" data-wf="title" value="' + esc(it.title) + '"></label>' +
+      '<label class="f">Текст <span class="count' + (xl > 140 ? ' over' : '') + '">' + xl + ' / 140</span><textarea data-wf="text" rows="3">' + esc(it.text) + '</textarea></label>' +
+      '<div class="row"><label class="f">Иконка (SF Symbols)<input type="text" data-wf="icon" list="iconList" value="' + esc(it.icon) + '" class="mono"></label></div>' +
+      '<div><div class="f" style="font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px">Цвет</div><div class="swatches">' +
+        PALETTE.map(c => '<button type="button" class="sw" style="background:' + c + '" data-color="' + c + '" aria-label="Цвет ' + c + '" aria-pressed="' + (c.toLowerCase() === String(it.color).toLowerCase()) + '"></button>').join('') +
+        '<input type="text" data-wf="color" value="' + esc(it.color) + '" class="mono" aria-label="Цвет HEX"></div></div>' +
+      '<div class="row">' + act + '</div>' +
+    '</div>';
+  }).join('');
+  const t = len(d.title);
+  $('#wTitleCount').textContent = t + ' / 30';
+  $('#wTitleCount').className = 'count' + (t > 30 ? ' over' : '');
+  const changed = wnDirty() && d.id === S.wn.orig.id;
+  $('#wIdWarn').innerHTML = changed ? '<div class="banner" style="margin:0">Идентификатор прежний: кто уже видел этот выпуск, правку не увидит. Для повторного показа — «Новый выпуск».</div>' : '';
+  renderWnPreview();
+}
+function renderWnPreview() {
+  if (!S.wn.loaded) return;
+  const d = S.wn.cur;
+  const actLabel = a => { const p = actionParts(a); return p.kind === 'howTo' ? 'Как это?' : p.kind === 'tab' ? 'Попробовать' : p.kind === 'screen' ? 'Открыть' : ''; };
+  $('#wPreview').innerHTML = (d.title ? '<div class="ver">' + esc(d.title.toUpperCase()) + '</div>' : '') + '<div class="ttl">Что нового</div>' +
+    d.items.map(it => {
+      const c = /^#[0-9A-Fa-f]{6}$/.test(it.color) ? it.color : '#8A8F98';
+      const al = actLabel(it.action);
+      return '<div class="p-item"><div class="p-icon" style="background:' + c + '26"><span style="background:' + c + '"></span></div><div style="min-width:0"><b>' + esc(it.title || 'Заголовок') + '</b><p>' + esc(it.text || 'Текст пункта') + '</p>' + (al ? '<div class="p-act">' + al + '</div>' : '') + '</div></div>';
+    }).join('') +
+    '<div class="p-btn">Продолжить</div><div class="p-link">Все возможности</div>';
+}
+
+// ---------- Панель ----------
+function renderDock() {
+  const r = rulesDirty(), w = wnDirty();
+  $('#dotRules').hidden = !r; $('#dotWn').hidden = !w;
+  const which = S.tab === 'wn' ? 'wn' : 'rules';
+  const dirty = which === 'wn' ? w : r;
+  $('#dock').hidden = !dirty || S.tab === 'access';
+  if (!dirty) return;
+  if (which === 'rules') {
+    const v = validateRules(S.rules.cur);
+    $('#dockText').innerHTML = '<b>Словарь изменён.</b> ' + (v.errors.length ? '<span style="color:var(--bad)">Ошибок: ' + v.errors.length + '</span>' : 'Будет версия ' + (S.rules.orig.version + 1) + '.');
+  } else {
+    const v = validateWn(S.wn.cur);
+    $('#dockText').innerHTML = '<b>«Что нового» изменено.</b> ' + (v.errors.length ? '<span style="color:var(--bad)">Ошибок: ' + v.errors.length + '</span>' : (S.wn.cur.id !== S.wn.orig.id ? 'Новый выпуск — покажется всем.' : 'Тот же выпуск.'));
+  }
+  $('#dockPublish').disabled = !token;
+  $('#dockPublish').title = token ? '' : 'Добавьте токен во вкладке «Доступ»';
+}
+function renderAll() { renderTester(); renderRules(); renderCatering(); renderWnForm(); renderDock(); }
+function changed() { saveDraft(); renderDock(); }
+
+// ---------- Сводка изменений ----------
+function rulesDiff() {
+  const o = S.rules.orig, c = S.rules.cur, lines = [];
+  const oIds = o.rules.map(r => r._id), cIds = c.rules.map(r => r._id);
+  c.rules.forEach((r, i) => {
+    const or = origRule(r._id);
+    if (!or) { lines.push('<span class="plus">+ Новое правило #' + (i + 1) + '</span>: ' + esc(r.category + ' / ' + r.sub) + ' — ' + esc(r.keywords.join(', '))); return; }
+    const parts = [];
+    const add = r.keywords.filter(k => !or.keywords.includes(k)), rem = or.keywords.filter(k => !r.keywords.includes(k));
+    if (add.length) parts.push('<span class="plus">+ ' + esc(add.join(', ')) + '</span>');
+    if (rem.length) parts.push('<span class="minus">− ' + esc(rem.join(', ')) + '</span>');
+    if (or.category !== r.category || or.sub !== r.sub) parts.push(esc(or.category + ' / ' + or.sub) + ' → ' + esc(r.category + ' / ' + r.sub));
+    if (JSON.stringify(or.retail || null) !== JSON.stringify(r.retail || null)) parts.push('розница: ' + esc(r.retail ? r.retail.join(' / ') : 'нет'));
+    if ((or.note || '') !== (r.note || '')) parts.push('заметка');
+    if (parts.length) lines.push('#' + (i + 1) + ' ' + esc(r.category + ' / ' + r.sub) + ': ' + parts.join(' · '));
+  });
+  o.rules.forEach(r => { if (!cIds.includes(r._id)) lines.push('<span class="minus">− Удалено правило</span> ' + esc(r.category + ' / ' + r.sub) + ' — ' + esc(r.keywords.join(', '))); });
+  const kept = oIds.filter(id => cIds.includes(id)), keptNow = cIds.filter(id => oIds.includes(id));
+  if (JSON.stringify(kept) !== JSON.stringify(keptNow)) lines.push('Изменён порядок правил');
+  const ca = c.cateringKeywords.filter(k => !o.cateringKeywords.includes(k)), cr = o.cateringKeywords.filter(k => !c.cateringKeywords.includes(k));
+  if (ca.length || cr.length) lines.push('Общепит: ' + (ca.length ? '<span class="plus">+ ' + esc(ca.join(', ')) + '</span> ' : '') + (cr.length ? '<span class="minus">− ' + esc(cr.join(', ')) + '</span>' : ''));
+  return lines;
+}
+function wnDiff() {
+  const o = S.wn.orig, c = S.wn.cur, lines = [];
+  if (o.id !== c.id) lines.push('Новый выпуск: <b>' + esc(c.id) + '</b> — лист покажется всем ещё раз');
+  if (o.title !== c.title) lines.push('Строка над заголовком: «' + esc(c.title) + '»');
+  if (String(o.minBuild == null ? '' : o.minBuild) !== String(c.minBuild == null ? '' : c.minBuild)) lines.push('С какой сборки: ' + esc(c.minBuild === '' || c.minBuild == null ? 'всем' : c.minBuild));
+  if (JSON.stringify(o.items) !== JSON.stringify(c.items)) lines.push('Пункты: ' + c.items.map(i => '«' + esc(i.title) + '»').join(', '));
+  return lines;
+}
+
+// ---------- Публикация ----------
+let publishing = null;
+function openPublish() {
+  const which = S.tab === 'wn' ? 'wn' : 'rules';
+  publishing = which;
+  const v = which === 'rules' ? validateRules(S.rules.cur) : validateWn(S.wn.cur);
+  const diff = which === 'rules' ? rulesDiff() : wnDiff();
+  let h = '';
+  if (which === 'rules') h += '<p class="muted" style="margin:0">Версия ' + S.rules.orig.version + ' → <b>' + (S.rules.orig.version + 1) + '</b>. Приложения подхватят словарь при следующей проверке: раз в сутки, в отладочной сборке — при каждом открытии.</p>';
+  else h += '<p class="muted" style="margin:0">Приложения подтянут файл при следующем запуске.</p>';
+  h += '<ul class="diff">' + diff.map(l => '<li>' + l + '</li>').join('') + '</ul>';
+  if (v.errors.length) h += '<div class="banner bad" style="margin:0 0 10px">' + v.errors.map(esc).join('<br>') + '</div>';
+  if (v.warns && v.warns.length) h += '<details class="banner" style="margin:0 0 10px"><summary>Замечания: ' + v.warns.length + ' (публикации не мешают)</summary>' + v.warns.map(esc).join('<br>') + '</details>';
+  $('#sheetTitle').textContent = which === 'rules' ? 'Опубликовать словарь' : 'Опубликовать «Что нового»';
+  $('#sheetBody').innerHTML = h;
+  $('#sheetGo').disabled = !!v.errors.length || !token;
+  $('#sheetGo').textContent = 'Опубликовать';
+  $('#sheet').hidden = false;
+}
+async function doPublish() {
+  const go = $('#sheetGo');
+  go.disabled = true; go.textContent = 'Публикую…';
+  try {
+    if (publishing === 'rules') {
+      const doc = stripIds(S.rules.cur);
+      doc.version = S.rules.orig.version + 1;
+      const text = serializeRules(doc);
+      JSON.parse(text);
+      const sha = await saveFile(RULES_PATH, text, S.rules.sha, 'Словарь категорий v' + doc.version);
+      S.rules.sha = sha;
+      S.rules.cur.version = doc.version;
+      S.rules.orig = clone(S.rules.cur);
+      store.del('skarbiq-draft-rules');
+      setStatus('Словарь v' + doc.version + ' опубликован. GitHub Pages обновится примерно через минуту.', 'ok');
+    } else {
+      const doc = clone(S.wn.cur);
+      if (doc.minBuild === '' || doc.minBuild == null) delete doc.minBuild; else doc.minBuild = Number(doc.minBuild);
+      const text = serializeWn(doc);
+      const sha = await saveFile(WN_PATH, text, S.wn.sha, 'Что нового: ' + doc.id);
+      S.wn.sha = sha;
+      S.wn.orig = clone(S.wn.cur);
+      store.del('skarbiq-draft-wn');
+      setStatus('«Что нового» (' + esc(doc.id) + ') опубликовано. Сайт обновится примерно через минуту.', 'ok');
+    }
+    $('#sheet').hidden = true;
+    renderAll();
+  } catch (e) {
+    let msg = esc(e.message);
+    if (e.status === 401) msg = 'Токен не подошёл или истёк. Проверьте его во вкладке «Доступ».';
+    else if (e.status === 403 || e.status === 404) msg = 'У токена нет права записи в diman9999/skarbiq (нужно Contents: Read and write).';
+    else if (e.status === 409 || e.status === 422) msg = 'Файл на GitHub изменился, пока вы редактировали. Черновик сохранён — обновите страницу и проверьте изменения.';
+    $('#sheetBody').insertAdjacentHTML('beforeend', '<div class="banner bad" style="margin:0">' + msg + '</div>');
+    go.textContent = 'Повторить'; go.disabled = false;
+  }
+}
+
+// ---------- События: вкладки ----------
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  S.tab = b.dataset.tab;
+  document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+  ['rules', 'wn', 'access'].forEach(t => { $('#tab-' + t).hidden = t !== S.tab; });
+  try { history.replaceState(null, '', '#' + S.tab); } catch (e) {}
+  renderDock();
+  window.scrollTo(0, 0);
+}));
+const startTab = location.hash.replace('#', '');
+if (['rules', 'wn', 'access'].includes(startTab)) { const b = document.querySelector('.tabs [data-tab="' + startTab + '"]'); if (b) b.click(); }
+
+// ---------- События: проверка ----------
+$('#tProduct').addEventListener('input', renderTester);
+$('#tStore').addEventListener('input', renderTester);
+$('#tResult').addEventListener('click', e => {
+  const a = e.target.closest('[data-goto]'); if (!a) return;
+  e.preventDefault();
+  const id = Number(a.dataset.goto);
+  $('#rSearch').value = ''; $('#rCat').value = '';
+  S.open = id; S.highlight = id; renderRules();
+  const el = document.getElementById('rule-' + id); if (el) el.scrollIntoView({ block: 'center' });
+});
+
+// ---------- События: правила ----------
+$('#rCat').innerHTML += Object.keys(TAXONOMY).map(c => '<option>' + esc(c) + '</option>').join('');
+$('#rSearch').addEventListener('input', renderRules);
+$('#rCat').addEventListener('change', renderRules);
+$('#rAdd').addEventListener('click', () => {
+  if (!S.rules.loaded) return;
+  const r = { keywords: [], category: 'Продукты', sub: 'Прочее', _id: ++uid };
+  S.rules.cur.rules.unshift(r);
+  S.open = r._id; S.highlight = r._id;
+  $('#rSearch').value = ''; $('#rCat').value = '';
+  renderRules(); changed();
+  const el = document.getElementById('rule-' + r._id);
+  if (el) { el.scrollIntoView({ block: 'center' }); const inp = el.querySelector('[data-kwinput]'); if (inp) inp.focus(); }
+});
+
+function ruleById(id) { return S.rules.cur.rules.find(r => r._id === id); }
+function addKeywords(r, raw) {
+  raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean).forEach(k => { if (!r.keywords.includes(k)) r.keywords.push(k); });
+}
+function rerenderRule(id, focusInput) {
+  renderRules(); renderTester(); changed();
+  if (focusInput) { const el = document.getElementById('rule-' + id); const inp = el && el.querySelector('[data-kwinput]'); if (inp) inp.focus(); }
+}
+
+$('#rulesList').addEventListener('click', e => {
+  const t = e.target;
+  const tog = t.closest('[data-toggle]');
+  if (tog && !t.closest('button')) {
+    const id = Number(tog.dataset.toggle);
+    S.open = S.open === id ? null : id; S.highlight = null;
+    renderRules(); return;
+  }
+  const ruleEl = t.closest('.rule'); if (!ruleEl) return;
+  const id = Number(ruleEl.id.replace('rule-', ''));
+  const r = ruleById(id); if (!r) return;
+  const rules = S.rules.cur.rules, i = rules.indexOf(r);
+  if (t.closest('[data-kwdel]')) { r.keywords = r.keywords.filter(k => k !== t.closest('[data-kwdel]').dataset.kwdel); rerenderRule(id); }
+  else if (t.closest('[data-kwadd]')) { const inp = ruleEl.querySelector('[data-kwinput]'); addKeywords(r, inp.value); rerenderRule(id, true); }
+  else if (t.closest('[data-move]')) {
+    const j = i + Number(t.closest('[data-move]').dataset.move);
+    if (j < 0 || j >= rules.length) return;
+    rules.splice(i, 1); rules.splice(j, 0, r); rerenderRule(id);
+    const el = document.getElementById('rule-' + id); if (el) el.scrollIntoView({ block: 'nearest' });
+  }
+  else if (t.closest('[data-movego]')) {
+    let j = Number(ruleEl.querySelector('[data-moveto]').value) - 1;
+    j = Math.max(0, Math.min(rules.length - 1, j));
+    rules.splice(i, 1); rules.splice(j, 0, r); rerenderRule(id);
+    const el = document.getElementById('rule-' + id); if (el) el.scrollIntoView({ block: 'center' });
+  }
+  else if (t.closest('[data-dup]')) {
+    const c = clone(r); c._id = ++uid; c.keywords = [];
+    rules.splice(i + 1, 0, c); S.open = c._id; S.highlight = c._id; rerenderRule(c._id, true);
+  }
+  else if (t.closest('[data-revert]')) {
+    const o = clone(origRule(id)); Object.keys(r).forEach(k => delete r[k]); Object.assign(r, o); rerenderRule(id);
+  }
+  else if (t.closest('[data-del]')) {
+    const b = t.closest('[data-del]');
+    if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = 'Точно удалить?'; return; }
+    rules.splice(i, 1); S.open = null; rerenderRule(id);
+  }
+  else if (t.closest('[data-close]')) { S.open = null; renderRules(); }
+});
+$('#rulesList').addEventListener('keydown', e => {
+  if (!e.target.matches('[data-kwinput]') || (e.key !== 'Enter' && e.key !== ',')) return;
+  e.preventDefault();
+  const id = Number(e.target.closest('.rule').id.replace('rule-', ''));
+  const r = ruleById(id); addKeywords(r, e.target.value); rerenderRule(id, true);
+});
+$('#rulesList').addEventListener('change', e => {
+  const f = e.target.dataset.f; if (!f) return;
+  const id = Number(e.target.closest('.rule').id.replace('rule-', ''));
+  const r = ruleById(id);
+  if (f === 'category') { r.category = e.target.value; r.sub = TAXONOMY[r.category][0]; }
+  else if (f === 'sub') r.sub = e.target.value;
+  else if (f === 'hasRetail') { if (e.target.checked) r.retail = ['Продукты', 'Готовая еда']; else delete r.retail; }
+  else if (f === 'rcat') r.retail = [e.target.value, TAXONOMY[e.target.value][0]];
+  else if (f === 'rsub') r.retail = [r.retail[0], e.target.value];
+  else if (f === 'note') { const v = e.target.value.trim(); if (v) r.note = v; else delete r.note; changed(); return; }
+  rerenderRule(id);
+});
+
+// Общепит
+function addCatering() {
+  const inp = $('#catInput');
+  inp.value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean).forEach(k => { if (!S.rules.cur.cateringKeywords.includes(k)) S.rules.cur.cateringKeywords.push(k); });
+  inp.value = ''; renderCatering(); renderTester(); changed(); inp.focus();
+}
+$('#catAdd').addEventListener('click', addCatering);
+$('#catInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCatering(); } });
+$('#catChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-catdel]'); if (!b) return;
+  S.rules.cur.cateringKeywords = S.rules.cur.cateringKeywords.filter(k => k !== b.dataset.catdel);
+  renderCatering(); renderTester(); changed();
+});
+
+// ---------- События: Что нового ----------
+$('#wId').addEventListener('input', e => { S.wn.cur.id = e.target.value.trim(); renderWnForm(); changed(); });
+$('#wTitle').addEventListener('input', e => { S.wn.cur.title = e.target.value; const t = len(e.target.value); $('#wTitleCount').textContent = t + ' / 30'; $('#wTitleCount').className = 'count' + (t > 30 ? ' over' : ''); renderWnPreview(); changed(); });
+$('#wBuild').addEventListener('input', e => { S.wn.cur.minBuild = e.target.value === '' ? '' : Number(e.target.value); changed(); });
+$('#wNewId').addEventListener('click', () => {
+  const d = new Date();
+  const base = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  let id = base, n = 2;
+  while (id === S.wn.orig.id) id = base + '-' + n++;
+  S.wn.cur.id = id; renderWnForm(); changed();
+});
+$('#wAddItem').addEventListener('click', () => {
+  S.wn.cur.items.push({ icon: 'sparkles', color: PALETTE[S.wn.cur.items.length % PALETTE.length], title: '', text: '' });
+  renderWnForm(); changed();
+  const last = $('#wItems').lastElementChild; if (last) { last.scrollIntoView({ block: 'center' }); const i = last.querySelector('[data-wf="title"]'); if (i) i.focus(); }
+});
+$('#wItems').addEventListener('input', e => {
+  const f = e.target.dataset.wf; if (!f || !['title', 'text', 'icon', 'color'].includes(f)) return;
+  const it = S.wn.cur.items[Number(e.target.closest('[data-item]').dataset.item)];
+  it[f] = e.target.value;
+  if (f === 'title' || f === 'text') {
+    const c = e.target.parentElement.querySelector('.count'), lim = f === 'title' ? 40 : 140, n = len(e.target.value);
+    c.textContent = n + ' / ' + lim; c.className = 'count' + (n > lim ? ' over' : '');
+  }
+  if (f === 'color') e.target.closest('.swatches').querySelectorAll('.sw').forEach(s => s.setAttribute('aria-pressed', String(s.dataset.color.toLowerCase() === e.target.value.toLowerCase())));
+  renderWnPreview(); changed();
+});
+$('#wItems').addEventListener('change', e => {
+  const f = e.target.dataset.wf; if (!f || !f.startsWith('a')) return;
+  const it = S.wn.cur.items[Number(e.target.closest('[data-item]').dataset.item)];
+  const p = actionParts(it.action);
+  if (f === 'akind') { it.action = buildAction({ kind: e.target.value }); if (!it.action) delete it.action; }
+  else {
+    if (f === 'ahint') p.hint = e.target.value;
+    if (f === 'atab') p.tab = e.target.value;
+    if (f === 'ascreen') p.screen = e.target.value;
+    it.action = buildAction(p);
+  }
+  renderWnForm(); changed();
+});
+$('#wItems').addEventListener('click', e => {
+  const card = e.target.closest('[data-item]'); if (!card) return;
+  const i = Number(card.dataset.item), items = S.wn.cur.items;
+  const sw = e.target.closest('[data-color]');
+  if (sw) { items[i].color = sw.dataset.color; renderWnForm(); changed(); return; }
+  const mv = e.target.closest('[data-imove]');
+  if (mv) { const j = i + Number(mv.dataset.imove); if (j < 0 || j >= items.length) return; const [x] = items.splice(i, 1); items.splice(j, 0, x); renderWnForm(); changed(); return; }
+  const del = e.target.closest('[data-idel]');
+  if (del) {
+    if (!del.classList.contains('armed')) { del.classList.add('armed'); del.textContent = 'Точно?'; return; }
+    items.splice(i, 1); renderWnForm(); changed();
+  }
+});
+
+// ---------- Док и окно ----------
+$('#dockUndo').addEventListener('click', e => {
+  const b = e.currentTarget;
+  if (!b.classList.contains('armed')) { b.classList.add('armed', 'danger'); b.textContent = 'Точно отменить?'; setTimeout(() => { b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё'; }, 3000); return; }
+  b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё';
+  if (S.tab === 'wn') S.wn.cur = clone(S.wn.orig); else { S.rules.cur = clone(S.rules.orig); S.open = null; }
+  saveDraft(); renderAll();
+});
+$('#dockPublish').addEventListener('click', openPublish);
+$('#sheetCancel').addEventListener('click', () => { $('#sheet').hidden = true; });
+$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') $('#sheet').hidden = true; });
+$('#sheetGo').addEventListener('click', doPublish);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#sheet').hidden = true; });
+
+// ---------- Доступ ----------
+function renderTokenState(msg, kind) {
+  $('#tokenState').innerHTML = msg ? '<div class="banner ' + (kind || '') + '" style="margin:0">' + msg + '</div>' : (token ? '<div class="banner ok" style="margin:0">Токен сохранён в этом браузере.</div>' : '<div class="banner" style="margin:0">Токена нет — режим чтения.</div>');
+}
+$('#token').value = token ? '••••••••' : '';
+$('#tokenSave').addEventListener('click', async () => {
+  const v = $('#token').value.trim();
+  if (v && !v.startsWith('••')) token = v;
+  if (!token) { renderTokenState('Вставьте токен.', 'bad'); return; }
+  renderTokenState('Проверяю…', 'ok');
+  try {
+    const repo = await gh('');
+    if (!repo.permissions || !repo.permissions.push) { renderTokenState('Токен видит репозиторий, но без права записи. Нужно Contents: Read and write.', 'bad'); return; }
+    store.set(tokenKey, token);
+    $('#token').value = '••••••••';
+    renderTokenState('Готово: токен работает, публиковать можно.', 'ok');
+    await loadAll();
+  } catch (e) {
+    renderTokenState(e.status === 401 ? 'Токен не подошёл или истёк.' : e.status === 404 ? 'Токен не видит diman9999/skarbiq — проверьте Repository access.' : 'Не удалось проверить: ' + esc(e.message), 'bad');
+  }
+});
+$('#tokenForget').addEventListener('click', () => {
+  token = ''; store.del(tokenKey); $('#token').value = ''; renderTokenState(); loadAll();
+});
+renderTokenState();
+
+// Не уйти со страницы с неопубликованным
+window.addEventListener('beforeunload', e => { if (rulesDirty() || wnDirty()) { e.preventDefault(); e.returnValue = ''; } });
+
+// Список иконок для подсказки ввода
+const dl = document.createElement('datalist'); dl.id = 'iconList';
+dl.innerHTML = ICONS.map(i => '<option value="' + i + '">').join('');
+document.body.appendChild(dl);
+
+// Для проверки из консоли
+window.SkarbIQAdmin = { tokens, matchProduct, serializeRules, serializeWn };
+
+loadAll();
+})();
+</script>
+</body>
+</html>
