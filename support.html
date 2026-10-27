@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ru" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Поддержка — SkarbIQ</title>
+<meta name="description" content="Поддержка SkarbIQ: ответы на частые вопросы и связь с разработчиком">
+<link rel="alternate" hreflang="en" href="./privacy-en.html">
+<link rel="alternate" hreflang="ru" href="./privacy.html">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root {
+  --bg:        #FBFBF9;
+  --surface:   #FFFFFF;
+  --line:      #E6E8E6;
+  --text:      #101311;
+  --muted:     #5A605C;
+  --faint:     #8A918C;
+  --accent:    #1E7A4D;
+  --accent-on: #FFFFFF;
+  --tint:      rgba(30,122,77,0.07);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0B0F0D;
+    --surface:   #121815;
+    --line:      rgba(242,245,243,0.09);
+    --text:      #F2F5F3;
+    --muted:     #97A39B;
+    --faint:     #7A857E;
+    --accent:    #4FC98A;
+    --accent-on: #06100A;
+    --tint:      rgba(79,201,138,0.09);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #0B0F0D;
+  --surface:   #121815;
+  --line:      rgba(242,245,243,0.09);
+  --text:      #F2F5F3;
+  --muted:     #97A39B;
+  --faint:     #7A857E;
+  --accent:    #4FC98A;
+  --accent-on: #06100A;
+  --tint:      rgba(79,201,138,0.09);
+}
+
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+a { color: var(--accent); }
+a:hover { opacity: .78; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 22px 0;
+}
+.logo { font-weight: 800; font-size: 20px; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
+.top-right { display: flex; align-items: center; gap: 10px; }
+
+/* Переключатель языка */
+.lang {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--line); border-radius: 100px;
+  overflow: hidden; height: 44px;
+}
+.lang a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 52px; height: 44px; padding: 0 6px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  color: var(--muted);
+}
+.lang a:hover { background: var(--tint); opacity: 1; }
+.lang a[aria-current="true"] { background: var(--accent); color: var(--accent-on); }
+
+.theme-toggle {
+  width: 44px; height: 44px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--line);
+  border-radius: 100px; cursor: pointer; color: var(--text);
+}
+.theme-toggle:hover { background: var(--tint); }
+.theme-toggle .moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .sun { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle .moon { display: block; }
+}
+
+h1 {
+  margin: 48px 0 10px; font-size: clamp(32px, 5.4vw, 44px);
+  font-weight: 800; letter-spacing: -.03em; line-height: 1.12;
+}
+.updated { margin: 0 0 48px; font-size: 15px; color: var(--faint); }
+
+h2 {
+  margin: 44px 0 14px; font-size: clamp(21px, 3vw, 25px);
+  font-weight: 800; letter-spacing: -.02em;
+}
+
+p { margin: 0 0 16px; font-size: 16px; line-height: 1.68; color: var(--muted); }
+p strong, li strong { color: var(--text); font-weight: 600; }
+
+ul { margin: 0 0 16px; padding-left: 22px; }
+li { font-size: 16px; line-height: 1.68; color: var(--muted); margin-bottom: 9px; }
+
+.callout {
+  margin: 0 0 20px; padding: 22px 24px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+}
+.callout p:last-child { margin-bottom: 0; }
+
+.foot {
+  margin-top: 72px; padding: 28px 0 48px; border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--faint);
+}
+
+@media (max-width: 480px) {
+  .top { flex-wrap: wrap; }
+}
+
+/* ===== Тема в цветах иконки: зелёный градиент и золото =====
+   Одна тема для светлого и тёмного режима системы, поэтому
+   переключатель темы скрыт. Блок стоит последним и перекрывает
+   токены выше во всех вариантах data-theme. */
+:root, :root[data-theme="light"], :root[data-theme="dark"], :root:not([data-theme="light"]) {
+  --bg:          #003A25;
+  --surface:     rgba(255,255,255,0.06);
+  --line:        rgba(255,255,255,0.13);
+  --line-soft:   rgba(255,255,255,0.10);
+  --hairline:    rgba(255,255,255,0.13);
+  --text:        #F5F1E4;
+  --muted:       rgba(245,241,228,0.76);
+  --faint:       rgba(245,241,228,0.56);
+  --accent:      #E9BC4F;
+  --accent-on:   #1C1606;
+  --accent-soft: rgba(233,188,79,0.16);
+  --tint:        rgba(233,188,79,0.12);
+  --warn-bg:     rgba(240,150,90,0.14);
+  --warn-line:   rgba(240,150,90,0.40);
+  --warn-text:   #F3B183;
+  --warn:        #F3C98A;
+  --ok-bg:       rgba(233,188,79,0.10);
+  --ok-line:     rgba(233,188,79,0.38);
+  --invert-bg:   rgba(0,0,0,0.26);
+  --invert-tx:   #F5F1E4;
+  --invert-mu:   rgba(245,241,228,0.74);
+  color-scheme: dark;
+}
+html { background: #00241A; }
+body {
+  background:
+    radial-gradient(120% 75% at 50% -12%, #0B7D50 0%, #005A3B 36%, #003D27 68%, #00241A 100%)
+    no-repeat, #00241A;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.theme-toggle { display: none !important; }
+
+/* Заголовок с иконкой приложения справа */
+.title-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.title-row h1 { margin: 0; flex: 1 1 auto; min-width: 0; }
+.app-icon {
+  flex: 0 0 auto; width: 88px; height: 88px;
+  border-radius: 22.4%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
+}
+@media (max-width: 520px) {
+  .title-row { gap: 14px; align-items: flex-start; }
+  .app-icon { width: 52px; height: 52px; }
+  /* «конфиденциальности» иначе не помещается рядом с иконкой */
+  .title-row h1 { font-size: clamp(22px, 6.2vw, 32px); hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
+}
+
+.mail-card { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;
+  padding:18px 20px; border:1px solid var(--line); border-radius:16px; background:var(--surface); margin:0 0 8px; }
+.mail-card p { margin:0; }
+.mail-btn { display:inline-block; padding:11px 18px; border-radius:12px; background:var(--accent);
+  color:var(--accent-on); font-weight:700; text-decoration:none; font-size:15px; }
+details { border-bottom:1px solid var(--line); padding:4px 0; }
+details summary { cursor:pointer; list-style:none; padding:14px 28px 14px 0; position:relative;
+  font-weight:700; font-size:17px; color:var(--text); }
+details summary::-webkit-details-marker { display:none; }
+details summary::after { content:"+"; position:absolute; right:4px; top:12px; font-size:22px; font-weight:500; color:var(--faint); }
+details[open] summary::after { content:"–"; }
+details p, details ul { margin-top:0; }
+details li { color:var(--muted); line-height:1.6; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <a class="logo" href="./">SkarbIQ</a>
+    <div class="top-right">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+        <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="title-row" style="margin:48px 0 10px"><h1>Поддержка</h1><img class="app-icon" src="icon.png" alt="Иконка SkarbIQ"></div>
+  <p class="updated">SkarbIQ для iOS · учёт расходов по чекам</p>
+
+  <div class="mail-card">
+    <p><strong>Напишите разработчику</strong><br>Отвечаю обычно в течение 1–2 дней.</p>
+    <a class="mail-btn" href="mailto:kondor.dmitry@gmail.com?subject=SkarbIQ">kondor.dmitry@gmail.com</a>
+  </div>
+  <p style="font-size:14px">В письме укажите модель iPhone и версию iOS. Версия приложения — в Настройки → «О приложении». Если не загружается чек, приложите снимок экрана с ошибкой.</p>
+
+  <h2>Частые вопросы</h2>
+  <details>
+    <summary>Чек не загружается</summary>
+    <p>Проверьте по порядку:</p>
+ <ul>
+  <li><strong>Вы в Беларуси?</strong> Сервис проверки чеков ch.info-center.by и сервисы электронных чеков сетей принимают подключения только из белорусских сетей. С VPN или из-за границы чек не загрузится.</li>
+  <li><strong>Лимит проверок.</strong> ch.info-center.by разрешает 10 проверок в сутки. Сколько осталось, видно на экране даты чека. Когда лимит закончился, чек можно поставить в очередь — он загрузится на следующий день.</li>
+  <li><strong>Чек свежий?</strong> Иногда касса передаёт чек в систему с задержкой. Попробуйте через час.</li>
+  <li><strong>Код читается?</strong> Если QR-код помят, введите код чека вручную: «Добавить расход» → «Ввести код вручную».</li>
+ </ul>
+  </details>
+  <details>
+    <summary>Сайт проверки просит войти</summary>
+    <p>Без входа ch.info-center.by даёт несколько проверок, дальше просит войти в учётную запись. Вход вы выполняете на настоящей странице сайта внутри приложения — SkarbIQ не видит и не сохраняет ваш пароль.</p>
+  </details>
+  <details>
+    <summary>Товар попал не в ту категорию</summary>
+    <p>Откройте чек в «Истории» и нажмите на товар — выберите правильную категорию. Приложение запомнит выбор и в следующий раз положит такой товар туда сам. Товары, которые приложение не узнало, собраны в карточке «Неразобранное» на главной.</p>
+  </details>
+  <details>
+    <summary>Как перенести данные на новый телефон</summary>
+    <p>Данные хранятся только на телефоне, своего сервера у приложения нет. На старом телефоне: Настройки → «Данные» → «Сохранить резервную копию» и сохраните файл (например, в «Файлы» или iCloud Drive). На новом: Настройки → «Данные» → «Восстановить из копии».</p>
+  </details>
+  <details>
+    <summary>Что входит в SkarbIQ Pro</summary>
+    <p>Бесплатно навсегда: сканирование чеков, категории, аналитика расходов, лимиты, виджет и резервные копии. Pro добавляет историю цен и изменения цен, доход в месяц, регулярные платежи без ограничений, выгрузку в CSV и очередь чеков без ограничений.</p><p>Есть подписка на месяц, подписка на год (7 дней бесплатно для новых подписчиков) и разовая покупка «Навсегда». Цены указаны в приложении: Настройки → SkarbIQ Pro.</p>
+  </details>
+  <details>
+    <summary>Как отменить подписку</summary>
+    <p>Настройки iPhone → ваше имя → «Подписки» → SkarbIQ → «Отменить подписку». Или в приложении: Настройки → SkarbIQ Pro → «Управлять подпиской». Pro продолжит работать до конца оплаченного периода. Если отменить пробный период до его окончания, оплата не спишется.</p>
+  </details>
+  <details>
+    <summary>Как вернуть деньги</summary>
+    <p>Возвраты за покупки в App Store оформляет Apple, разработчик не может сделать это сам. Запросить возврат можно на сайте <a href="https://reportaproblem.apple.com" rel="noopener">reportaproblem.apple.com</a>.</p>
+  </details>
+  <details>
+    <summary>Pro пропал после переустановки или на новом телефоне</summary>
+    <p>Откройте Настройки → SkarbIQ Pro → «Восстановить покупки». Войдите тем же Apple ID, с которого оформляли покупку.</p>
+  </details>
+  <details>
+    <summary>Как удалить все данные</summary>
+    <p>Настройки → «Данные» → «Очистить все данные». Или просто удалите приложение — вместе с ним удаляется его база. Копий ваших чеков у разработчика нет.</p>
+  </details>
+
+  <h2>In English</h2>
+  <p>SkarbIQ is an expense tracker for Belarusian fiscal receipts; its interface is in Russian. For any question, write to <a href="mailto:kondor.dmitry@gmail.com?subject=SkarbIQ">kondor.dmitry@gmail.com</a>. Subscriptions are managed in iPhone Settings → your name → Subscriptions; refunds are handled by Apple at <a href="https://reportaproblem.apple.com" rel="noopener">reportaproblem.apple.com</a>. <a href="privacy-en.html">Privacy Policy</a>.</p>
+
+  <footer class="foot">
+    <span>SkarbIQ · 2026</span>
+    <a href="privacy.html">Политика конфиденциальности</a>
+    <a href="./">На главную</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'skarbiq-theme';
+
+  try {
+    var saved = localStorage.getItem(KEY);
+    if (saved === 'dark' || saved === 'light') {
+      root.setAttribute('data-theme', saved);
+    }
+  } catch (e) {}
+
+  function currentlyDark() {
+    var attr = root.getAttribute('data-theme');
+    if (attr === 'dark') return true;
+    if (attr === 'light') return false;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  var btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var next = currentlyDark() ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
