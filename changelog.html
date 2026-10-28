@@ -2,129 +2,96 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SkarbIQ — Что нового</title>
-<meta name="description" content="История обновлений SkarbIQ — приложения для учёта расходов по кассовым чекам.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Что нового — SkarbIQ</title>
+<meta name="description" content="История обновлений SkarbIQ: новые функции, улучшения и исправления.">
+<meta name="theme-color" content="#06231A">
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="site.css">
 <style>
-:root {
-  --bg:          #003A25;
-  --surface:     rgba(255,255,255,0.06);
-  --hairline:    rgba(255,255,255,0.13);
-  --text:        #F5F1E4;
-  --muted:       rgba(245,241,228,0.76);
-  --faint:       rgba(245,241,228,0.56);
-  --accent:      #E9BC4F;
-  --accent-soft: rgba(233,188,79,0.16);
-  --new:         #7CC59C;
-  --new-soft:    rgba(124,197,156,0.16);
-  --fix:         #F3B183;
-  --fix-soft:    rgba(240,150,90,0.14);
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-html { background: #00241A; }
-body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--text);
-  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
-  font-size: 17px;
-  line-height: 1.6;
-  background:
-    radial-gradient(120% 75% at 50% -12%, #0B7D50 0%, #005A3B 36%, #003D27 68%, #00241A 100%)
-    no-repeat, #00241A;
-  background-attachment: fixed;
-}
-.wrap { max-width: 760px; margin: 0 auto; padding: 48px 20px 72px; }
-
-.brand { font-weight: 800; font-size: 20px; color: var(--accent); letter-spacing: -0.01em; }
-.title-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 18px 0 12px; }
-h1 { margin: 0; font-size: 36px; line-height: 1.15; letter-spacing: -0.02em; }
-.app-icon {
-  flex: 0 0 auto; width: 76px; height: 76px; border-radius: 22.4%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
-}
-.lead { color: var(--muted); font-size: 18px; margin: 0 0 32px; }
-
-.release {
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: 20px;
-  padding: 24px 24px 18px;
-  margin-bottom: 20px;
-}
-.release-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 4px; }
-.release h2 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
-.date { color: var(--faint); font-size: 15px; }
-.latest {
-  display: inline-block; padding: 2px 10px; border-radius: 100px;
-  background: var(--accent-soft); color: var(--accent);
-  font-size: 13px; font-weight: 600;
-}
-.summary { color: var(--muted); margin: 6px 0 14px; }
-
-h3 {
-  display: inline-block;
-  margin: 14px 0 8px;
-  padding: 2px 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-h3.new { background: var(--new-soft); color: var(--new); }
-h3.better { background: var(--accent-soft); color: var(--accent); }
-h3.fix { background: var(--fix-soft); color: var(--fix); }
-
-ul { margin: 0 0 6px; padding-left: 20px; }
-li { margin: 6px 0; }
-li b { font-weight: 600; }
-
-.note {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(0,0,0,0.22);
-  color: var(--muted);
-  font-size: 15px;
-}
-
-footer { margin-top: 40px; color: var(--faint); font-size: 14px; }
-a { color: var(--accent); }
-
-@media (max-width: 520px) {
-  .wrap { padding: 32px 16px 56px; }
-  h1 { font-size: 28px; }
-  .app-icon { width: 52px; height: 52px; }
-  .release { padding: 20px 18px 14px; }
-}
+.timeline{position:relative;padding:10px 0 20px;max-width:900px}
+.timeline::before{content:"";position:absolute;left:15px;top:20px;bottom:20px;width:2px;background:linear-gradient(180deg,var(--gold),rgba(232,182,74,.15) 30%,var(--line))}
+.rel{position:relative;padding-left:56px;margin-bottom:28px}
+.rel::before{content:"";position:absolute;left:6px;top:30px;width:20px;height:20px;border-radius:50%;background:var(--ink);border:3px solid var(--line-2)}
+.rel.latest::before{border-color:var(--gold);box-shadow:0 0 0 6px rgba(232,182,74,.15),0 0 24px rgba(232,182,74,.5)}
+.rel-card{padding:30px 32px;border-radius:26px;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line)}
+.rel.latest .rel-card{border-color:rgba(232,182,74,.38);background:radial-gradient(90% 120% at 100% 0%,rgba(232,182,74,.10),transparent 60%),linear-gradient(180deg,var(--card-2),var(--card))}
+.rel-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:8px}
+.rel-head h2{font-size:clamp(22px,2.6vw,28px);font-weight:800;margin-right:auto}
+.date{font:600 13px var(--mono);color:var(--faint)}
+.latest-b{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
+.summary{font-size:18px;color:var(--text);margin:0 0 20px}
+.kind{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 12px;padding:5px 11px;border-radius:8px}
+.kind.new{background:rgba(232,182,74,.13);color:var(--gold)}
+.kind.better{background:rgba(127,181,255,.12);color:var(--sky)}
+.kind.fix{background:rgba(91,214,154,.12);color:var(--mint)}
+.rel ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.rel li{position:relative;padding-left:22px;color:var(--muted)}
+.rel li::before{content:"";position:absolute;left:4px;top:.62em;width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.55}
+.rel li b{color:var(--text)}
+.rel .note{margin-top:20px;padding:14px 16px;border-radius:14px;background:rgba(232,182,74,.07);border:1px solid rgba(232,182,74,.25);color:var(--gold-2);font-size:14.5px}
+.rel.collapsed .more{display:none}
+.toggle-rel{margin-top:18px;background:none;border:1px solid var(--line-2);color:var(--muted);font:700 14px var(--font);padding:8px 16px;border-radius:999px;cursor:pointer}
+.toggle-rel:hover{color:var(--text);border-color:var(--gold)}
+@media(max-width:640px){.rel{padding-left:40px}.timeline::before{left:9px}.rel::before{left:0;width:20px;height:20px}.rel-card{padding:22px 20px;border-radius:22px}}
 </style>
+<script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-<div class="wrap">
-
-  <div class="brand">SkarbIQ</div>
-  <div class="title-row">
-    <h1>Что нового</h1>
-    <img class="app-icon" src="icon.png" alt="Иконка SkarbIQ">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="./"><img src="icon.png" alt="">SkarbIQ</a>
+    <nav class="nav-links" aria-label="Разделы сайта"><a href="./#features">Возможности</a><a href="changelog.html" aria-current="page">Что нового</a><a href="support.html">Поддержка</a><a href="privacy.html">Конфиденциальность</a></nav>
+    <a class="btn btn-gold" data-download href="https://testflight.apple.com/join/r9mnDBq1">Скачать</a>
   </div>
-  <p class="lead">История обновлений открытого тестирования. Спасибо всем, кто пробует приложение и пишет отзывы — многие исправления ниже появились благодаря вам.</p>
+</header>
+<main>
+<section class="phero">
+  <div class="wrap">
+    <div class="eyebrow reveal">Что нового</div>
+    <h1 class="reveal" style="--d:.06s">История <span class="gold">обновлений</span></h1>
+    <p class="lead reveal" style="--d:.12s">Как менялся SkarbIQ во время открытого тестирования. Спасибо всем, кто пробует приложение и пишет отзывы — многие исправления ниже появились благодаря вам.</p>
+    <div class="meta reveal" style="--d:.18s"><span class="pill"><span class="dot"></span>Обновлений: <b>5</b></span><a class="pill" data-download href="https://testflight.apple.com/join/r9mnDBq1">Присоединиться к тесту →</a></div>
+  </div>
+</section>
+<div class="wrap"><div class="timeline">
+<article class="rel reveal latest" id="r5">
+  <div class="rel-card">
+    <div class="rel-head"><h2>Октябрь, обновление 5</h2><span class="date">28 октября 2026</span><span class="latest-b">Последнее</span></div>
+    <p class="summary">Подсказки по делу, все возможности в одном месте и подготовка к App Store.</p>
+    <div class="kind new">✦ Новое</div>
+    <ul>
+      <li><b>Подсказки.</b> Короткие подсказки появляются там, где пригодятся: смахнуть чек, сменить категорию товара, история цены, лимит категории и другие. По одной за запуск и не в первый день.</li>
+      <li><b>«Что умеет SkarbIQ»</b> — Настройки → «Что умеет SkarbIQ». Все возможности по ситуациям, с поиском и кнопками «Попробовать».</li>
+      <li><b>«Что нового»</b> показывается один раз после обновления.</li>
+      <li><b>Сделать регулярным.</b> Если ручная трата за связь или коммуналку повторилась второй месяц подряд, на главной появится предложение сделать её регулярным платежом — экран откроется уже заполненным.</li>
+      <li><b>Демо-данные</b> — Настройки → «Данные» → «Загрузить демо-данные». Полгода чеков, чтобы посмотреть все возможности, если вы не в Беларуси и загрузить свои чеки нельзя.</li>
+    </ul>
 
-  <!-- ===== Текущая сборка ===== -->
-  <section class="release">
-    <div class="release-head">
-      <h2>Октябрь, обновление 4</h2>
-      <span class="date">26 октября 2026</span>
-      <span class="latest">Последнее</span>
-    </div>
+    <div class="kind better">↗ Улучшения</div>
+    <ul>
+      <li>История цены — только для товаров из чеков: ручные траты больше в неё не попадают.</li>
+      <li><b>Pro в TestFlight</b> теперь оформляется так же, как в App Store: откройте Настройки → SkarbIQ Pro и выберите план. В тестовой среде деньги не списываются.</li>
+    </ul>
+
+    <div class="kind fix">✓ Исправления</div>
+    <ul>
+      <li>Товары удалённой ручной траты оставались в «Категориях» и в «Истории цен».</li>
+    </ul>
+
+    <div class="note">Кнопка «Снять бумажный чек» убрана, пока распознавание дорабатывается. Загружайте чеки по QR — при исчерпанном лимите они встают в очередь.</div>
+    
+  </div>
+</article>
+<article class="rel reveal collapsed" id="r4">
+  <div class="rel-card">
+    <div class="rel-head"><h2>Октябрь, обновление 4</h2><span class="date">26 октября 2026</span></div>
     <p class="summary">SkarbIQ Pro: история цен товаров, планирование и десятки исправлений по вашим отзывам.</p>
-
-    <h3 class="new">Новое</h3>
+    <div class="more"><div class="kind new">✦ Новое</div>
     <ul>
       <li><b>История цены товара.</b> В деталях чека нажмите на значок графика рядом с товаром: как менялась цена, минимум и максимум, в каком магазине он сейчас дешевле и все покупки.</li>
       <li><b>Изменения цен</b> — новая карточка в «Аналитике»: на сколько подорожала ваша корзина по сравнению с прошлым периодом, что подорожало и что подешевело.</li>
@@ -134,7 +101,7 @@ a { color: var(--accent); }
       <li>Бесплатно навсегда остаются сканирование чеков, категории, аналитика расходов, лимиты, виджет и резервные копии.</li>
     </ul>
 
-    <h3 class="better">Улучшения</h3>
+    <div class="kind better">↗ Улучшения</div>
     <ul>
       <li><b>История:</b> сортировка «Дороже» и «Дешевле» показывает все чеки одним списком по сумме. Фильтр по категории находит и смешанные чеки, где есть товары этой категории. Строки в фильтрах нажимаются по всей ширине.</li>
       <li><b>Аналитика:</b> «Все» в блоке «По категориям» открывает аналитику за тот же период, что выбран на главной. График расходов за квартал — по неделям, за год — по месяцам.</li>
@@ -148,7 +115,7 @@ a { color: var(--accent); }
       <li>Системные кнопки («Назад», «Отмена») — на русском.</li>
     </ul>
 
-    <h3 class="fix">Исправления</h3>
+    <div class="kind fix">✓ Исправления</div>
     <ul>
       <li>Проверка чека больше не списывается из дневного лимита, если запрос не дошёл до сервера (нет сети, капча закрыта).</li>
       <li>Чек с неверной датой из очереди помечается ошибкой, а не пропадает молча.</li>
@@ -160,24 +127,21 @@ a { color: var(--accent); }
       <li>Кнопки удаления лимита и платежа были зелёными вместо красных.</li>
     </ul>
 
-    <div class="note">Распознавание бумажного чека временно закрыто на доработку: оно пока ошибается слишком часто. Кнопка вернётся, когда распознавание станет надёжным. Загружайте чеки по QR — при исчерпанном лимите они встают в очередь.</div>
-  </section>
-
-  <!-- ===== Обновление 3 ===== -->
-  <section class="release">
-    <div class="release-head">
-      <h2>Октябрь, обновление 3</h2>
-      <span class="date">22 октября 2026</span>
-    </div>
+    <div class="note">Распознавание бумажного чека временно закрыто на доработку: оно пока ошибается слишком часто. Кнопка вернётся, когда распознавание станет надёжным. Загружайте чеки по QR — при исчерпанном лимите они встают в очередь.</div></div>
+    <button class="toggle-rel" type="button" aria-expanded="false">Показать изменения</button>
+  </div>
+</article>
+<article class="rel reveal collapsed" id="r3">
+  <div class="rel-card">
+    <div class="rel-head"><h2>Октябрь, обновление 3</h2><span class="date">22 октября 2026</span></div>
     <p class="summary">Доход в месяц, честные лимиты и аккуратный виджет.</p>
-
-    <h3 class="new">Новое</h3>
+    <div class="more"><div class="kind new">✦ Новое</div>
     <ul>
       <li><b>Доход в месяц</b> — Настройки → «Доход в месяц». Укажите сумму, и на главной будет видно, сколько осталось до конца месяца и сколько можно тратить в день. В виджете — остаток вместо среднего расхода. По желанию — уведомление, когда потрачено 80% дохода и когда расходы его превысят. Функция выключена по умолчанию.</li>
       <li><b>Словарь категорий обновляется сам.</b> Новые слова и исправления приходят раз в сутки, без обновления приложения. Загружается только общий словарь — ваши данные никуда не передаются.</li>
     </ul>
 
-    <h3 class="better">Улучшения</h3>
+    <div class="kind better">↗ Улучшения</div>
     <ul>
       <li><b>Точнее категории:</b> готовые салаты, пряники и круассаны, нектарины, чай с добавками, лакомства для животных, мясные деликатесы и десятки товаров, которые раньше попадали в «Другое».</li>
       <li><b>Виджет</b> больше не выходит за края: блок лимита всегда на месте, список категорий подстраивается под размер. Суммы одного размера, лимит становится оранжевым с 80%.</li>
@@ -186,7 +150,7 @@ a { color: var(--accent); }
       <li>Название магазина в списке больше не обрезается раньше времени, сумма и дата видны всегда.</li>
     </ul>
 
-    <h3 class="fix">Исправления</h3>
+    <div class="kind fix">✓ Исправления</div>
     <ul>
       <li>Карточка лимита показывала «80%» при любой заполненности — теперь реальный процент.</li>
       <li>Лимит ровно на сумму трат помечался как «Превышен».</li>
@@ -195,47 +159,41 @@ a { color: var(--accent); }
       <li>Лимит не появлялся в виджете, если был задан до последней покупки.</li>
     </ul>
 
-    <div class="note">Уведомления о лимитах начнут отсчёт заново: если лимит уже близок к исчерпанию, предупреждение может прийти ещё раз.</div>
-  </section>
-
-  <!-- ===== Обновление 2 ===== -->
-  <section class="release">
-    <div class="release-head">
-      <h2>Октябрь, обновление 2</h2>
-      <span class="date">16 октября 2026</span>
-    </div>
+    <div class="note">Уведомления о лимитах начнут отсчёт заново: если лимит уже близок к исчерпанию, предупреждение может прийти ещё раз.</div></div>
+    <button class="toggle-rel" type="button" aria-expanded="false">Показать изменения</button>
+  </div>
+</article>
+<article class="rel reveal collapsed" id="r2">
+  <div class="rel-card">
+    <div class="rel-head"><h2>Октябрь, обновление 2</h2><span class="date">16 октября 2026</span></div>
     <p class="summary">Чеки Санты, скидки на виду и напоминания без повторов.</p>
-
-    <h3 class="new">Новое</h3>
+    <div class="more"><div class="kind new">✦ Новое</div>
     <ul>
       <li><b>Чеки Санты</b> и других магазинов с облачной кассой Webkassa загружаются сразу по QR-коду — без выбора даты и без капчи.</li>
       <li><b>Сэкономлено по акциям</b> — теперь видно на главной, в аналитике, в деталях чека (у каждого товара со скидкой) и в виджете.</li>
     </ul>
 
-    <h3 class="better">Улучшения</h3>
+    <div class="kind better">↗ Улучшения</div>
     <ul>
       <li><b>Категория чека из кафе и ресторанов</b> определяется по заведению, а не только по названиям блюд. Чек из KFC или «Додо» больше не попадает в «Несколько категорий».</li>
       <li><b>Ежедневное напоминание</b> каждый день приходит с новым текстом.</li>
       <li>Скидки сохраняются в резервной копии.</li>
     </ul>
 
-    <h3 class="fix">Исправления</h3>
+    <div class="kind fix">✓ Исправления</div>
     <ul>
       <li>Скидка не сохранялась вместе с чеком — поэтому её не было видно нигде, кроме экрана сканирования.</li>
     </ul>
 
-    <div class="note">Скидки видны у чеков, отсканированных после этого обновления. У сохранённых раньше чеков экономия не записалась.</div>
-  </section>
-
-  <!-- ===== Предыдущая сборка ===== -->
-  <section class="release">
-    <div class="release-head">
-      <h2>Октябрь, обновление 1</h2>
-      <span class="date">12 октября 2026</span>
-    </div>
+    <div class="note">Скидки видны у чеков, отсканированных после этого обновления. У сохранённых раньше чеков экономия не записалась.</div></div>
+    <button class="toggle-rel" type="button" aria-expanded="false">Показать изменения</button>
+  </div>
+</article>
+<article class="rel reveal collapsed" id="r1">
+  <div class="rel-card">
+    <div class="rel-head"><h2>Октябрь, обновление 1</h2><span class="date">12 октября 2026</span></div>
     <p class="summary">Начало открытого тестирования: электронные чеки сетей и новый ввод даты.</p>
-
-    <h3 class="new">Новое</h3>
+    <div class="more"><div class="kind new">✦ Новое</div>
     <ul>
       <li><b>Электронные чеки Доброном, Копеечки, Маяка и Евроопта</b> загружаются сразу по QR — без капчи, выбора даты и дневного лимита проверок. Работает с белорусским интернетом.</li>
       <li><b>Чеки iKassa</b> («Соседи» и другие магазины) обычно загружаются прямо со страницы кассы.</li>
@@ -245,26 +203,39 @@ a { color: var(--accent); }
       <li>Новая иконка с тёмным и тонированным вариантами.</li>
     </ul>
 
-    <h3 class="better">Улучшения</h3>
+    <div class="kind better">↗ Улучшения</div>
     <ul>
       <li>Повторное нажатие на вкладку прокручивает экран в самый верх.</li>
       <li>Главная по умолчанию показывает неделю, аналитика открывается на «Категориях».</li>
       <li>В поиске по истории совпадение выделяется цветом.</li>
     </ul>
 
-    <h3 class="fix">Исправления</h3>
+    <div class="kind fix">✓ Исправления</div>
     <ul>
       <li>Зависание камеры после сканирования.</li>
       <li>«Добавить расход» снова открывает меню способов добавления.</li>
       <li>Мерцание панели вкладок на iOS 18.</li>
       <li>Фон экранов категорий и лимитов.</li>
-    </ul>
-  </section>
-
-  <footer>
-    SkarbIQ · <a href="index.html">О приложении</a> · <a href="privacy.html">Политика конфиденциальности</a>
-  </footer>
-
-</div>
+    </ul></div>
+    <button class="toggle-rel" type="button" aria-expanded="false">Показать изменения</button>
+  </div>
+</article>
+</div></div>
+<script>
+document.querySelectorAll('.toggle-rel').forEach(function(b){
+  b.addEventListener('click',function(){
+    var r=b.closest('.rel'),open=r.classList.toggle('collapsed')===false;
+    b.textContent=open?'Свернуть':'Показать изменения';b.setAttribute('aria-expanded',String(open));
+  });
+});
+</script>
+</main>
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 SkarbIQ · учёт расходов по чекам · iOS 17.6+</span>
+    <nav aria-label="Документы"><a href="changelog.html" aria-current="page">Что нового</a><a href="support.html">Поддержка</a><a href="privacy.html">Конфиденциальность</a></nav>
+  </div>
+</footer>
+<script src="site.js"></script>
 </body>
 </html>
