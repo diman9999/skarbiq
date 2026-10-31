@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Редактор словаря категорий и «Что нового». Одна колонка, вкладки сверху, панель публикации снизу */
+/* Редактор словаря категорий, «Что нового» и текстов сайта. Одна колонка, вкладки сверху, панель публикации снизу */
 :root {
   --bg: #03140E; --surface: #0C2A1F; --sunk: #071C15; --line: rgba(233,245,238,.12);
   --text: #EEF5F0; --muted: #A6B8AD; --faint: #75887D;
@@ -154,6 +154,27 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); outline
 .diff .plus { color: var(--accent); font-weight: 700; }
 .diff .minus { color: var(--bad); font-weight: 700; }
 
+/* Сайт */
+.cms-tools { position: sticky; top: 62px; z-index: 5; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 8px; margin: 12px 0 4px; background: rgba(7,28,21,.92); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 12px; }
+.cms-tools .faint { font-size: 12.5px; margin-left: 4px; }
+.cms-group { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 12px 0; background: linear-gradient(180deg, #0D2B20, #0A2219); }
+.cms-gt { font-weight: 800; font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.cms-field { margin: 8px 0; }
+.cms-lbl { font-size: 11.5px; font-weight: 700; color: var(--faint); margin-bottom: 3px; }
+.ce { background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 10px; padding: 8px 11px; min-height: 38px; overflow-wrap: anywhere; line-height: 1.5; }
+.ce:focus { border-color: var(--accent); outline: none; }
+.ce.changed { border-color: color-mix(in srgb, var(--warn) 65%, var(--line)); }
+.ce.ce-h { font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
+.ce b, .ce strong { color: #fff; }
+.ce a, .ce .gold { color: var(--accent); }
+.ce .n { color: var(--faint); margin-right: 6px; }
+.cms-list { border-left: 2px solid var(--line); padding-left: 10px; margin: 8px 0; }
+.cms-item { margin: 4px 0 8px; }
+.cms-item-bar { display: flex; gap: 4px; align-items: center; font-size: 12px; }
+.cms-item .cms-field { margin: 2px 0; }
+.btn.armed { background: var(--bad); color: #fff; border-color: var(--bad); }
+@media (max-width: 640px) { .cms-tools { position: static; } }
+#pFrame { width: 100%; height: 75vh; border: 1px solid var(--line); border-radius: 14px; background: #03140E; }
 .help ol { padding-left: 20px; margin: 6px 0; }
 .help li { margin-bottom: 5px; }
 a { color: var(--accent); overflow-wrap: anywhere; }
@@ -168,6 +189,7 @@ a { color: var(--accent); overflow-wrap: anywhere; }
     <div class="tabs" role="tablist">
       <button role="tab" data-tab="rules" aria-selected="true">Категории<span class="dot" id="dotRules" hidden></span></button>
       <button role="tab" data-tab="wn" aria-selected="false">Что нового<span class="dot" id="dotWn" hidden></span></button>
+      <button role="tab" data-tab="site" aria-selected="false">Сайт<span class="dot" id="dotSite" hidden></span></button>
       <button role="tab" data-tab="access" aria-selected="false">Доступ</button>
     </div>
   </div>
@@ -237,6 +259,44 @@ a { color: var(--accent); overflow-wrap: anywhere; }
         <div class="phone" id="wPreview"></div>
       </div>
     </div>
+  </section>
+
+  <!-- Сайт -->
+  <section id="tab-site" hidden>
+    <h2>Тексты сайта</h2>
+    <p class="sub">Выберите страницу и правьте тексты прямо в полях. Enter не переносит строку (Shift+Enter — перенос). Публикуется только открытая страница. Вёрстка, картинки и анимации не меняются.</p>
+    <div class="toolbar">
+      <select id="pSel" style="flex:1 1 240px;width:auto"></select>
+      <button class="btn" id="pPreview" type="button">Предпросмотр</button>
+      <button class="btn primary" id="pRelease" type="button" hidden>+ Новый выпуск</button>
+    </div>
+    <div class="card" id="pRelForm" hidden style="display:grid;gap:12px;margin-bottom:12px">
+      <h3>Новый выпуск</h3>
+      <div class="row">
+        <label class="f grow">Название<input type="text" id="rlTitle"></label>
+        <label class="f" style="flex:0 1 200px">Дата<input type="text" id="rlDate"></label>
+      </div>
+      <label class="f">Кратко, одной фразой<input type="text" id="rlSum" placeholder="Что главное в этом обновлении"></label>
+      <label class="f">✦ Новое — по пункту на строку<textarea id="rlNew" rows="3" placeholder="**Название функции.** Что она делает"></textarea></label>
+      <label class="f">↗ Улучшения — по пункту на строку<textarea id="rlBetter" rows="3"></textarea></label>
+      <label class="f">✓ Исправления — по пункту на строку<textarea id="rlFix" rows="3"></textarea></label>
+      <label class="f">Примечание в рамке (необязательно)<textarea id="rlNote" rows="2"></textarea></label>
+      <p class="muted" style="margin:0;font-size:13px">**текст** — жирным. Прежний выпуск свернётся сам, счётчик обновлений увеличится.</p>
+      <div id="rlMsg"></div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn" id="rlCancel" type="button">Отмена</button>
+        <button class="btn primary" id="rlAdd" type="button">Добавить в черновик</button>
+      </div>
+    </div>
+    <div class="cms-tools" id="pTools" hidden>
+      <button class="btn small" type="button" data-fmt="bold"><b>Ж</b> Жирный</button>
+      <button class="btn small" type="button" data-fmt="link">Ссылка</button>
+      <button class="btn small" type="button" data-fmt="unlink">Убрать ссылку</button>
+      <button class="btn small" type="button" data-fmt="removeFormat">Убрать оформление</button>
+      <span class="faint">Выделите текст в поле, потом нажмите кнопку</span>
+    </div>
+    <div id="pPrevWrap" hidden style="margin:12px 0"><iframe id="pFrame" title="Предпросмотр страницы"></iframe></div>
+    <div id="pFields"></div>
   </section>
 
   <!-- Доступ -->
@@ -539,6 +599,8 @@ async function loadAll() {
   const ro = !token ? 'Режим чтения: публиковать можно после того, как добавите токен во вкладке «Доступ».' : '';
   setStatus([ro].concat(problems).filter(Boolean).join('<br>'), problems.some(p => p.includes('не загруз')) ? 'bad' : '');
   renderAll();
+  // Страницы сайта перечитываем: после ввода токена — уже из GitHub, с правом записи
+  if (S.pages) { S.pages = {}; if (S.tab === 'site') loadPage(S.page); }
 }
 // У черновика — те же _id, что у оригинала, если правило не менялось по составу (для подсветки изменений)
 function matchIds(draftDoc, origDoc) {
@@ -743,6 +805,17 @@ function renderWnPreview() {
 function renderDock() {
   const r = rulesDirty(), w = wnDirty();
   $('#dotRules').hidden = !r; $('#dotWn').hidden = !w;
+  $('#dotSite').hidden = !anyPageDirty();
+  if (S.tab === 'site') {
+    const dirty = pageDirty(S.page);
+    $('#dock').hidden = !dirty;
+    if (!dirty) return;
+    const errs = validatePage(S.page);
+    $('#dockText').innerHTML = '<b>«' + esc(pageTitle(S.page)) + '» изменена.</b> ' + (errs.length ? '<span style="color:var(--bad)">Ошибок: ' + errs.length + '</span>' : 'Опубликуется только эта страница.');
+    $('#dockPublish').disabled = !token;
+    $('#dockPublish').title = token ? '' : 'Добавьте токен во вкладке «Доступ»';
+    return;
+  }
   const which = S.tab === 'wn' ? 'wn' : 'rules';
   const dirty = which === 'wn' ? w : r;
   $('#dock').hidden = !dirty || S.tab === 'access';
@@ -795,6 +868,7 @@ function wnDiff() {
 // ---------- Публикация ----------
 let publishing = null;
 function openPublish() {
+  if (S.tab === 'site') { openPublishPage(); return; }
   const which = S.tab === 'wn' ? 'wn' : 'rules';
   publishing = which;
   const v = which === 'rules' ? validateRules(S.rules.cur) : validateWn(S.wn.cur);
@@ -815,7 +889,9 @@ async function doPublish() {
   const go = $('#sheetGo');
   go.disabled = true; go.textContent = 'Публикую…';
   try {
-    if (publishing === 'rules') {
+    if (publishing.startsWith('page:')) {
+      await publishPage(publishing.slice(5));
+    } else if (publishing === 'rules') {
       const doc = stripIds(S.rules.cur);
       doc.version = S.rules.orig.version + 1;
       const text = serializeRules(doc);
@@ -848,17 +924,410 @@ async function doPublish() {
   }
 }
 
+// ---------- Сайт: тексты страниц ----------
+// Редактируются только элементы с data-cms (тексты) и data-cms-list (списки).
+// Файл меняется точечно: остальной код страницы остаётся байт в байт прежним.
+const PAGES = [
+  ['index.html', 'Главная'], ['support.html', 'Поддержка'], ['changelog.html', 'История обновлений'],
+  ['privacy.html', 'Политика конфиденциальности'], ['privacy-en.html', 'Privacy policy (EN)'],
+  ['Review.html', 'Для проверки Apple'], ['site.js', 'Общие настройки сайта']
+];
+const pageTitle = p => (PAGES.find(x => x[0] === p) || [p, p])[1];
+S.pages = {}; S.page = 'index.html';
+const pageDirty = p => { const x = S.pages[p]; return !!(x && x.loaded && x.cur !== x.orig); };
+const anyPageDirty = () => Object.keys(S.pages).some(pageDirty);
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return s.length + ':' + h; }
+function savePageDraft(p) {
+  const x = S.pages[p]; if (!x || !x.loaded) return;
+  const k = 'skarbiq-draft-page-' + p;
+  pageDirty(p) ? store.set(k, JSON.stringify({ base: hashStr(x.orig), cur: x.cur })) : store.del(k);
+}
+
+async function loadPage(p, force) {
+  if (S.pages[p] && S.pages[p].loaded && !force) { renderSite(); return; }
+  S.pages[p] = { loaded: false }; renderSite();
+  try {
+    const f = await loadFile(p);
+    const x = { orig: f.text, cur: f.text, sha: f.sha, loaded: true, note: '' };
+    const d = store.get('skarbiq-draft-page-' + p);
+    if (d) {
+      try {
+        const j = JSON.parse(d);
+        if (j.base === hashStr(f.text)) { x.cur = j.cur; x.note = 'Восстановлен неопубликованный черновик этой страницы.'; }
+        else store.del('skarbiq-draft-page-' + p);
+      } catch (e) { store.del('skarbiq-draft-page-' + p); }
+    }
+    S.pages[p] = x;
+  } catch (e) { S.pages[p] = { loaded: false, error: e.message }; }
+  if (S.page === p) renderSite();
+  renderDock();
+}
+
+// Элемент по фрагменту открывающего тега: границы в исходном тексте
+function findEl(src, needle) {
+  const i = src.indexOf(needle); if (i < 0) return null;
+  const start = src.lastIndexOf('<', i);
+  const m = /^<([a-zA-Z][a-zA-Z0-9-]*)/.exec(src.slice(start, start + 40)); if (!m) return null;
+  const tag = m[1].toLowerCase();
+  const openEnd = src.indexOf('>', i) + 1;
+  const re = new RegExp('<(/?)' + tag + '(?=[\\s>/])', 'gi'); re.lastIndex = openEnd;
+  let depth = 1, x;
+  while ((x = re.exec(src))) {
+    if (x[1]) { if (--depth === 0) return { start, openEnd, closeStart: x.index, end: src.indexOf('>', x.index) + 1, tag }; }
+    else depth++;
+  }
+  return null;
+}
+const fNeedle = k => 'data-cms="' + k + '"';
+const iNeedle = k => 'data-cms-item="' + k + '"';
+const lNeedle = k => 'data-cms-list="' + k + '"';
+function innerOf(src, k) { const e = findEl(src, fNeedle(k)); return e ? src.slice(e.openEnd, e.closeStart) : null; }
+function maxKey(src) { let n = 0; src.replace(/data-cms(?:-item|-list)?="[a-z](\d+)"/g, (a, d) => { n = Math.max(n, +d); return a; }); return n; }
+
+// Разрешённое оформление внутри текста
+const ALLOWED = { B: [], STRONG: [], I: [], EM: [], BR: [], CODE: [], SMALL: ['class'], SPAN: ['class', 'aria-hidden'], A: ['href', 'target', 'rel', 'class'] };
+function sanitize(html) {
+  const t = document.createElement('template'); t.innerHTML = html;
+  (function walk(n) {
+    Array.from(n.childNodes).forEach(c => {
+      if (c.nodeType === 8) { c.remove(); return; }
+      if (c.nodeType !== 1) return;
+      const tag = c.tagName;
+      if (['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'IMG'].includes(tag)) { c.remove(); return; }
+      walk(c);
+      if (!ALLOWED[tag]) { c.replaceWith(...c.childNodes); return; }
+      Array.from(c.attributes).forEach(a => { if (!ALLOWED[tag].includes(a.name)) c.removeAttribute(a.name); });
+      if (tag === 'A' && /^\s*javascript:/i.test(c.getAttribute('href') || '')) c.removeAttribute('href');
+      if (tag === 'SPAN' && !c.attributes.length) c.replaceWith(...c.childNodes);
+    });
+  })(t.content);
+  return t.innerHTML;
+}
+
+function setField(p, k, html, tocId) {
+  const x = S.pages[p]; const e = findEl(x.cur, fNeedle(k)); if (!e) return;
+  x.cur = x.cur.slice(0, e.openEnd) + html + x.cur.slice(e.closeStart);
+  if (tocId) {
+    // Оглавление политики повторяет заголовки разделов — обновляем и его
+    const d = document.createElement('div'); d.innerHTML = html; d.querySelectorAll('.n').forEach(n => n.remove());
+    const txt = esc(d.textContent.replace(/\s+/g, ' ').trim());
+    x.cur = x.cur.replace(new RegExp('(<a href="#' + tocId + '"[^>]*>)[^<]*(</a>)', 'g'), (a, o, c) => o + txt + c);
+  }
+}
+function removeItem(p, k) {
+  const x = S.pages[p]; const e = findEl(x.cur, iNeedle(k)); if (!e) return;
+  let s = e.start; const ls = x.cur.lastIndexOf('\n', s - 1);
+  if (ls >= 0 && /^[ \t]*$/.test(x.cur.slice(ls + 1, s))) s = ls;
+  x.cur = x.cur.slice(0, s) + x.cur.slice(e.end);
+}
+function swapItems(p, k1, k2) {
+  const x = S.pages[p]; let a = findEl(x.cur, iNeedle(k1)), b = findEl(x.cur, iNeedle(k2)); if (!a || !b) return;
+  if (a.start > b.start) [a, b] = [b, a];
+  const ta = x.cur.slice(a.start, a.end), tb = x.cur.slice(b.start, b.end);
+  x.cur = x.cur.slice(0, a.start) + tb + x.cur.slice(a.end, b.start) + ta + x.cur.slice(b.end);
+}
+function addItem(p, lastKey) {
+  const x = S.pages[p]; const it = findEl(x.cur, iNeedle(lastKey)); if (!it) return null;
+  let html = x.cur.slice(it.start, it.end), n = maxKey(x.cur), first = null;
+  html = html.replace(/data-cms(-item|-list)?="([a-z])\d+"/g, (a, kind, pre) => 'data-cms' + (kind || '') + '="' + pre + (++n) + '"');
+  html = html.replace(/ id="[^"]*"/g, '');
+  // Тексты нового пункта — заготовки, чтобы не забыть поправить
+  (html.match(/data-cms="[a-z]\d+"/g) || []).forEach(nd => {
+    const key = nd.slice(10, -1); if (!first) first = key;
+    const e = findEl(html, nd); if (e) html = html.slice(0, e.openEnd) + (e.tag === 'summary' ? 'Новый вопрос' : 'Новый пункт') + html.slice(e.closeStart);
+  });
+  const ls = x.cur.lastIndexOf('\n', it.start - 1), indent = x.cur.slice(ls + 1, it.start);
+  const sep = /^[ \t]*$/.test(indent) ? '\n' + indent : '';
+  x.cur = x.cur.slice(0, it.end) + sep + html + x.cur.slice(it.end);
+  return first;
+}
+
+// ---------- Сайт: отрисовка ----------
+const KIND = { H1: 'Главный заголовок', H2: 'Заголовок', H3: 'Подзаголовок', H4: 'Подзаголовок', P: 'Текст', LI: 'Пункт', SUMMARY: 'Вопрос' };
+function fieldLabel(el) {
+  if (el.classList.contains('a')) return 'Ответ';
+  if (el.classList.contains('date')) return 'Дата';
+  if (el.classList.contains('note')) return 'Примечание';
+  if (el.classList.contains('summary')) return 'Кратко';
+  return KIND[el.tagName] || 'Текст';
+}
+function groupTitle(el) {
+  const h = el.querySelector('h1,h2,h3'); if (!h) return '';
+  const c = h.cloneNode(true); c.querySelectorAll('.n').forEach(n => n.remove());
+  const t = c.textContent.replace(/\s+/g, ' ').trim();
+  return t ? '<div class="cms-gt">' + esc(t.length > 70 ? t.slice(0, 70) + '…' : t) + '</div>' : '';
+}
+function fieldHtml(el) {
+  const k = el.getAttribute('data-cms');
+  const sec = el.tagName === 'H2' && el.closest('section[id]');
+  return '<div class="cms-field"><div class="cms-lbl">' + esc(fieldLabel(el)) + '</div><div class="ce' + (/^H\d$/.test(el.tagName) ? ' ce-h' : '') +
+    '" contenteditable="true" spellcheck="true" data-ce="' + k + '"' + (sec ? ' data-toc="' + esc(sec.id) + '"' : '') + '></div></div>';
+}
+function listHtml(el) {
+  const lk = el.getAttribute('data-cms-list');
+  const items = Array.from(el.children).filter(c => c.hasAttribute('data-cms-item'));
+  let h = '<div class="cms-list">';
+  items.forEach((it, i) => {
+    const ik = it.getAttribute('data-cms-item');
+    const prev = i ? items[i - 1].getAttribute('data-cms-item') : '', next = i < items.length - 1 ? items[i + 1].getAttribute('data-cms-item') : '';
+    h += '<div class="cms-item"><div class="cms-item-bar"><span class="faint">' + (i + 1) + '</span><span style="flex:1"></span>' +
+      '<button class="btn small" type="button" data-swap="' + ik + '" data-with="' + prev + '"' + (prev ? '' : ' disabled') + ' aria-label="Выше">↑</button>' +
+      '<button class="btn small" type="button" data-swap="' + ik + '" data-with="' + next + '"' + (next ? '' : ' disabled') + ' aria-label="Ниже">↓</button>' +
+      '<button class="btn small danger" type="button" data-del="' + ik + '" aria-label="Удалить">✕</button></div>' +
+      (it.hasAttribute('data-cms') ? fieldHtml(it) : walkCms(it)) + '</div>';
+  });
+  if (items.length) h += '<button class="btn small" type="button" data-add="' + items[items.length - 1].getAttribute('data-cms-item') + '">+ Пункт</button>';
+  return h + '</div>';
+}
+function walkCms(node) {
+  let h = '';
+  Array.from(node.children).forEach(el => {
+    if (el.hasAttribute('data-cms')) h += fieldHtml(el);
+    else if (el.hasAttribute('data-cms-list')) h += listHtml(el);
+    else if (/^(SECTION|ARTICLE)$/.test(el.tagName)) { const inner = walkCms(el); if (inner) h += '<div class="cms-group">' + groupTitle(el) + inner + '</div>'; }
+    else h += walkCms(el);
+  });
+  return h;
+}
+
+function renderSite(focusKey) {
+  const p = S.page, x = S.pages[p], box = $('#pFields');
+  $('#pSel').value = p;
+  const ready = !!(x && x.loaded);
+  $('#pRelease').hidden = p !== 'changelog.html' || !ready;
+  if (p !== 'changelog.html') $('#pRelForm').hidden = true;
+  $('#pPreview').hidden = p === 'site.js' || !ready;
+  $('#pTools').hidden = p === 'site.js' || !ready;
+  if (p === 'site.js') $('#pPrevWrap').hidden = true;
+  if (!x || (!x.loaded && !x.error)) { box.innerHTML = '<div class="empty">Загружаю…</div>'; return; }
+  if (x.error) { box.innerHTML = '<div class="banner bad">Страница не загрузилась: ' + esc(x.error) + '</div>'; return; }
+  if (p === 'site.js') { renderSiteJs(x); return; }
+  const doc = new DOMParser().parseFromString(x.cur, 'text/html');
+  const main = doc.querySelector('main') || doc.body;
+  if (!main.querySelector('[data-cms]')) {
+    box.innerHTML = '<div class="banner">На этой странице ещё нет разметки для редактора. Залейте на сайт размеченную версию страницы — тогда её тексты появятся здесь.</div>';
+    $('#pTools').hidden = true; return;
+  }
+  box.innerHTML = (x.note ? '<div class="banner ok" style="margin-top:0">' + esc(x.note) + '</div>' : '') + walkCms(main);
+  box.querySelectorAll('[data-ce]').forEach(ce => {
+    const k = ce.dataset.ce, now = innerOf(x.cur, k), was = innerOf(x.orig, k);
+    ce.innerHTML = now == null ? '' : now;
+    ce.classList.toggle('changed', was !== now);
+  });
+  if (focusKey) { const ce = box.querySelector('[data-ce="' + focusKey + '"]'); if (ce) { ce.scrollIntoView({ block: 'center' }); ce.focus(); document.execCommand('selectAll', false, null); } }
+  updatePreview();
+}
+
+// site.js: переключатель «вышло в App Store» и ссылки
+function jsVar(src, name) { const m = new RegExp('var ' + name + ' = ([^;]+);').exec(src); return m ? m[1].trim() : null; }
+function setJsVar(p, name, val) { const x = S.pages[p]; x.cur = x.cur.replace(new RegExp('(var ' + name + ' = )[^;]+;'), (a, pre) => pre + val + ';'); }
+function renderSiteJs(x) {
+  const rel = jsVar(x.cur, 'RELEASED'), as = jsVar(x.cur, 'APP_STORE'), tf = jsVar(x.cur, 'TESTFLIGHT');
+  if (rel == null || as == null || tf == null) { $('#pFields').innerHTML = '<div class="banner bad">В site.js не найдены настройки RELEASED / APP_STORE / TESTFLIGHT.</div>'; return; }
+  const unq = s => s.replace(/^['"]|['"]$/g, '');
+  $('#pFields').innerHTML = '<div class="card" style="display:grid;gap:14px">' +
+    '<label class="check"><input type="checkbox" id="sjReleased"' + (rel === 'true' ? ' checked' : '') + '> Приложение вышло в App Store</label>' +
+    '<p class="muted" style="margin:-6px 0 0;font-size:13.5px">Включено — все кнопки «Скачать» на сайте ведут в App Store, надпись «ТЕСТ» на главной меняется на «НОВОЕ · Теперь в App Store». Выключено — кнопки ведут в TestFlight.</p>' +
+    '<label class="f">Ссылка на App Store<input type="text" id="sjAS" value="' + esc(unq(as)) + '"></label>' +
+    '<label class="f">Ссылка на TestFlight<input type="text" id="sjTF" value="' + esc(unq(tf)) + '"></label></div>';
+}
+
+let previewTimer = null;
+function updatePreview() {
+  if ($('#pPrevWrap').hidden) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    const x = S.pages[S.page]; if (!x || !x.loaded) return;
+    const base = '<base href="https://' + OWNER + '.github.io/' + REPO + '/">';
+    $('#pFrame').srcdoc = x.cur.replace(/<head([^>]*)>/i, m => m + base);
+  }, 500);
+}
+
+// ---------- Сайт: новый выпуск в истории обновлений ----------
+const inlineMd = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+function ruDate(d) { return new Intl.DateTimeFormat('ru', { day: 'numeric', month: 'long', year: 'numeric' }).format(d).replace(/\s*г\.$/, ''); }
+function openReleaseForm() {
+  const x = S.pages['changelog.html']; if (!x || !x.loaded) return;
+  const now = new Date();
+  let month = new Intl.DateTimeFormat('ru', { month: 'long' }).format(now); month = month.charAt(0).toUpperCase() + month.slice(1);
+  const same = (x.cur.match(new RegExp('<h2[^>]*>' + month + ', обновление', 'g')) || []).length;
+  $('#rlTitle').value = month + ', обновление ' + (same + 1);
+  $('#rlDate').value = ruDate(now);
+  $('#rlMsg').innerHTML = '';
+  $('#pRelForm').hidden = false;
+  $('#rlSum').focus();
+}
+function addRelease() {
+  const x = S.pages['changelog.html'];
+  const title = $('#rlTitle').value.trim(), date = $('#rlDate').value.trim(), sum = $('#rlSum').value.trim(), note = $('#rlNote').value.trim();
+  const groups = [['new', '✦ Новое', $('#rlNew').value], ['better', '↗ Улучшения', $('#rlBetter').value], ['fix', '✓ Исправления', $('#rlFix').value]]
+    .map(g => [g[0], g[1], g[2].split('\n').map(s => s.trim().replace(/^[-–•*]\s+/, '')).filter(Boolean)]).filter(g => g[2].length);
+  if (!title || !date) { $('#rlMsg').innerHTML = '<div class="banner bad">Нужны название и дата.</div>'; return; }
+  if (!groups.length) { $('#rlMsg').innerHTML = '<div class="banner bad">Добавьте хотя бы один пункт в «Новое», «Улучшения» или «Исправления».</div>'; return; }
+  let src = x.cur, n = maxKey(src);
+  const k = pre => pre + (++n);
+  const ids = Array.from(src.matchAll(/<article[^>]*\bid="r(\d+)"/g)).map(m => +m[1]);
+  const rid = (ids.length ? Math.max(...ids) : 0) + 1;
+  let a = '<article class="rel reveal latest" id="r' + rid + '">\n  <div class="rel-card">\n' +
+    '    <div class="rel-head"><h2 data-cms="' + k('f') + '">' + esc(title) + '</h2><span class="date" data-cms="' + k('f') + '">' + esc(date) + '</span><span class="latest-b">Последнее</span></div>\n';
+  if (sum) a += '    <p class="summary" data-cms="' + k('f') + '">' + inlineMd(sum) + '</p>\n';
+  groups.forEach(([cls, label, lines]) => {
+    a += '    <div class="kind ' + cls + '">' + label + '</div>\n    <ul data-cms-list="' + k('l') + '">\n' +
+      lines.map(l => '      <li data-cms-item="' + k('i') + '" data-cms="' + k('f') + '">' + inlineMd(l) + '</li>\n').join('') + '    </ul>\n\n';
+  });
+  if (note) a += '    <div class="note" data-cms="' + k('f') + '">' + inlineMd(note) + '</div>\n';
+  a += '  </div>\n</article>\n';
+  // Прежний «последний» выпуск сворачиваем, как остальные
+  const lm = /<article class="rel reveal latest"[^>]*>/.exec(src);
+  if (lm) {
+    const e = findEl(src, lm[0]);
+    if (e) {
+      let art = src.slice(e.start, e.end);
+      art = art.replace('class="rel reveal latest"', 'class="rel reveal collapsed"').replace(/<span class="latest-b">[^<]*<\/span>/, '');
+      if (!art.includes('class="more"')) {
+        const kp = art.indexOf('<div class="kind'), close = art.lastIndexOf('</div>');
+        if (kp > 0 && close > kp) art = art.slice(0, kp) + '<div class="more">' + art.slice(kp, close).replace(/\s+$/, '') +
+          '</div>\n    <button class="toggle-rel" type="button" aria-expanded="false">Показать изменения</button>\n  ' + art.slice(close);
+      }
+      src = src.slice(0, e.start) + art + src.slice(e.end);
+    }
+  }
+  const first = src.search(/<article class="rel/);
+  if (first < 0) { $('#rlMsg').innerHTML = '<div class="banner bad">В файле не найден список выпусков.</div>'; return; }
+  src = src.slice(0, first) + a + src.slice(first);
+  const cnt = (src.match(/<article class="rel/g) || []).length;
+  src = src.replace(/(Обновлений: <b>)\d+(<\/b>)/, '$1' + cnt + '$2');
+  x.cur = src;
+  ['#rlSum', '#rlNew', '#rlBetter', '#rlFix', '#rlNote'].forEach(s => { $(s).value = ''; });
+  $('#pRelForm').hidden = true;
+  savePageDraft('changelog.html'); renderSite(); renderDock();
+  setStatus('Выпуск «' + esc(title) + '» добавлен в черновик. Проверьте в предпросмотре и опубликуйте.', 'ok');
+}
+
+// ---------- Сайт: публикация ----------
+function validatePage(p) {
+  const x = S.pages[p], errors = [];
+  if (p === 'site.js') {
+    if (!/var RELEASED = (true|false);/.test(x.cur)) errors.push('RELEASED должно быть true или false.');
+    ['APP_STORE', 'TESTFLIGHT'].forEach(v => { const u = (jsVar(x.cur, v) || '').replace(/^['"]|['"]$/g, ''); if (!/^https:\/\/[^\s'"]+$/.test(u)) errors.push('Ссылка ' + v + ' должна начинаться с https://'); });
+    return errors;
+  }
+  const c = (s, re) => (s.match(re) || []).length;
+  if (c(x.cur, /<main\b/g) !== c(x.orig, /<main\b/g) || c(x.cur, /<\/main>/g) !== c(x.orig, /<\/main>/g)) errors.push('Сломана структура страницы (main).');
+  if (!/<\/html>\s*$/i.test(x.cur)) errors.push('Страница обрывается — нет </html>.');
+  return errors;
+}
+function pageDiff(p) {
+  const x = S.pages[p];
+  if (p === 'site.js') {
+    const l = [];
+    ['RELEASED', 'APP_STORE', 'TESTFLIGHT'].forEach(v => { const a = jsVar(x.orig, v), b = jsVar(x.cur, v); if (a !== b) l.push(v + ': ' + esc(a) + ' → <b>' + esc(b) + '</b>'); });
+    return l;
+  }
+  const map = s => { const m = new Map(); new DOMParser().parseFromString(s, 'text/html').querySelectorAll('[data-cms]').forEach(e => m.set(e.getAttribute('data-cms'), e.textContent.replace(/\s+/g, ' ').trim())); return m; };
+  const A = map(x.orig), B = map(x.cur), cut = t => t.length > 90 ? t.slice(0, 90) + '…' : t, lines = [];
+  B.forEach((t, k) => { if (!A.has(k)) lines.push('<span class="plus">+</span> «' + esc(cut(t)) + '»'); else if (A.get(k) !== t) lines.push('«' + esc(cut(A.get(k))) + '» → «' + esc(cut(t)) + '»'); });
+  A.forEach((t, k) => { if (!B.has(k)) lines.push('<span class="minus">−</span> «' + esc(cut(t)) + '»'); });
+  if (!lines.length) lines.push('Изменён порядок пунктов или оформление текста');
+  return lines.length > 40 ? lines.slice(0, 40).concat(['…и ещё ' + (lines.length - 40)]) : lines;
+}
+function openPublishPage() {
+  const p = S.page; publishing = 'page:' + p;
+  const errors = validatePage(p);
+  let h = '<p class="muted" style="margin:0">Файл <span class="mono">' + esc(p) + '</span>. Сайт обновится примерно через минуту после публикации.</p>';
+  h += '<ul class="diff">' + pageDiff(p).map(l => '<li>' + l + '</li>').join('') + '</ul>';
+  if (errors.length) h += '<div class="banner bad" style="margin:0 0 10px">' + errors.map(esc).join('<br>') + '</div>';
+  $('#sheetTitle').textContent = 'Опубликовать: ' + pageTitle(p);
+  $('#sheetBody').innerHTML = h;
+  $('#sheetGo').disabled = !!errors.length || !token;
+  $('#sheetGo').textContent = 'Опубликовать';
+  $('#sheet').hidden = false;
+}
+async function publishPage(p) {
+  const x = S.pages[p];
+  const sha = await saveFile(p, x.cur, x.sha, 'Сайт: ' + pageTitle(p));
+  x.sha = sha; x.orig = x.cur; x.note = '';
+  store.del('skarbiq-draft-page-' + p);
+  setStatus('«' + esc(pageTitle(p)) + '» опубликована. GitHub Pages обновится примерно через минуту.', 'ok');
+  renderSite();
+}
+
+// ---------- Сайт: события ----------
+$('#pSel').innerHTML = PAGES.map(([p, t]) => '<option value="' + p + '">' + esc(t) + '</option>').join('');
+$('#pSel').addEventListener('change', e => { S.page = e.target.value; $('#pPrevWrap').hidden = true; $('#pPreview').textContent = 'Предпросмотр'; loadPage(S.page); renderDock(); });
+$('#pPreview').addEventListener('click', () => {
+  const w = $('#pPrevWrap'); w.hidden = !w.hidden;
+  $('#pPreview').textContent = w.hidden ? 'Предпросмотр' : 'Скрыть предпросмотр';
+  updatePreview();
+});
+$('#pRelease').addEventListener('click', openReleaseForm);
+$('#rlCancel').addEventListener('click', () => { $('#pRelForm').hidden = true; });
+$('#rlAdd').addEventListener('click', addRelease);
+
+// Оформление: кнопки не забирают фокус у текста
+$('#pTools').addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
+$('#pTools').addEventListener('click', e => {
+  const b = e.target.closest('[data-fmt]'); if (!b) return;
+  const f = b.dataset.fmt;
+  if (f === 'link') { const u = prompt('Адрес ссылки', 'https://'); if (u && /^(https?:|mailto:|#|[a-z0-9-]+\.html)/i.test(u)) document.execCommand('createLink', false, u); }
+  else if (f === 'unlink') document.execCommand('unlink');
+  else document.execCommand(f);
+});
+
+const cmsBox = $("#pFields");
+cmsBox.addEventListener('input', e => {
+  const ce = e.target.closest('[data-ce]');
+  if (ce) {
+    const html = sanitize(ce.innerHTML);
+    setField(S.page, ce.dataset.ce, html, ce.dataset.toc);
+    ce.classList.toggle('changed', innerOf(S.pages[S.page].orig, ce.dataset.ce) !== innerOf(S.pages[S.page].cur, ce.dataset.ce));
+    savePageDraft(S.page); renderDock(); updatePreview();
+    return;
+  }
+  if (S.page === 'site.js') {
+    if (e.target.id === 'sjAS') setJsVar('site.js', 'APP_STORE', "'" + e.target.value.trim().replace(/'/g, '%27') + "'");
+    if (e.target.id === 'sjTF') setJsVar('site.js', 'TESTFLIGHT', "'" + e.target.value.trim().replace(/'/g, '%27') + "'");
+    savePageDraft('site.js'); renderDock();
+  }
+});
+cmsBox.addEventListener('change', e => {
+  if (e.target.id === 'sjReleased') { setJsVar('site.js', 'RELEASED', e.target.checked ? 'true' : 'false'); savePageDraft('site.js'); renderDock(); }
+});
+cmsBox.addEventListener('keydown', e => {
+  if (!e.target.closest('[data-ce]') || e.key !== 'Enter') return;
+  e.preventDefault();
+  if (e.shiftKey) document.execCommand('insertLineBreak');
+});
+cmsBox.addEventListener('paste', e => {
+  if (!e.target.closest('[data-ce]')) return;
+  e.preventDefault();
+  const t = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\s*\n\s*/g, ' ');
+  document.execCommand('insertText', false, t);
+});
+cmsBox.addEventListener('click', e => {
+  const sw = e.target.closest('[data-swap]'), del = e.target.closest('[data-del]'), add = e.target.closest('[data-add]');
+  if (sw && sw.dataset.with) { swapItems(S.page, sw.dataset.swap, sw.dataset.with); savePageDraft(S.page); renderSite(); renderDock(); }
+  else if (del) {
+    if (!del.classList.contains('armed')) { del.classList.add('armed'); del.textContent = 'Удалить?'; setTimeout(() => { del.classList.remove('armed'); del.textContent = '✕'; }, 3000); return; }
+    removeItem(S.page, del.dataset.del); savePageDraft(S.page); renderSite(); renderDock();
+  } else if (add) {
+    const key = addItem(S.page, add.dataset.add); savePageDraft(S.page); renderSite(key); renderDock();
+  }
+});
+
+
 // ---------- События: вкладки ----------
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
   S.tab = b.dataset.tab;
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
-  ['rules', 'wn', 'access'].forEach(t => { $('#tab-' + t).hidden = t !== S.tab; });
+  ['rules', 'wn', 'site', 'access'].forEach(t => { $('#tab-' + t).hidden = t !== S.tab; });
+  if (S.tab === 'site') loadPage(S.page);
   try { history.replaceState(null, '', '#' + S.tab); } catch (e) {}
   renderDock();
   window.scrollTo(0, 0);
 }));
 const startTab = location.hash.replace('#', '');
-if (['rules', 'wn', 'access'].includes(startTab)) { const b = document.querySelector('.tabs [data-tab="' + startTab + '"]'); if (b) b.click(); }
+if (['rules', 'wn', 'site', 'access'].includes(startTab)) { const b = document.querySelector('.tabs [data-tab="' + startTab + '"]'); if (b) b.click(); }
 
 // ---------- События: проверка ----------
 $('#tProduct').addEventListener('input', renderTester);
@@ -1028,6 +1497,7 @@ $('#dockUndo').addEventListener('click', e => {
   const b = e.currentTarget;
   if (!b.classList.contains('armed')) { b.classList.add('armed', 'danger'); b.textContent = 'Точно отменить?'; setTimeout(() => { b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё'; }, 3000); return; }
   b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё';
+  if (S.tab === 'site') { const x = S.pages[S.page]; if (x && x.loaded) { x.cur = x.orig; x.note = ''; savePageDraft(S.page); renderSite(); renderDock(); } return; }
   if (S.tab === 'wn') S.wn.cur = clone(S.wn.orig); else { S.rules.cur = clone(S.rules.orig); S.open = null; }
   saveDraft(); renderAll();
 });
@@ -1036,6 +1506,7 @@ $('#sheetCancel').addEventListener('click', () => { $('#sheet').hidden = true; }
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') $('#sheet').hidden = true; });
 $('#sheetGo').addEventListener('click', doPublish);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#sheet').hidden = true; });
+
 
 // ---------- Доступ ----------
 function renderTokenState(msg, kind) {
@@ -1064,7 +1535,7 @@ $('#tokenForget').addEventListener('click', () => {
 renderTokenState();
 
 // Не уйти со страницы с неопубликованным
-window.addEventListener('beforeunload', e => { if (rulesDirty() || wnDirty()) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if (rulesDirty() || wnDirty() || anyPageDirty()) { e.preventDefault(); e.returnValue = ''; } });
 
 // Список иконок для подсказки ввода
 const dl = document.createElement('datalist'); dl.id = 'iconList';
