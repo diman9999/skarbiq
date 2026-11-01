@@ -537,7 +537,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
 
       <article class="tile t-g reveal" style="--d:.1s">
         <h3 data-cms="f25">Очередь чеков</h3>
-        <p data-cms="f26">Сервис проверки даёт 10 проверок в сутки. Закончились — чек подождёт в очереди, а после полуночи загрузится одним нажатием. Ничего не потеряется.</p>
+        <p data-cms="f26">Чек ещё не появился в базе, закончился лимит или нет сети — он подождёт в очереди, а утром загрузится одним нажатием. Бумажный чек можно выбросить сразу.</p>
         <div class="art queue"><div class="qbox">3 чека<small>в очереди</small></div><div class="moon">🌙</div><div class="qbox">00:00<small>можно загрузить</small></div></div>
       </article>
     </div>
@@ -568,7 +568,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
     <div class="sec-head center reveal">
       <div class="eyebrow">Тарифы</div>
       <h2 data-cms="f29">Главное — бесплатно. Навсегда.</h2>
-      <p data-cms="f30">Сканирование и учёт расходов не ограничены. Pro добавляет цены и планирование.</p>
+      <p data-cms="f30">Учёт расходов — бесплатно, до 6 чеков в день. Pro снимает лимит и добавляет цены и планирование.</p>
     </div>
     <div class="plans">
       <div class="plan reveal">
@@ -576,12 +576,12 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
         <div class="price">0 <small>навсегда</small></div>
         <p class="sub" data-cms="f32">Всё, чтобы понять, куда уходят деньги.</p>
         <ul data-cms-list="l1">
-          <li data-cms-item="i1" data-cms="f33">Сканирование чеков без ограничений</li>
+          <li data-cms-item="i1" data-cms="f33">До 6 чеков в день</li>
           <li data-cms-item="i2" data-cms="f34">Каждый товар — в свою категорию</li>
           <li data-cms-item="i3" data-cms="f35">Аналитика за неделю, месяц, квартал, год</li>
           <li data-cms-item="i4" data-cms="f36">Лимиты с уведомлениями</li>
           <li data-cms-item="i5" data-cms="f37">Виджет и резервные копии</li>
-          <li data-cms-item="i6" data-cms="f38">2 регулярных платежа, очередь до 3 чеков</li>
+          <li data-cms-item="i6" data-cms="f38">2 регулярных платежа, очередь до 6 чеков</li>
         </ul>
       </div>
       <div class="plan pro reveal" style="--d:.1s">
@@ -599,7 +599,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
           <li data-cms-item="i9" data-cms="f43">Подсказки о ценах на новых чеках</li>
           <li data-cms-item="i10" data-cms="f44">Доход в месяц и остаток до конца месяца</li>
           <li data-cms-item="i11" data-cms="f45">Регулярные платежи без ограничений</li>
-          <li data-cms-item="i12" data-cms="f46">Выгрузка в CSV, очередь чеков без ограничений</li>
+          <li data-cms-item="i12" data-cms="f46">Чеки и очередь без ограничений, выгрузка в CSV</li>
         </ul>
       </div>
     </div>
@@ -618,7 +618,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <details class="reveal" data-cms-item="i13"><summary data-cms="f49">Какие чеки подходят?</summary><div class="a" data-cms="f50">Любой белорусский кассовый чек с QR-кодом — из магазина, аптеки, кафе или с АЗС. Электронные чеки «Евроопта», «Доброном», «Копеечки», «Маяка», «Санты» и «Соседей» загружаются сразу и не тратят лимит проверок.</div></details>
       <details class="reveal" data-cms-item="i14"><summary data-cms="f51">Работает за границей или с VPN?</summary><div class="a" data-cms="f52">Нет. Сервис проверки чеков и сервисы сетей открыты только для белорусских сетей. Вне Беларуси приложение покажет понятное сообщение, а посмотреть его возможности можно на встроенных демо-данных.</div></details>
       <details class="reveal" data-cms-item="i15"><summary data-cms="f53">Что если QR-кода нет или он помят?</summary><div class="a" data-cms="f54">Код чека можно ввести вручную, а трату без чека — добавить вручную с суммой и категорией.</div></details>
-      <details class="reveal" data-cms-item="i16"><summary data-cms="f55">Почему лимит в 10 проверок?</summary><div class="a" data-cms="f56">Так работает сервис проверки чеков инфоцентра: 10 проверок в сутки. Когда они заканчиваются, чек встаёт в очередь: после полуночи откройте очередь на главной и загрузите его одним нажатием.</div></details>
+      <details class="reveal" data-cms-item="i16"><summary data-cms="f55">Почему лимит в 10 проверок?</summary><div class="a" data-cms="f56">Так работает сервис проверки чеков инфоцентра: 10 проверок в сутки. В бесплатной версии SkarbIQ — до 6 чеков в день. Когда лимит заканчивается, чек встаёт в очередь: на следующий день откройте очередь на главной и загрузите его одним нажатием.</div></details>
       <details class="reveal" data-cms-item="i17"><summary data-cms="f57">Как перенести данные на новый телефон?</summary><div class="a" data-cms="f58">Настройки → «Данные» → «Сохранить резервную копию». На новом телефоне — «Восстановить из копии».</div></details>
       <details class="reveal" data-cms-item="i18"><summary data-cms="f59">Есть версия для Android?</summary><div class="a" data-cms="f60">Пока только iPhone, iOS 17.6 и новее.</div></details>
     </div>
