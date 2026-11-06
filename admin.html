@@ -179,9 +179,35 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); outline
 .help li { margin-bottom: 5px; }
 a { color: var(--accent); overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Справочник SF Symbols */
+.sym-cur { width: 42px; height: 42px; flex: none; display: grid; place-items: center; font-size: 22px; border-radius: 10px; background: rgba(0,0,0,.25); border: 1px solid var(--line); }
+.p-emo { font-style: normal; font-size: 20px; line-height: 1; }
+#symDlg { width: min(760px, calc(100vw - 24px)); max-height: min(86vh, 900px); padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--text); }
+#symDlg::backdrop { background: rgba(0,0,0,.6); }
+#symDlg .sd-head { position: sticky; top: 0; z-index: 1; background: var(--surface); padding: 14px 14px 10px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+#symDlg .sd-groups { display: flex; gap: 6px; flex-wrap: wrap; }
+#symDlg .sd-groups button { border: 1px solid var(--line); background: var(--sunk); color: var(--muted); border-radius: 999px; padding: 4px 11px; font-size: 13px; font-weight: 700; }
+#symDlg .sd-groups button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+#symDlg .sd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; padding: 12px 14px 16px; overflow: auto; max-height: calc(min(86vh, 900px) - 150px); }
+#symDlg .sd-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; border: 1px solid var(--line); background: rgba(0,0,0,.2); border-radius: 12px; padding: 10px; min-width: 0; }
+#symDlg .sd-tile:hover, #symDlg .sd-tile[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft); }
+#symDlg .sd-tile .e { font-size: 24px; line-height: 1; }
+#symDlg .sd-tile .n { font-family: var(--mono); font-size: 11.5px; color: var(--text); word-break: break-all; }
+#symDlg .sd-tile .k { font-size: 11.5px; color: var(--faint); }
+#symDlg .sd-note { font-size: 12.5px; color: var(--faint); margin: 0; }
 </style>
 </head>
 <body>
+<dialog id="symDlg" aria-label="Иконки SF Symbols">
+  <div class="sd-head">
+    <div class="row"><h3 style="margin-right:auto">Иконки SF Symbols</h3><button class="btn small" type="button" id="symClose">Закрыть</button></div>
+    <input type="search" id="symSearch" placeholder="Поиск: тема, чек, деньги, chart…" autocomplete="off">
+    <div class="sd-groups" id="symGroups"></div>
+    <p class="sd-note">Эмодзи — только примерный вид: браузер не умеет рисовать значки Apple. Точный вид — в приложении SF Symbols на Mac или сразу в SkarbIQ. Нужного нет — впишите имя вручную.</p>
+  </div>
+  <div class="sd-grid" id="symGrid"></div>
+</dialog>
 
 <header class="top">
   <div class="wrap top-in">
@@ -255,7 +281,7 @@ a { color: var(--accent); overflow-wrap: anywhere; }
       </div>
       <div>
         <h2>Так увидят</h2>
-        <p class="sub">Иконка в приложении будет настоящая — здесь только цвет.</p>
+        <p class="sub">Иконка в приложении будет настоящая — здесь примерный вид (эмодзи) и цвет.</p>
         <div class="phone" id="wPreview"></div>
       </div>
     </div>
@@ -367,7 +393,186 @@ const HINTS = [
 const TABS = [['0','Главная'],['1','Аналитика'],['2','История'],['3','Категории'],['4','Настройки']];
 const SCREENS = [['recurring','Регулярные платежи'],['income','Доход в месяц'],['limits','Лимиты категорий'],['subcategoryLimits','Лимиты подкатегорий'],['data','Данные'],['widget','Как поставить виджет']];
 const PALETTE = ['#E0B12D','#2E9E5B','#E07B2D','#2F80ED','#8E5BD9','#E5484D','#14A3B8','#8A8F98'];
-const ICONS = ['lightbulb.fill','sparkles','star.fill','gift.fill','bolt.fill','chart.line.uptrend.xyaxis','chart.bar.fill','chart.pie.fill','cart.fill','bag.fill','qrcode.viewfinder','tag.fill','magnifyingglass','calendar.badge.clock','banknote.fill','target','bell.fill','square.grid.2x2.fill','tray.full.fill','arrow.up.right','checkmark.seal.fill','wand.and.stars','externaldrive.fill','hand.draw.fill','wrench.and.screwdriver.fill','list.bullet.rectangle','storefront.fill','fork.knife'];
+// Справочник SF Symbols: имя, примерный вид (эмодзи — браузер настоящие символы Apple не рисует), слова для поиска, группа
+const SYMBOLS = [
+ // Новое и важное
+ ['sparkles','✨','новое блеск магия звёзды','Новое'],
+ ['star.fill','⭐','звезда избранное лучшее','Новое'],
+ ['gift.fill','🎁','подарок бонус бесплатно','Новое'],
+ ['bolt.fill','⚡','быстро молния скорость','Новое'],
+ ['wand.and.stars','🪄','магия авто волшебная палочка','Новое'],
+ ['lightbulb.fill','💡','подсказка идея совет','Новое'],
+ ['party.popper.fill','🎉','праздник юбилей ура','Новое'],
+ ['crown.fill','👑','pro премиум корона','Новое'],
+ ['checkmark.seal.fill','✅','проверено готово надёжно','Новое'],
+ ['flame.fill','🔥','горячее популярное огонь','Новое'],
+ ['heart.fill','❤️','любимое сердце нравится','Новое'],
+ ['hand.thumbsup.fill','👍','отзыв спасибо лайк','Новое'],
+ ['megaphone.fill','📣','объявление новость','Новое'],
+ ['exclamationmark.triangle.fill','⚠️','внимание важно предупреждение','Новое'],
+ ['info.circle.fill','ℹ️','информация справка','Новое'],
+ ['questionmark.circle.fill','❓','вопрос помощь как','Новое'],
+ // Аналитика
+ ['chart.pie.fill','🥧','диаграмма круг доли категории','Аналитика'],
+ ['chart.bar.fill','📊','график столбцы динамика','Аналитика'],
+ ['chart.bar.xaxis','📊','столбцы ось период','Аналитика'],
+ ['chart.line.uptrend.xyaxis','📈','рост цена тренд график','Аналитика'],
+ ['chart.line.downtrend.xyaxis','📉','снижение падение цена','Аналитика'],
+ ['chart.xyaxis.line','📈','линия график история','Аналитика'],
+ ['chart.dots.scatter','⚬','точки разброс','Аналитика'],
+ ['circle.circle.fill','◎','кольцо подробно два слоя','Аналитика'],
+ ['percent','％','процент доля скидка','Аналитика'],
+ ['arrow.up.right','↗️','рост вверх подорожало','Аналитика'],
+ ['arrow.down.right','↘️','вниз подешевело','Аналитика'],
+ ['arrow.up.arrow.down','↕️','сортировка изменение','Аналитика'],
+ ['target','🎯','цель лимит план','Аналитика'],
+ ['gauge.with.needle.fill','⏲️','шкала лимит уровень','Аналитика'],
+ ['sum','∑','сумма итог','Аналитика'],
+ // Деньги и покупки
+ ['banknote.fill','💵','деньги наличные купюра','Деньги'],
+ ['creditcard.fill','💳','карта оплата банк','Деньги'],
+ ['wallet.pass.fill','👛','кошелёк','Деньги'],
+ ['dollarsign.circle.fill','💲','доллар цена деньги','Деньги'],
+ ['rublesign.circle.fill','₽','рубль валюта','Деньги'],
+ ['eurosign.circle.fill','€','евро валюта','Деньги'],
+ ['cart.fill','🛒','корзина покупки магазин','Деньги'],
+ ['bag.fill','🛍️','сумка покупки','Деньги'],
+ ['basket.fill','🧺','корзинка продукты','Деньги'],
+ ['tag.fill','🏷️','ценник цена категория метка','Деньги'],
+ ['storefront.fill','🏪','магазин сеть','Деньги'],
+ ['building.columns.fill','🏛️','банк учреждение','Деньги'],
+ ['giftcard.fill','🎫','карта подарочная скидка','Деньги'],
+ ['receipt','🧾','чек квитанция','Деньги'],
+ ['doc.text.fill','📄','документ чек текст','Деньги'],
+ ['scroll.fill','📜','длинный чек свиток','Деньги'],
+ ['piggybank.fill','🐷','копилка накопления доход','Деньги'],
+ ['chart.line.flattrend.xyaxis','➖','стабильно ровно','Деньги'],
+ // Сканер
+ ['qrcode','▦','qr код','Сканер'],
+ ['qrcode.viewfinder','🔳','qr сканер рамка','Сканер'],
+ ['barcode.viewfinder','▥','штрихкод сканер','Сканер'],
+ ['camera.fill','📷','камера фото','Сканер'],
+ ['camera.viewfinder','📸','видоискатель съёмка','Сканер'],
+ ['doc.viewfinder','📃','скан документа бумажный чек','Сканер'],
+ ['text.viewfinder','🔤','распознавание текста ocr','Сканер'],
+ ['viewfinder','⌗','рамка прицел','Сканер'],
+ ['flashlight.on.fill','🔦','фонарик вспышка','Сканер'],
+ ['tray.full.fill','📥','очередь входящие','Сканер'],
+ ['tray.and.arrow.down.fill','📥','загрузка в очередь','Сканер'],
+ ['clock.arrow.circlepath','🔁','повтор позже очередь','Сканер'],
+ // Время и платежи
+ ['calendar','📅','календарь дата месяц','Время'],
+ ['calendar.badge.clock','🗓️','расписание регулярные срок','Время'],
+ ['calendar.badge.plus','📆','добавить дату','Время'],
+ ['clock.fill','🕒','время часы','Время'],
+ ['alarm.fill','⏰','будильник напоминание утро','Время'],
+ ['timer','⏱️','таймер','Время'],
+ ['hourglass','⏳','ожидание песочные часы','Время'],
+ ['bell.fill','🔔','уведомление напоминание колокол','Время'],
+ ['bell.badge.fill','🔔','новое уведомление','Время'],
+ ['repeat','🔁','повтор регулярно','Время'],
+ ['arrow.clockwise','🔄','обновить','Время'],
+ ['arrow.triangle.2.circlepath','🔄','синхронизация обмен','Время'],
+ ['clock.arrow.circlepath','🕘','история прошлое','Время'],
+ ['chevron.left.forwardslash.chevron.right','⟨⟩','назад вперёд листать','Время'],
+ ['arrow.left.and.right','↔️','свайп листать прошлые','Время'],
+ ['hand.draw.fill','👆','свайп жест палец','Время'],
+ ['hand.tap.fill','👆','тап нажатие','Время'],
+ // Интерфейс
+ ['square.grid.2x2.fill','🔲','все возможности плитки каталог','Интерфейс'],
+ ['list.bullet','📋','список','Интерфейс'],
+ ['list.bullet.rectangle','📋','список карточка','Интерфейс'],
+ ['magnifyingglass','🔍','поиск найти','Интерфейс'],
+ ['line.3.horizontal.decrease.circle.fill','🔽','фильтр','Интерфейс'],
+ ['slider.horizontal.3','🎚️','настройки параметры','Интерфейс'],
+ ['gearshape.fill','⚙️','настройки шестерёнка','Интерфейс'],
+ ['house.fill','🏠','главная дом','Интерфейс'],
+ ['moon.fill','🌙','тёмная чёрная тема ночь','Интерфейс'],
+ ['sun.max.fill','☀️','светлая тема день','Интерфейс'],
+ ['circle.lefthalf.filled','◐','тема оформление авто','Интерфейс'],
+ ['paintpalette.fill','🎨','цвета палитра оформление','Интерфейс'],
+ ['textformat.size','🔠','шрифт размер текста','Интерфейс'],
+ ['ipad','📱','ipad планшет','Интерфейс'],
+ ['ipad.and.iphone','📱','ipad iphone устройства','Интерфейс'],
+ ['iphone','📱','телефон iphone','Интерфейс'],
+ ['apps.iphone','📲','виджет экран','Интерфейс'],
+ ['rectangle.3.group.fill','▤','виджет блоки','Интерфейс'],
+ ['eye.fill','👁️','показать видно','Интерфейс'],
+ ['eye.slash.fill','🙈','скрыть','Интерфейс'],
+ ['pencil','✏️','изменить править','Интерфейс'],
+ ['trash.fill','🗑️','удалить','Интерфейс'],
+ ['plus.circle.fill','➕','добавить','Интерфейс'],
+ ['checkmark.circle.fill','✔️','готово галочка','Интерфейс'],
+ ['xmark.circle.fill','✖️','закрыть отмена','Интерфейс'],
+ ['arrow.uturn.backward','↩️','отменить назад','Интерфейс'],
+ // Данные и защита
+ ['externaldrive.fill','💾','резервная копия диск','Данные'],
+ ['icloud.fill','☁️','облако icloud','Данные'],
+ ['square.and.arrow.up','📤','поделиться экспорт','Данные'],
+ ['square.and.arrow.down','📥','импорт загрузить','Данные'],
+ ['tablecells','▦','таблица csv экспорт','Данные'],
+ ['doc.on.doc.fill','📑','копия дубликат','Данные'],
+ ['folder.fill','📁','папка','Данные'],
+ ['lock.fill','🔒','приватность защита замок','Данные'],
+ ['lock.shield.fill','🛡️','безопасность защита','Данные'],
+ ['hand.raised.fill','✋','приватность данные не отправляются','Данные'],
+ ['faceid','🙂','face id вход','Данные'],
+ ['wifi.slash','📵','без интернета офлайн','Данные'],
+ ['antenna.radiowaves.left.and.right','📡','сеть связь','Данные'],
+ ['wrench.and.screwdriver.fill','🔧','исправления ремонт','Данные'],
+ ['ant.fill','🐜','баг ошибка исправлено','Данные'],
+ ['hammer.fill','🔨','доработка','Данные'],
+ ['speedometer','⏩','быстрее производительность','Данные'],
+ ['battery.100','🔋','батарея экономия','Данные'],
+ // Категории расходов
+ ['fork.knife','🍴','еда кафе рестораны','Категории'],
+ ['cup.and.saucer.fill','☕','кофе кафе','Категории'],
+ ['takeoutbag.and.cup.and.straw.fill','🥤','фастфуд доставка','Категории'],
+ ['carrot.fill','🥕','продукты овощи','Категории'],
+ ['birthday.cake.fill','🎂','сладости праздник','Категории'],
+ ['wineglass.fill','🍷','алкоголь вино','Категории'],
+ ['car.fill','🚗','транспорт авто','Категории'],
+ ['fuelpump.fill','⛽','топливо азс','Категории'],
+ ['bus.fill','🚌','автобус общественный','Категории'],
+ ['tram.fill','🚋','трамвай метро','Категории'],
+ ['airplane','✈️','путешествия самолёт','Категории'],
+ ['house.and.flag.fill','🏡','дом жильё','Категории'],
+ ['lightbulb.led.fill','💡','электричество свет коммуналка','Категории'],
+ ['drop.fill','💧','вода коммуналка','Категории'],
+ ['flame','🔥','газ отопление','Категории'],
+ ['phone.fill','📞','связь телефон','Категории'],
+ ['wifi','📶','интернет','Категории'],
+ ['tv.fill','📺','тв подписки','Категории'],
+ ['play.rectangle.fill','▶️','подписки видео стриминг','Категории'],
+ ['gamecontroller.fill','🎮','развлечения игры','Категории'],
+ ['ticket.fill','🎟️','билеты кино','Категории'],
+ ['tshirt.fill','👕','одежда','Категории'],
+ ['shoeprint.fill','👟','обувь','Категории'],
+ ['shippingbox.fill','📦','маркетплейсы посылка доставка','Категории'],
+ ['pills.fill','💊','аптека лекарства','Категории'],
+ ['cross.case.fill','🩺','здоровье медицина','Категории'],
+ ['heart.text.square.fill','🩺','здоровье','Категории'],
+ ['figure.run','🏃','спорт','Категории'],
+ ['dumbbell.fill','🏋️','спортзал','Категории'],
+ ['scissors','✂️','красота парикмахер','Категории'],
+ ['sparkles.rectangle.stack.fill','💄','косметика уход','Категории'],
+ ['bubbles.and.sparkles.fill','🫧','гигиена бытовая химия','Категории'],
+ ['washer.fill','🧺','бытовая техника стирка','Категории'],
+ ['sofa.fill','🛋️','мебель дом','Категории'],
+ ['hammer','🔨','ремонт инструменты','Категории'],
+ ['leaf.fill','🍃','сад растения','Категории'],
+ ['pawprint.fill','🐾','животные питомцы','Категории'],
+ ['figure.and.child.holdinghands','👨‍👧','дети семья','Категории'],
+ ['teddybear.fill','🧸','игрушки дети','Категории'],
+ ['book.fill','📚','книги образование','Категории'],
+ ['graduationcap.fill','🎓','обучение курсы','Категории'],
+ ['laptopcomputer','💻','техника электроника','Категории'],
+ ['smoke.fill','🚬','табак','Категории'],
+ ['gift','🎁','подарки','Категории'],
+ ['ellipsis.circle.fill','⋯','прочее другое','Категории'],
+];
+const ICONS = [...new Set(SYMBOLS.map(x => x[0]))];
+const SYM_EMOJI = Object.fromEntries(SYMBOLS.map(x => [x[0], x[1]]));
 
 // ---------- Мелочи ----------
 const $ = (s, r) => (r || document).querySelector(s);
@@ -774,7 +979,7 @@ function renderWnForm() {
       '<div class="item-head"><h3>Пункт ' + (i + 1) + '</h3><div class="row" style="gap:6px"><button class="btn small" type="button" data-imove="-1" aria-label="Выше">↑</button><button class="btn small" type="button" data-imove="1" aria-label="Ниже">↓</button><button class="btn small danger" type="button" data-idel>Удалить</button></div></div>' +
       '<label class="f">Заголовок <span class="count' + (tl > 40 ? ' over' : '') + '">' + tl + ' / 40</span><input type="text" data-wf="title" value="' + esc(it.title) + '"></label>' +
       '<label class="f">Текст <span class="count' + (xl > 140 ? ' over' : '') + '">' + xl + ' / 140</span><textarea data-wf="text" rows="3">' + esc(it.text) + '</textarea></label>' +
-      '<div class="row"><label class="f">Иконка (SF Symbols)<input type="text" data-wf="icon" list="iconList" value="' + esc(it.icon) + '" class="mono"></label></div>' +
+      '<div class="row" style="align-items:flex-end"><span class="sym-cur" title="Примерный вид">' + (SYM_EMOJI[it.icon] || '?') + '</span><label class="f">Иконка (SF Symbols)<input type="text" data-wf="icon" list="iconList" value="' + esc(it.icon) + '" class="mono"></label><button class="btn" type="button" data-ipick>Выбрать…</button></div>' +
       '<div><div class="f" style="font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px">Цвет</div><div class="swatches">' +
         PALETTE.map(c => '<button type="button" class="sw" style="background:' + c + '" data-color="' + c + '" aria-label="Цвет ' + c + '" aria-pressed="' + (c.toLowerCase() === String(it.color).toLowerCase()) + '"></button>').join('') +
         '<input type="text" data-wf="color" value="' + esc(it.color) + '" class="mono" aria-label="Цвет HEX"></div></div>' +
@@ -796,7 +1001,7 @@ function renderWnPreview() {
     d.items.map(it => {
       const c = /^#[0-9A-Fa-f]{6}$/.test(it.color) ? it.color : '#8A8F98';
       const al = actLabel(it.action);
-      return '<div class="p-item"><div class="p-icon" style="background:' + c + '26"><span style="background:' + c + '"></span></div><div style="min-width:0"><b>' + esc(it.title || 'Заголовок') + '</b><p>' + esc(it.text || 'Текст пункта') + '</p>' + (al ? '<div class="p-act">' + al + '</div>' : '') + '</div></div>';
+      return '<div class="p-item"><div class="p-icon" style="background:' + c + '26">' + (SYM_EMOJI[it.icon] ? '<i class="p-emo">' + SYM_EMOJI[it.icon] + '</i>' : '<span style="background:' + c + '"></span>') + '</div><div style="min-width:0"><b>' + esc(it.title || 'Заголовок') + '</b><p>' + esc(it.text || 'Текст пункта') + '</p>' + (al ? '<div class="p-act">' + al + '</div>' : '') + '</div></div>';
     }).join('') +
     '<div class="p-btn">Продолжить</div><div class="p-link">Все возможности</div>';
 }
@@ -1541,6 +1746,48 @@ window.addEventListener('beforeunload', e => { if (rulesDirty() || wnDirty() || 
 const dl = document.createElement('datalist'); dl.id = 'iconList';
 dl.innerHTML = ICONS.map(i => '<option value="' + i + '">').join('');
 document.body.appendChild(dl);
+
+// Справочник иконок
+const symState = { item: -1, group: 'Все' };
+const SYM_GROUPS = ['Все', ...new Set(SYMBOLS.map(x => x[3]))];
+function renderSymGrid() {
+  const q = $('#symSearch').value.trim().toLowerCase();
+  const cur = symState.item >= 0 && S.wn.cur.items[symState.item] ? S.wn.cur.items[symState.item].icon : '';
+  const seen = new Set();
+  const list = SYMBOLS.filter(x => {
+    if (seen.has(x[0] + x[3])) return false; seen.add(x[0] + x[3]);
+    if (symState.group !== 'Все' && x[3] !== symState.group) return false;
+    return !q || x[0].toLowerCase().includes(q) || x[2].includes(q);
+  });
+  $('#symGroups').innerHTML = SYM_GROUPS.map(g => '<button type="button" data-sg="' + esc(g) + '" aria-pressed="' + (g === symState.group) + '">' + esc(g) + '</button>').join('');
+  $('#symGrid').innerHTML = list.length ? list.map(x => '<button type="button" class="sd-tile" data-sym="' + esc(x[0]) + '" aria-current="' + (x[0] === cur) + '"><span class="e">' + x[1] + '</span><span class="n">' + esc(x[0]) + '</span><span class="k">' + esc(x[2]) + '</span></button>').join('') : '<p class="sd-note">Ничего не нашлось. Имя можно вписать вручную — из приложения SF Symbols.</p>';
+}
+function openSymPicker(index) {
+  symState.item = index; $('#symSearch').value = '';
+  renderSymGrid();
+  const d = $('#symDlg'); if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  setTimeout(() => $('#symSearch').focus(), 30);
+}
+function closeSymPicker() { const d = $('#symDlg'); if (d.close) d.close(); else d.removeAttribute('open'); }
+$('#wItems').addEventListener('click', e => {
+  const b = e.target.closest('[data-ipick]'); if (!b) return;
+  openSymPicker(Number(b.closest('[data-item]').dataset.item));
+});
+$('#symSearch').addEventListener('input', renderSymGrid);
+$('#symGroups').addEventListener('click', e => { const b = e.target.closest('[data-sg]'); if (!b) return; symState.group = b.dataset.sg; renderSymGrid(); });
+$('#symGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-sym]'); if (!b) return;
+  const it = S.wn.cur.items[symState.item]; if (!it) return closeSymPicker();
+  it.icon = b.dataset.sym;
+  closeSymPicker(); renderWnForm(); changed();
+});
+$('#symClose').addEventListener('click', closeSymPicker);
+$('#symDlg').addEventListener('click', e => { if (e.target === $('#symDlg')) closeSymPicker(); });
+// Иконка, вписанная руками, сразу меняет примерный вид рядом
+$('#wItems').addEventListener('input', e => {
+  if (e.target.dataset.wf !== 'icon') return;
+  const box = e.target.closest('.row').querySelector('.sym-cur'); if (box) box.textContent = SYM_EMOJI[e.target.value.trim()] || '?';
+});
 
 // Для проверки из консоли
 window.SkarbIQAdmin = { tokens, matchProduct, serializeRules, serializeWn };
