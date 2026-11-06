@@ -14,7 +14,7 @@
       "color": "#6B5BD6",
       "title": "Чёрная тема",
       "text": "Настоящий чёрный для OLED-экранов. Настройки → Оформление.",
-      "action": "tab:4"
+      "action": "screen:appearance"
     },
     {
       "icon": "chart.pie.fill",
@@ -28,7 +28,7 @@
       "color": "#2E9E5B",
       "title": "Динамика расходов",
       "text": "Листайте график. Тап по столбцу — аналитика покажет только этот день, неделю или месяц.",
-      "action": "tab:1"
+      "action": "howTo:dailyChart"
     },
     {
       "icon": "calendar",
