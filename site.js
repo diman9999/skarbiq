@@ -1,7 +1,7 @@
 // Общий скрипт страниц SkarbIQ.
 // После выхода в App Store поставьте RELEASED = true — все кнопки «Скачать» на сайте поведут в App Store.
 (function () {
-  var RELEASED = false;
+  var RELEASED = true;
   var APP_STORE = 'https://apps.apple.com/app/id6816230990';
   var TESTFLIGHT = 'https://testflight.apple.com/join/r9mnDBq1';
   window.SKARBIQ_RELEASED = RELEASED;
