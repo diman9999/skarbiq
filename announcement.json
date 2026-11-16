@@ -1,0 +1,15 @@
+{
+  "id": "survey-2026-11",
+  "enabled": false,
+  "icon": "list.bullet.clipboard.fill",
+  "color": "#E0B12D",
+  "title": "Помогите сделать SkarbIQ лучше",
+  "text": "12 коротких вопросов, 3 минуты. Расскажите, что нравится и чего не хватает — по ответам решаю, что делать в следующих версиях.",
+  "chips": [
+    "Анонимно",
+    "3 минуты"
+  ],
+  "button": "Пройти опрос",
+  "action": "url:https://diman9999.github.io/skarbiq/survey.html",
+  "audience": "all"
+}

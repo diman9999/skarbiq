@@ -136,6 +136,13 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); outline
 .p-item p { margin: 3px 0 0; font-size: 13px; color: var(--muted); line-height: 1.4; overflow-wrap: anywhere; }
 .p-item .p-act { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: 4px; }
 .p-btn { background: var(--accent); color: var(--on-accent); text-align: center; font-weight: 700; border-radius: 13px; padding: 13px; margin-top: 8px; }
+.a-icon { width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center; margin: 14px auto 0; font-size: 36px; }
+.a-label { text-align: center; font-size: 11px; font-weight: 800; letter-spacing: .12em; color: #E8B64A; margin-top: 16px; }
+.a-title { text-align: center; font-size: 24px; font-weight: 800; line-height: 1.15; margin: 6px 0 0; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.a-text { text-align: center; font-size: 14px; color: var(--muted); line-height: 1.45; margin: 10px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.a-chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.a-chips span { background: rgba(63,190,122,.14); color: #6FD3A0; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 99px; }
+.a-off { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 6px; }
 .p-link { text-align: center; font-size: 13px; font-weight: 700; color: var(--accent); padding: 10px 0 0; }
 
 /* Панель публикации */
@@ -215,6 +222,7 @@ a { color: var(--accent); overflow-wrap: anywhere; }
     <div class="tabs" role="tablist">
       <button role="tab" data-tab="rules" aria-selected="true">Категории<span class="dot" id="dotRules" hidden></span></button>
       <button role="tab" data-tab="wn" aria-selected="false">Что нового<span class="dot" id="dotWn" hidden></span></button>
+      <button role="tab" data-tab="an" aria-selected="false">Важное<span class="dot" id="dotAn" hidden></span></button>
       <button role="tab" data-tab="site" aria-selected="false">Сайт<span class="dot" id="dotSite" hidden></span></button>
       <button role="tab" data-tab="access" aria-selected="false">Доступ</button>
     </div>
@@ -283,6 +291,44 @@ a { color: var(--accent); overflow-wrap: anywhere; }
         <h2>Так увидят</h2>
         <p class="sub">Иконка в приложении будет настоящая — здесь примерный вид (эмодзи) и цвет.</p>
         <div class="phone" id="wPreview"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Важное -->
+  <section id="tab-an" hidden>
+    <div class="wn-grid">
+      <div>
+        <h2>Объявление</h2>
+        <p class="sub">Лист «Важное» при входе в приложение: опрос, акция, важная новость. Показывается один раз на каждый новый идентификатор и только если в этот запуск не было «Что нового». Новым пользователям — не раньше чем через 2 дня после установки. Работает с версии 1.6.</p>
+        <div class="card" style="display:grid;gap:12px" id="aForm">
+          <label class="agree-row" style="display:flex;gap:10px;align-items:center;font-weight:700"><input type="checkbox" id="aEnabled" style="width:20px;height:20px">Показывать объявление</label>
+          <div class="row">
+            <label class="f grow">Идентификатор<input type="text" id="aId" class="mono"></label>
+            <button class="btn" id="aNewId" type="button" style="align-self:flex-end">Новое объявление</button>
+          </div>
+          <div id="aIdWarn"></div>
+          <label class="f">Заголовок <span class="count" id="aTitleCount"></span><input type="text" id="aTitle" placeholder="Помогите сделать SkarbIQ лучше"></label>
+          <label class="f">Текст <span class="count" id="aTextCount"></span><textarea id="aText" rows="4"></textarea></label>
+          <label class="f">Плашки под текстом — через запятую, необязательно<input type="text" id="aChips" placeholder="Анонимно, 3 минуты"></label>
+          <div class="row" style="align-items:flex-end"><span class="sym-cur" id="aIconCur" title="Примерный вид">?</span><label class="f">Иконка (SF Symbols)<input type="text" id="aIcon" list="iconList" class="mono"></label><button class="btn" type="button" id="aPick">Выбрать…</button></div>
+          <div><div class="f" style="font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px">Цвет</div><div class="swatches" id="aSwatches"></div></div>
+          <div class="row">
+            <label class="f">Текст кнопки<input type="text" id="aButton" placeholder="Пройти опрос"></label>
+            <label class="f">Кнопка ведёт<select id="aKind"></select></label>
+          </div>
+          <div class="row" id="aActRow"></div>
+          <div class="row">
+            <label class="f">Показывать до (включительно)<input type="date" id="aUntil"></label>
+            <label class="f">Кому<select id="aAudience"><option value="all">Всем</option><option value="free">Только без Pro</option><option value="pro">Только с Pro</option></select></label>
+            <label class="f" style="flex:0 1 150px">С какой сборки<input type="number" id="aBuild" min="0" step="1"></label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2>Так увидят</h2>
+        <p class="sub">Иконка в приложении будет настоящая — здесь примерный вид.</p>
+        <div class="phone" id="aPreview"></div>
       </div>
     </div>
   </section>
@@ -378,6 +424,8 @@ a { color: var(--accent); overflow-wrap: anywhere; }
 const OWNER = 'diman9999', REPO = 'skarbiq', BRANCH = 'main';
 const RULES_PATH = 'category-rules-t2.json';
 const WN_PATH = 'whats-new.json';
+const AN_PATH = 'announcement.json';
+const SITE_URL = 'https://diman9999.github.io/skarbiq/';
 const TAXONOMY_VERSION = 2;
 
 // Набор категорий 2 — как в DefaultCategories.swift
@@ -397,6 +445,8 @@ const PALETTE = ['#E0B12D','#2E9E5B','#E07B2D','#2F80ED','#8E5BD9','#E5484D','#1
 const SYMBOLS = [
  // Новое и важное
  ['sparkles','✨','новое блеск магия звёзды','Новое'],
+ ['list.bullet.clipboard.fill','📋','опрос анкета список','Новое'],
+ ['megaphone.fill','📣','объявление новость важно','Новое'],
  ['star.fill','⭐','звезда избранное лучшее','Новое'],
  ['gift.fill','🎁','подарок бонус бесплатно','Новое'],
  ['bolt.fill','⚡','быстро молния скорость','Новое'],
@@ -736,6 +786,7 @@ function serializeWn(doc) {
   o.items = doc.items.map(it => {
     const x = { icon: it.icon, color: it.color, title: it.title, text: it.text };
     if (it.action) x.action = it.action;
+    if (it.button) x.button = it.button;
     return x;
   });
   return JSON.stringify(o, null, 2) + '\n';
@@ -746,6 +797,7 @@ let uid = 0;
 const S = {
   rules: { orig: null, cur: null, sha: null, loaded: false },
   wn: { orig: null, cur: null, sha: null, loaded: false },
+  an: { orig: null, cur: null, sha: null, loaded: false },
   open: null,          // _id открытого правила
   highlight: null,     // _id подсвеченного правила
   tab: 'rules'
@@ -800,6 +852,14 @@ async function loadAll() {
       } catch (e) { store.del('skarbiq-draft-wn'); }
     }
   } catch (e) { problems.push('«Что нового» не загрузилось: ' + esc(e.message)); }
+
+  try {
+    let doc = null, sha = null;
+    try { const f = await loadFile(AN_PATH); doc = JSON.parse(f.text); sha = f.sha; }
+    catch (e) { if (!(e.status === 404 || /404/.test(e.message))) throw e; }
+    S.an.orig = normAn(doc); S.an.sha = sha; S.an.loaded = true;
+    S.an.cur = clone(S.an.orig);
+  } catch (e) { problems.push('«Важное» не загрузилось: ' + esc(e.message)); }
 
   const ro = !token ? 'Режим чтения: публиковать можно после того, как добавите токен во вкладке «Доступ».' : '';
   setStatus([ro].concat(problems).filter(Boolean).join('<br>'), problems.some(p => p.includes('не загруз')) ? 'bad' : '');
@@ -948,6 +1008,7 @@ function renderCatering() {
 // ---------- Отрисовка: Что нового ----------
 function actionParts(a) {
   if (!a) return { kind: '' };
+  if (a.startsWith('url:')) return { kind: 'url', url: a.slice(4) };
   const p = a.split(':');
   if (p[0] === 'howTo') return { kind: 'howTo', hint: p[1] || '' };
   if (p[0] === 'tab') return { kind: 'tab', tab: p[1] || '0', hint: p[2] || '' };
@@ -955,6 +1016,7 @@ function actionParts(a) {
   return { kind: 'raw', raw: a };
 }
 function buildAction(parts) {
+  if (parts.kind === 'url') return 'url:' + (parts.url || SITE_URL);
   if (parts.kind === 'howTo') return 'howTo:' + (parts.hint || HINTS[0][0]);
   if (parts.kind === 'tab') return 'tab:' + (parts.tab || '0') + (parts.hint ? ':' + parts.hint : '');
   if (parts.kind === 'screen') return 'screen:' + (parts.screen || SCREENS[0][0]);
@@ -970,10 +1032,11 @@ function renderWnForm() {
   if (document.activeElement !== $('#wBuild')) $('#wBuild').value = d.minBuild == null ? '' : d.minBuild;
   $('#wItems').innerHTML = d.items.map((it, i) => {
     const a = actionParts(it.action);
-    let act = '<label class="f">Кнопка<select data-wf="akind">' + opt([['howTo','«Как это?» — подсказка крупно'],['tab','«Попробовать» — вкладка'],['screen','«Открыть» — экран']], a.kind, 'Без кнопки') + '</select></label>';
+    let act = '<label class="f">Кнопка<select data-wf="akind">' + opt([['howTo','«Как это?» — подсказка крупно'],['tab','«Попробовать» — вкладка'],['screen','«Открыть» — экран'],['url','«… ↗» — страница сайта (с версии 1.6)']], a.kind, 'Без кнопки') + '</select></label>';
     if (a.kind === 'howTo') act += '<label class="f">Подсказка<select data-wf="ahint">' + opt(HINTS, a.hint) + '</select></label>';
     if (a.kind === 'tab') act += '<label class="f">Вкладка<select data-wf="atab">' + opt(TABS, a.tab) + '</select></label><label class="f">и подсказка на ней<select data-wf="ahint">' + opt(HINTS, a.hint, 'без подсказки') + '</select></label>';
     if (a.kind === 'screen') act += '<label class="f">Экран<select data-wf="ascreen">' + opt(SCREENS, a.screen) + '</select></label>';
+    if (a.kind === 'url') act += '<label class="f grow">Адрес страницы<input type="url" data-wf="aurl" value="' + esc(a.url) + '" class="mono"></label><label class="f">Текст кнопки<input type="text" data-wf="abtn" value="' + esc(it.button || '') + '" placeholder="Открыть"></label>';
     const tl = len(it.title), xl = len(it.text);
     return '<div class="card item" data-item="' + i + '">' +
       '<div class="item-head"><h3>Пункт ' + (i + 1) + '</h3><div class="row" style="gap:6px"><button class="btn small" type="button" data-imove="-1" aria-label="Выше">↑</button><button class="btn small" type="button" data-imove="1" aria-label="Ниже">↓</button><button class="btn small danger" type="button" data-idel>Удалить</button></div></div>' +
@@ -996,11 +1059,11 @@ function renderWnForm() {
 function renderWnPreview() {
   if (!S.wn.loaded) return;
   const d = S.wn.cur;
-  const actLabel = a => { const p = actionParts(a); return p.kind === 'howTo' ? 'Как это?' : p.kind === 'tab' ? 'Попробовать' : p.kind === 'screen' ? 'Открыть' : ''; };
+  const actLabel = (a, it) => { const p = actionParts(a); return p.kind === 'howTo' ? 'Как это?' : p.kind === 'tab' ? 'Попробовать' : p.kind === 'screen' ? 'Открыть' : p.kind === 'url' ? (it.button || 'Открыть') + ' ↗' : ''; };
   $('#wPreview').innerHTML = (d.title ? '<div class="ver">' + esc(d.title.toUpperCase()) + '</div>' : '') + '<div class="ttl">Что нового</div>' +
     d.items.map(it => {
       const c = /^#[0-9A-Fa-f]{6}$/.test(it.color) ? it.color : '#8A8F98';
-      const al = actLabel(it.action);
+      const al = actLabel(it.action, it);
       return '<div class="p-item"><div class="p-icon" style="background:' + c + '26">' + (SYM_EMOJI[it.icon] ? '<i class="p-emo">' + SYM_EMOJI[it.icon] + '</i>' : '<span style="background:' + c + '"></span>') + '</div><div style="min-width:0"><b>' + esc(it.title || 'Заголовок') + '</b><p>' + esc(it.text || 'Текст пункта') + '</p>' + (al ? '<div class="p-act">' + al + '</div>' : '') + '</div></div>';
     }).join('') +
     '<div class="p-btn">Продолжить</div><div class="p-link">Все возможности</div>';
@@ -1009,7 +1072,7 @@ function renderWnPreview() {
 // ---------- Панель ----------
 function renderDock() {
   const r = rulesDirty(), w = wnDirty();
-  $('#dotRules').hidden = !r; $('#dotWn').hidden = !w;
+  $('#dotRules').hidden = !r; $('#dotWn').hidden = !w; $('#dotAn').hidden = !anDirty();
   $('#dotSite').hidden = !anyPageDirty();
   if (S.tab === 'site') {
     const dirty = pageDirty(S.page);
@@ -1021,13 +1084,16 @@ function renderDock() {
     $('#dockPublish').title = token ? '' : 'Добавьте токен во вкладке «Доступ»';
     return;
   }
-  const which = S.tab === 'wn' ? 'wn' : 'rules';
-  const dirty = which === 'wn' ? w : r;
+  const which = S.tab === 'wn' ? 'wn' : S.tab === 'an' ? 'an' : 'rules';
+  const dirty = which === 'wn' ? w : which === 'an' ? anDirty() : r;
   $('#dock').hidden = !dirty || S.tab === 'access';
   if (!dirty) return;
   if (which === 'rules') {
     const v = validateRules(S.rules.cur);
     $('#dockText').innerHTML = '<b>Словарь изменён.</b> ' + (v.errors.length ? '<span style="color:var(--bad)">Ошибок: ' + v.errors.length + '</span>' : 'Будет версия ' + (S.rules.orig.version + 1) + '.');
+  } else if (which === 'an') {
+    const v = validateAn(S.an.cur);
+    $('#dockText').innerHTML = '<b>«Важное» изменено.</b> ' + (v.errors.length ? '<span style="color:var(--bad)">Ошибок: ' + v.errors.length + '</span>' : (!S.an.cur.enabled ? 'Объявление будет выключено.' : S.an.cur.id !== S.an.orig.id ? 'Новое объявление — покажется всем один раз.' : 'То же объявление.'));
   } else {
     const v = validateWn(S.wn.cur);
     $('#dockText').innerHTML = '<b>«Что нового» изменено.</b> ' + (v.errors.length ? '<span style="color:var(--bad)">Ошибок: ' + v.errors.length + '</span>' : (S.wn.cur.id !== S.wn.orig.id ? 'Новый выпуск — покажется всем.' : 'Тот же выпуск.'));
@@ -1035,7 +1101,7 @@ function renderDock() {
   $('#dockPublish').disabled = !token;
   $('#dockPublish').title = token ? '' : 'Добавьте токен во вкладке «Доступ»';
 }
-function renderAll() { renderTester(); renderRules(); renderCatering(); renderWnForm(); renderDock(); }
+function renderAll() { renderTester(); renderRules(); renderCatering(); renderWnForm(); renderAnForm(); renderDock(); }
 function changed() { saveDraft(); renderDock(); }
 
 // ---------- Сводка изменений ----------
@@ -1074,17 +1140,17 @@ function wnDiff() {
 let publishing = null;
 function openPublish() {
   if (S.tab === 'site') { openPublishPage(); return; }
-  const which = S.tab === 'wn' ? 'wn' : 'rules';
+  const which = S.tab === 'wn' ? 'wn' : S.tab === 'an' ? 'an' : 'rules';
   publishing = which;
-  const v = which === 'rules' ? validateRules(S.rules.cur) : validateWn(S.wn.cur);
-  const diff = which === 'rules' ? rulesDiff() : wnDiff();
+  const v = which === 'rules' ? validateRules(S.rules.cur) : which === 'an' ? validateAn(S.an.cur) : validateWn(S.wn.cur);
+  const diff = which === 'rules' ? rulesDiff() : which === 'an' ? anDiff() : wnDiff();
   let h = '';
   if (which === 'rules') h += '<p class="muted" style="margin:0">Версия ' + S.rules.orig.version + ' → <b>' + (S.rules.orig.version + 1) + '</b>. Приложения подхватят словарь при следующей проверке: раз в сутки, в отладочной сборке — при каждом открытии.</p>';
   else h += '<p class="muted" style="margin:0">Приложения подтянут файл при следующем запуске.</p>';
   h += '<ul class="diff">' + diff.map(l => '<li>' + l + '</li>').join('') + '</ul>';
   if (v.errors.length) h += '<div class="banner bad" style="margin:0 0 10px">' + v.errors.map(esc).join('<br>') + '</div>';
   if (v.warns && v.warns.length) h += '<details class="banner" style="margin:0 0 10px"><summary>Замечания: ' + v.warns.length + ' (публикации не мешают)</summary>' + v.warns.map(esc).join('<br>') + '</details>';
-  $('#sheetTitle').textContent = which === 'rules' ? 'Опубликовать словарь' : 'Опубликовать «Что нового»';
+  $('#sheetTitle').textContent = which === 'rules' ? 'Опубликовать словарь' : which === 'an' ? 'Опубликовать «Важное»' : 'Опубликовать «Что нового»';
   $('#sheetBody').innerHTML = h;
   $('#sheetGo').disabled = !!v.errors.length || !token;
   $('#sheetGo').textContent = 'Опубликовать';
@@ -1107,6 +1173,13 @@ async function doPublish() {
       S.rules.orig = clone(S.rules.cur);
       store.del('skarbiq-draft-rules');
       setStatus('Словарь v' + doc.version + ' опубликован. GitHub Pages обновится примерно через минуту.', 'ok');
+    } else if (publishing === 'an') {
+      const text = serializeAn(S.an.cur);
+      JSON.parse(text);
+      const sha = await saveFile(AN_PATH, text, S.an.sha, 'Важное: ' + (S.an.cur.enabled ? S.an.cur.id : 'выключено'));
+      S.an.sha = sha;
+      S.an.orig = clone(S.an.cur);
+      setStatus('«Важное» опубликовано. Сайт обновится примерно через минуту.', 'ok');
     } else {
       const doc = clone(S.wn.cur);
       if (doc.minBuild === '' || doc.minBuild == null) delete doc.minBuild; else doc.minBuild = Number(doc.minBuild);
@@ -1525,14 +1598,14 @@ cmsBox.addEventListener('click', e => {
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
   S.tab = b.dataset.tab;
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
-  ['rules', 'wn', 'site', 'access'].forEach(t => { $('#tab-' + t).hidden = t !== S.tab; });
+  ['rules', 'wn', 'an', 'site', 'access'].forEach(t => { $('#tab-' + t).hidden = t !== S.tab; });
   if (S.tab === 'site') loadPage(S.page);
   try { history.replaceState(null, '', '#' + S.tab); } catch (e) {}
   renderDock();
   window.scrollTo(0, 0);
 }));
 const startTab = location.hash.replace('#', '');
-if (['rules', 'wn', 'site', 'access'].includes(startTab)) { const b = document.querySelector('.tabs [data-tab="' + startTab + '"]'); if (b) b.click(); }
+if (['rules', 'wn', 'an', 'site', 'access'].includes(startTab)) { const b = document.querySelector('.tabs [data-tab="' + startTab + '"]'); if (b) b.click(); }
 
 // ---------- События: проверка ----------
 $('#tProduct').addEventListener('input', renderTester);
@@ -1674,8 +1747,10 @@ $('#wItems').addEventListener('change', e => {
   const f = e.target.dataset.wf; if (!f || !f.startsWith('a')) return;
   const it = S.wn.cur.items[Number(e.target.closest('[data-item]').dataset.item)];
   const p = actionParts(it.action);
-  if (f === 'akind') { it.action = buildAction({ kind: e.target.value }); if (!it.action) delete it.action; }
+  if (f === 'abtn') { it.button = e.target.value.trim(); if (!it.button) delete it.button; renderWnPreview(); changed(); return; }
+  if (f === 'akind') { it.action = buildAction({ kind: e.target.value }); if (!it.action) delete it.action; if (e.target.value !== 'url') delete it.button; }
   else {
+    if (f === 'aurl') p.url = e.target.value.trim();
     if (f === 'ahint') p.hint = e.target.value;
     if (f === 'atab') p.tab = e.target.value;
     if (f === 'ascreen') p.screen = e.target.value;
@@ -1703,7 +1778,7 @@ $('#dockUndo').addEventListener('click', e => {
   if (!b.classList.contains('armed')) { b.classList.add('armed', 'danger'); b.textContent = 'Точно отменить?'; setTimeout(() => { b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё'; }, 3000); return; }
   b.classList.remove('armed', 'danger'); b.textContent = 'Отменить всё';
   if (S.tab === 'site') { const x = S.pages[S.page]; if (x && x.loaded) { x.cur = x.orig; x.note = ''; savePageDraft(S.page); renderSite(); renderDock(); } return; }
-  if (S.tab === 'wn') S.wn.cur = clone(S.wn.orig); else { S.rules.cur = clone(S.rules.orig); S.open = null; }
+  if (S.tab === 'wn') S.wn.cur = clone(S.wn.orig); else if (S.tab === 'an') S.an.cur = clone(S.an.orig); else { S.rules.cur = clone(S.rules.orig); S.open = null; }
   saveDraft(); renderAll();
 });
 $('#dockPublish').addEventListener('click', openPublish);
@@ -1777,6 +1852,7 @@ $('#symSearch').addEventListener('input', renderSymGrid);
 $('#symGroups').addEventListener('click', e => { const b = e.target.closest('[data-sg]'); if (!b) return; symState.group = b.dataset.sg; renderSymGrid(); });
 $('#symGrid').addEventListener('click', e => {
   const b = e.target.closest('[data-sym]'); if (!b) return;
+  if (symState.item === 'an') { S.an.cur.icon = b.dataset.sym; closeSymPicker(); renderAnForm(); changed(); return; }
   const it = S.wn.cur.items[symState.item]; if (!it) return closeSymPicker();
   it.icon = b.dataset.sym;
   closeSymPicker(); renderWnForm(); changed();
@@ -1787,6 +1863,125 @@ $('#symDlg').addEventListener('click', e => { if (e.target === $('#symDlg')) clo
 $('#wItems').addEventListener('input', e => {
   if (e.target.dataset.wf !== 'icon') return;
   const box = e.target.closest('.row').querySelector('.sym-cur'); if (box) box.textContent = SYM_EMOJI[e.target.value.trim()] || '?';
+});
+
+// ---------- Важное (announcement.json) ----------
+const AN_KINDS = [['url', 'Страница сайта (например, опрос)'], ['tab', 'Вкладка приложения'], ['screen', 'Экран приложения']];
+function normAn(doc) {
+  const d = Object.assign({ id: '', enabled: false, icon: 'list.bullet.clipboard.fill', color: '#E0B12D', title: '', text: '', chips: [], button: '', action: 'url:' + SITE_URL + 'survey.html', until: '', audience: 'all', minBuild: '' }, doc || {});
+  if (doc && doc.enabled == null) d.enabled = true;
+  d.chips = Array.isArray(d.chips) ? d.chips : [];
+  d.until = d.until || ''; d.audience = d.audience || 'all'; d.minBuild = d.minBuild == null ? '' : d.minBuild;
+  return d;
+}
+function serializeAn(d) {
+  const o = { id: d.id, enabled: !!d.enabled, icon: d.icon, color: d.color, title: d.title, text: d.text };
+  if (d.chips.length) o.chips = d.chips;
+  o.button = d.button; o.action = d.action;
+  if (d.until) o.until = d.until;
+  if (d.audience && d.audience !== 'all') o.audience = d.audience;
+  if (d.minBuild !== '' && d.minBuild != null) o.minBuild = Number(d.minBuild);
+  return JSON.stringify(o, null, 2) + '\n';
+}
+const anDirty = () => S.an.loaded && serializeAn(S.an.cur) !== serializeAn(S.an.orig);
+function validateAn(d) {
+  const errors = [];
+  if (!d.enabled) return { errors };
+  if (!String(d.id).trim()) errors.push('Пустой идентификатор.');
+  if (!d.title.trim()) errors.push('Нет заголовка.');
+  if (!d.text.trim()) errors.push('Нет текста.');
+  if (!d.button.trim()) errors.push('Нет текста кнопки.');
+  if (!d.icon.trim()) errors.push('Нет иконки.');
+  if (!/^#[0-9A-Fa-f]{6}$/.test(d.color)) errors.push('Цвет должен быть в виде #RRGGBB.');
+  const p = actionParts(d.action);
+  if (p.kind === 'url' && !/^https:\/\/\S+$/.test(p.url || '')) errors.push('Адрес страницы должен начинаться с https://');
+  if (d.until && !/^\d{4}-\d{2}-\d{2}$/.test(d.until)) errors.push('Дата «Показывать до» — в виде ГГГГ-ММ-ДД.');
+  if (d.until && d.until < new Date().toISOString().slice(0, 10)) errors.push('Дата «Показывать до» уже прошла — объявление никто не увидит.');
+  if (d.minBuild !== '' && d.minBuild != null && !(Number.isInteger(Number(d.minBuild)) && Number(d.minBuild) >= 0)) errors.push('«С какой сборки» — целое число от 0.');
+  return { errors };
+}
+function anDiff() {
+  const o = S.an.orig, c = S.an.cur, lines = [];
+  if (o.enabled !== c.enabled) lines.push(c.enabled ? 'Объявление <b>включено</b>' : 'Объявление <b>выключено</b> — больше не покажется');
+  if (c.enabled && o.id !== c.id) lines.push('Новое объявление: <b>' + esc(c.id) + '</b> — покажется всем один раз');
+  if (o.title !== c.title) lines.push('Заголовок: «' + esc(c.title) + '»');
+  if (o.text !== c.text) lines.push('Текст изменён');
+  if (o.button !== c.button || o.action !== c.action) lines.push('Кнопка: «' + esc(c.button) + '» → ' + esc(c.action));
+  if (o.until !== c.until) lines.push('Показывать до: ' + esc(c.until || 'без срока'));
+  if (o.audience !== c.audience) lines.push('Кому: ' + esc({ all: 'всем', free: 'без Pro', pro: 'с Pro' }[c.audience]));
+  return lines.length ? lines : ['Мелкие правки'];
+}
+function renderAnForm() {
+  if (!S.an.loaded) return;
+  const d = S.an.cur, act = document.activeElement;
+  const setv = (id, v) => { if (act !== $(id)) $(id).value = v; };
+  $('#aEnabled').checked = !!d.enabled;
+  setv('#aId', d.id); setv('#aTitle', d.title); setv('#aText', d.text); setv('#aChips', d.chips.join(', '));
+  setv('#aIcon', d.icon); setv('#aButton', d.button); setv('#aUntil', d.until); setv('#aBuild', d.minBuild);
+  $('#aAudience').value = d.audience;
+  $('#aIconCur').textContent = SYM_EMOJI[d.icon] || '?';
+  const tl = len(d.title), xl = len(d.text);
+  $('#aTitleCount').textContent = tl + ' / 40'; $('#aTitleCount').className = 'count' + (tl > 40 ? ' over' : '');
+  $('#aTextCount').textContent = xl + ' / 200'; $('#aTextCount').className = 'count' + (xl > 200 ? ' over' : '');
+  $('#aSwatches').innerHTML = PALETTE.map(c => '<button type="button" class="sw" style="background:' + c + '" data-acolor="' + c + '" aria-label="Цвет ' + c + '" aria-pressed="' + (c.toLowerCase() === String(d.color).toLowerCase()) + '"></button>').join('') +
+    '<input type="text" id="aColor" value="' + esc(d.color) + '" class="mono" aria-label="Цвет HEX">';
+  const p = actionParts(d.action);
+  $('#aKind').innerHTML = opt(AN_KINDS, p.kind);
+  let row = '';
+  if (p.kind === 'url') row = '<label class="f grow">Адрес страницы<input type="url" id="aUrl" value="' + esc(p.url) + '" class="mono"></label>';
+  if (p.kind === 'tab') row = '<label class="f">Вкладка<select id="aTab">' + opt(TABS, p.tab) + '</select></label>';
+  if (p.kind === 'screen') row = '<label class="f">Экран<select id="aScreen">' + opt(SCREENS, p.screen) + '</select></label>';
+  if (!(act && act.id === 'aUrl')) $('#aActRow').innerHTML = row;
+  const same = anDirty() && d.enabled && d.id === S.an.orig.id && S.an.orig.enabled;
+  $('#aIdWarn').innerHTML = same ? '<div class="banner" style="margin:0">Идентификатор прежний: кто уже видел объявление, правку не увидит. Чтобы показать снова — «Новое объявление».</div>' : '';
+  $('#aForm').style.opacity = d.enabled ? '' : '.6';
+  renderAnPreview();
+}
+function renderAnPreview() {
+  const d = S.an.cur;
+  if (!d.enabled) { $('#aPreview').innerHTML = '<div class="a-off">Объявление выключено — пользователи его не увидят.</div>'; return; }
+  const c = /^#[0-9A-Fa-f]{6}$/.test(d.color) ? d.color : '#8A8F98';
+  $('#aPreview').innerHTML = '<div class="a-icon" style="background:' + c + '29">' + (SYM_EMOJI[d.icon] || '<span style="width:24px;height:24px;border-radius:7px;background:' + c + '"></span>') + '</div>' +
+    '<div class="a-label">ВАЖНОЕ</div><div class="a-title">' + esc(d.title || 'Заголовок') + '</div><div class="a-text">' + esc(d.text || 'Текст объявления') + '</div>' +
+    (d.chips.length ? '<div class="a-chips">' + d.chips.map(x => '<span>' + esc(x) + '</span>').join('') + '</div>' : '') +
+    '<div class="p-btn" style="margin-top:26px">' + esc(d.button || 'Кнопка') + '</div><div class="p-link" style="color:var(--muted)">Не сейчас</div>';
+}
+function newAnId() {
+  const t = new Date(); const pad = n => String(n).padStart(2, '0');
+  return t.getFullYear() + '-' + pad(t.getMonth() + 1) + '-' + pad(t.getDate()) + '-' + Math.random().toString(36).slice(2, 5);
+}
+$('#tab-an').addEventListener('input', e => {
+  if (!S.an.loaded) return;
+  const d = S.an.cur, id = e.target.id;
+  if (id === 'aId') d.id = e.target.value.trim();
+  else if (id === 'aTitle') d.title = e.target.value;
+  else if (id === 'aText') d.text = e.target.value;
+  else if (id === 'aChips') d.chips = e.target.value.split(',').map(x => x.trim()).filter(Boolean);
+  else if (id === 'aIcon') d.icon = e.target.value.trim();
+  else if (id === 'aColor') d.color = e.target.value.trim();
+  else if (id === 'aButton') d.button = e.target.value;
+  else if (id === 'aUrl') d.action = 'url:' + e.target.value.trim();
+  else if (id === 'aBuild') d.minBuild = e.target.value;
+  else return;
+  renderAnForm(); changed();
+});
+$('#tab-an').addEventListener('change', e => {
+  if (!S.an.loaded) return;
+  const d = S.an.cur, id = e.target.id;
+  if (id === 'aEnabled') { d.enabled = e.target.checked; if (d.enabled && !d.id) d.id = newAnId(); }
+  else if (id === 'aKind') d.action = buildAction({ kind: e.target.value }) || ('url:' + SITE_URL);
+  else if (id === 'aTab') d.action = 'tab:' + e.target.value;
+  else if (id === 'aScreen') d.action = 'screen:' + e.target.value;
+  else if (id === 'aUntil') d.until = e.target.value;
+  else if (id === 'aAudience') d.audience = e.target.value;
+  else return;
+  renderAnForm(); changed();
+});
+$('#tab-an').addEventListener('click', e => {
+  const sw = e.target.closest('[data-acolor]');
+  if (sw) { S.an.cur.color = sw.dataset.acolor; renderAnForm(); changed(); return; }
+  if (e.target.id === 'aNewId') { S.an.cur.id = newAnId(); S.an.cur.enabled = true; renderAnForm(); changed(); return; }
+  if (e.target.id === 'aPick') openSymPicker('an');
 });
 
 // Для проверки из консоли
