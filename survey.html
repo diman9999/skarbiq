@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Опрос пользователей — SkarbIQ</title>
+<meta name="description" content="Анонимный опрос пользователей SkarbIQ: что нравится, чего не хватает. 3–4 минуты.">
+<meta name="theme-color" content="#06231A">
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+.sv{max-width:760px;margin:0 auto 80px}
+.progress{position:sticky;top:calc(64px + env(safe-area-inset-top,0px));z-index:5;height:4px;border-radius:4px;background:rgba(255,255,255,.07);margin-bottom:26px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .35s}
+.part{margin:40px 0 14px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.qcard{padding:26px 26px 22px;border-radius:24px;background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);margin-bottom:14px;transition:border-color .3s}
+.qcard.err{border-color:rgba(240,138,122,.7)}
+.qcard h3{font-size:18px;font-weight:800;margin:0 0 4px;line-height:1.35}
+.qcard h3 .n{color:var(--gold);font:700 14px var(--mono);margin-right:8px}
+.qcard .hint{color:var(--faint);font-size:13.5px;margin:0 0 14px}
+.qcard .need{color:var(--coral);font-size:13px;font-weight:700;margin-top:10px;display:none}
+.qcard.err .need{display:block}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt span{display:inline-flex;align-items:center;min-height:42px;padding:8px 16px;border-radius:999px;border:1px solid var(--line-2);background:rgba(255,255,255,.04);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s,color .2s;user-select:none}
+.opt span:hover{background:rgba(255,255,255,.08)}
+.opt input:checked+span{background:rgba(91,214,154,.16);border-color:var(--mint);color:#fff}
+.opt input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.opt input:disabled+span{opacity:.4;cursor:not-allowed}
+.other{margin-top:10px;display:none}
+.other.on{display:block}
+textarea,.tin{width:100%;box-sizing:border-box;padding:14px 16px;border-radius:16px;border:1px solid var(--line-2);background:rgba(0,0,0,.25);color:var(--text);font:500 16px var(--font);resize:vertical}
+textarea{min-height:96px}
+textarea:focus,.tin:focus{outline:none;border-color:var(--gold)}
+.nps{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px}
+.nps .opt span{justify-content:center;width:100%;padding:8px 0;border-radius:12px;font-family:var(--mono)}
+.nps-l{display:flex;justify-content:space-between;color:var(--faint);font-size:12.5px;margin-top:8px}
+.submit{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:30px}
+.submit .note{color:var(--faint);font-size:13.5px;margin:0}
+.formerr{color:var(--coral);font-weight:700;font-size:14.5px;display:none}
+.done{display:none;padding:34px;border-radius:28px;background:radial-gradient(90% 140% at 0% 0%,rgba(232,182,74,.18),transparent 60%),linear-gradient(160deg,#0E3B2A,#071C15);border:1px solid var(--line-2)}
+.done h2{font-size:28px;font-weight:800;margin:0 0 10px}
+.done p{color:var(--muted);margin:0 0 14px}
+.contactbox{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+.contactbox h3{font-size:17px;margin:0 0 6px}
+.contactbox .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.contactbox .tin{flex:1 1 260px}
+.agree{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:14px;margin-top:12px;cursor:pointer}
+.agree input{margin-top:3px;accent-color:var(--gold);width:18px;height:18px;flex:none}
+.ok{color:var(--mint);font-weight:700}
+.already{display:none;padding:18px 22px;border-radius:18px;border:1px dashed var(--line-2);color:var(--muted);margin-bottom:20px}
+@media(max-width:560px){.qcard{padding:20px 18px 18px}.nps{grid-template-columns:repeat(6,minmax(0,1fr))}.done{padding:24px 20px}}
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="./"><img src="icon.png" alt="">SkarbIQ</a>
+    <nav class="nav-links" aria-label="Разделы сайта"><a href="./#features">Возможности</a><a href="changelog.html">Что нового</a><a href="support.html">Поддержка</a><a href="privacy.html">Конфиденциальность</a></nav>
+    <a class="btn btn-gold" data-download href="https://testflight.apple.com/join/r9mnDBq1">Скачать</a>
+  </div>
+</header>
+<main>
+<section class="phero">
+  <div class="wrap">
+    <div class="eyebrow reveal">Опрос</div>
+    <h1 class="reveal" style="--d:.06s">Помогите сделать <span class="gold">SkarbIQ лучше</span></h1>
+    <p class="lead reveal" style="--d:.12s">12 коротких вопросов, 3–4 минуты. Опрос анонимный: мы не спрашиваем имя и не видим, кто вы. Ответы читает разработчик и по ним решает, что делать дальше.</p>
+  </div>
+</section>
+<div class="wrap">
+  <div class="sv">
+    <div class="already" id="already">Вы уже проходили этот опрос — спасибо! Если что-то изменилось, можно пройти ещё раз.</div>
+    <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+    <form id="form" novalidate></form>
+    <div class="done" id="done" role="status">
+      <h2>Спасибо! 💛</h2>
+      <p>Ответы отправлены. Каждый из них читаю сам — именно по ним выбираю, что делать в следующих версиях.</p>
+      <div class="contactbox" id="contactbox">
+        <h3>Готовы ответить на пару уточняющих вопросов?</h3>
+        <p>Оставьте Telegram или почту — по желанию. Контакт сохраняется отдельно от ответов, так что ответы остаются анонимными.</p>
+        <div class="row">
+          <input class="tin" id="contact" type="text" inputmode="email" autocomplete="off" placeholder="@telegram или почта" maxlength="120">
+          <button class="btn btn-gold" type="button" id="sendContact">Отправить</button>
+        </div>
+        <label class="agree"><input type="checkbox" id="agree"><span>Согласен(на), чтобы этот контакт использовали только для уточняющих вопросов по опросу. После опроса контакты удаляются.</span></label>
+        <p class="formerr" id="contactErr"></p>
+        <p class="ok" id="contactOk" hidden>Контакт сохранён — спасибо!</p>
+      </div>
+      <p style="margin-top:22px"><a class="btn btn-ghost" href="./">На главную</a></p>
+    </div>
+  </div>
+</div>
+</main>
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 SkarbIQ · учёт расходов по чекам · iOS 17.6+</span>
+    <nav aria-label="Документы"><a href="changelog.html">Что нового</a><a href="support.html">Поддержка</a><a href="privacy.html">Конфиденциальность</a></nav>
+  </div>
+</footer>
+<script>
+(function(){
+  // Адрес веб-приложения Google Apps Script (Развернуть → Веб-приложение → URL).
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxVRaxOkOTkGg5-dOP__ij1jQsgCzhlZMNATd1BhDwxnQnrXXXnvSYC-YvY4I2GdG2z/exec';
+  var SURVEY_ID = 'survey-2026-11';
+
+  var FEATURES = ['Сканирование QR','Аналитика по категориям','Подробная диаграмма (подкатегории)','История чеков и поиск','Лимиты категорий','Доход в месяц','Регулярные платежи','История цены товара','Изменения цен','Виджет','Экспорт в CSV','Резервные копии'];
+
+  var Q = [
+    {part:'Немного о вас'},
+    {id:'tenure', t:'Как давно вы пользуетесь SkarbIQ?', type:'one', req:true,
+     o:['Меньше недели','1–4 недели','1–3 месяца','Больше 3 месяцев']},
+    {id:'frequency', t:'Как часто вы загружаете чеки?', type:'one', req:true,
+     o:['После каждой покупки','Раз в несколько дней','Раз в неделю и реже','Почти не загружаю']},
+    {id:'stores', t:'Где вы чаще всего покупаете?', hint:'Можно выбрать несколько', type:'many', other:true,
+     o:['Евроопт','Санта','Гиппо','Корона','Green','Белмаркет','Доброном','Соседи','Mart Inn','Магазины у дома']},
+    {part:'Что нравится'},
+    {id:'features_used', t:'Какие функции вы используете?', hint:'Можно выбрать несколько', type:'many', req:true, o:FEATURES},
+    {id:'feature_best', t:'Что для вас самое полезное в приложении?', hint:'Один ответ', type:'one', o:FEATURES},
+    {id:'categories', t:'Насколько точно приложение определяет категории товаров?', type:'one',
+     o:['Почти всегда верно','Часто верно, иногда поправляю','Часто ошибается','Не обращаю внимания']},
+    {part:'Чего не хватает'},
+    {id:'blockers', t:'Что мешает пользоваться чаще?', hint:'Можно выбрать несколько', type:'many', other:true,
+     o:['Чек не находится сразу после покупки','Неверные категории','Лимит чеков в бесплатной версии','Неудобно сканировать','Не все магазины выдают QR','Нет синхронизации между устройствами','Забываю сканировать','Ничего не мешает']},
+    {id:'wishes', t:'Что из этого вы бы хотели?', hint:'До трёх ответов', type:'many', max:3, other:true,
+     o:['Общий бюджет на семью','Синхронизация между iPhone и iPad','Учёт покупок на Ozon и Wildberries','Бумажные чеки без QR (фото)','Цели накоплений','Сравнение цен между магазинами','Учёт наличных и переводов','Напоминания сканировать чек','Версия для Android']},
+    {id:'missing', t:'Какой одной функции вам больше всего не хватает?', type:'text', ph:'Напишите своими словами'},
+    {part:'Pro и оценка'},
+    {id:'pro', t:'SkarbIQ Pro:', type:'one',
+     o:['Уже купил(а)','Думаю купить','Бесплатной версии хватает','Дорого','Не знал(а) о Pro']},
+    {id:'nps', t:'Насколько вероятно, что вы порекомендуете SkarbIQ друзьям?', hint:'0 — точно нет, 10 — обязательно', type:'nps'},
+    {id:'comment', t:'Что угодно, что хотите сказать разработчику', hint:'Необязательно', type:'text', ph:'Идеи, жалобы, пожелания…'}
+  ];
+
+  var form = document.getElementById('form'), num = 0, html = '';
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  Q.forEach(function(q){
+    if (q.part){ html += '<div class="part">'+esc(q.part)+'</div>'; return; }
+    num++;
+    html += '<div class="qcard" role="group" aria-labelledby="h_'+q.id+'" data-q="'+q.id+'"><h3 id="h_'+q.id+'"><span class="n">'+String(num).padStart(2,'0')+'</span>'+esc(q.t)+'</h3>';
+    html += '<p class="hint">'+esc(q.hint || (q.req ? 'Обязательный вопрос' : '\u00a0'))+'</p>';
+    if (q.type==='one' || q.type==='many'){
+      var tp = q.type==='one' ? 'radio' : 'checkbox';
+      html += '<div class="opts">';
+      q.o.forEach(function(o){ html += '<label class="opt"><input type="'+tp+'" name="'+q.id+'" value="'+esc(o)+'"><span>'+esc(o)+'</span></label>'; });
+      if (q.other) html += '<label class="opt"><input type="'+tp+'" name="'+q.id+'" value="__other"><span>Другое…</span></label>';
+      html += '</div>';
+      if (q.other) html += '<div class="other"><input class="tin" type="text" name="'+q.id+'_other" maxlength="200" placeholder="Что именно?"></div>';
+    } else if (q.type==='nps'){
+      html += '<div class="opts nps">';
+      for (var i=0;i<=10;i++) html += '<label class="opt"><input type="radio" name="'+q.id+'" value="'+i+'"><span>'+i+'</span></label>';
+      html += '</div><div class="nps-l"><span>Точно нет</span><span>Обязательно</span></div>';
+    } else {
+      html += '<textarea name="'+q.id+'" maxlength="1500" placeholder="'+esc(q.ph||'')+'"></textarea>';
+    }
+    html += '<div class="need">Ответьте, пожалуйста, на этот вопрос</div></div>';
+  });
+  html += '<div class="submit"><button class="btn btn-gold" type="submit" id="send">Отправить ответы</button><p class="formerr" id="formErr"></p><p class="note">Ответы анонимны: мы не собираем имя, почту и данные устройства.</p></div>';
+  form.innerHTML = html;
+
+  var bar = document.getElementById('bar');
+  var real = Q.filter(function(q){return !q.part});
+  function value(q){
+    if (q.type==='text') { var t=form.elements[q.id].value.trim(); return t; }
+    var els = form.querySelectorAll('input[name="'+q.id+'"]:checked'), v=[];
+    els.forEach(function(e){
+      if (e.value==='__other'){ var o=form.elements[q.id+'_other'].value.trim(); v.push(o ? 'Другое: '+o : 'Другое'); }
+      else v.push(e.value);
+    });
+    return q.type==='many' ? v.join('; ') : (v[0]||'');
+  }
+  function update(){
+    var n=0; real.forEach(function(q){ if (value(q)) n++; });
+    bar.style.width = Math.round(n/real.length*100)+'%';
+  }
+  form.addEventListener('change', function(e){
+    var t=e.target, q=real.find(function(x){return x.id===t.name});
+    if (q && q.max && t.type==='checkbox'){
+      var all=form.querySelectorAll('input[name="'+q.id+'"]'), on=form.querySelectorAll('input[name="'+q.id+'"]:checked').length;
+      all.forEach(function(x){ x.disabled = !x.checked && on>=q.max; });
+    }
+    if (q && q.other){
+      var box=t.closest('.qcard').querySelector('.other'), oth=form.querySelector('input[name="'+q.id+'"][value="__other"]');
+      box.classList.toggle('on', oth.checked);
+    }
+    if (t.closest('.qcard')) t.closest('.qcard').classList.remove('err');
+    update();
+  });
+  form.addEventListener('input', update);
+
+  // Откуда пришли: ссылка из приложения добавляет ?from=app&v=1.5.1
+  var params = new URLSearchParams(location.search);
+  var from = (params.get('from')||'site').slice(0,20), ver = (params.get('v')||'').slice(0,20);
+
+  function store(k,v){ try{ if (v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  if (store(SURVEY_ID+':done')) document.getElementById('already').style.display='block';
+
+  function post(payload){
+    if (!ENDPOINT) return Promise.reject(new Error('no endpoint'));
+    // text/plain — без предварительного запроса CORS; ответ не читаем (no-cors)
+    return fetch(ENDPOINT, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)});
+  }
+
+  var sending=false;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (sending) return;
+    var firstErr=null, data={type:'answers', survey:SURVEY_ID, from:from, version:ver};
+    real.forEach(function(q){
+      var v=value(q); data[q.id]=v;
+      var card=form.querySelector('[data-q="'+q.id+'"]');
+      if (q.req && !v){ card.classList.add('err'); if(!firstErr) firstErr=card; }
+    });
+    var err=document.getElementById('formErr');
+    if (firstErr){ err.textContent='Ответьте, пожалуйста, на отмеченные вопросы.'; err.style.display='block'; firstErr.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    err.style.display='none';
+    sending=true; var btn=document.getElementById('send'); btn.textContent='Отправляем…'; btn.disabled=true;
+    post(data).then(function(){
+      store(SURVEY_ID+':done','1');
+      form.style.display='none'; document.querySelector('.progress').style.display='none'; document.getElementById('already').style.display='none';
+      var d=document.getElementById('done'); d.style.display='block'; d.scrollIntoView({behavior:'smooth',block:'start'});
+    }).catch(function(){
+      sending=false; btn.textContent='Отправить ответы'; btn.disabled=false;
+      err.textContent='Не получилось отправить. Проверьте интернет и попробуйте ещё раз.'; err.style.display='block';
+    });
+  });
+
+  document.getElementById('sendContact').addEventListener('click', function(){
+    var c=document.getElementById('contact').value.trim(), ce=document.getElementById('contactErr');
+    if (!c){ ce.textContent='Введите Telegram или почту.'; ce.style.display='block'; return; }
+    if (!document.getElementById('agree').checked){ ce.textContent='Отметьте согласие, чтобы отправить контакт.'; ce.style.display='block'; return; }
+    ce.style.display='none'; this.disabled=true;
+    // Отдельная запись, без ответов и без времени отправки анкеты — связать их нельзя
+    post({type:'contact', survey:SURVEY_ID, contact:c}).then(function(){
+      document.getElementById('contactOk').hidden=false;
+      document.querySelector('.contactbox .row').style.display='none';
+      document.querySelector('.contactbox .agree').style.display='none';
+    }).catch(function(){
+      document.getElementById('sendContact').disabled=false;
+      ce.textContent='Не получилось отправить. Попробуйте ещё раз.'; ce.style.display='block';
+    });
+  });
+  update();
+})();
+</script>
+<script src="site.js"></script>
+</body>
+</html>
