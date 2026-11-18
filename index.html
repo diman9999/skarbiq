@@ -38,7 +38,7 @@
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--ink); color: var(--text);
   font: 16px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden;
@@ -95,13 +95,14 @@ p { margin: 0; }
 
 /* ---------- Телефон с анимацией ---------- */
 .stage { position: relative; display: grid; place-items: center; min-height: 600px; }
-.glow { position: absolute; width: 440px; height: 440px; max-width: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(232,182,74,.28), transparent 65%); filter: blur(10px); animation: breathe 6s ease-in-out infinite; }
+.glow { position: absolute; width: min(440px, 100%); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(232,182,74,.28), transparent 65%); filter: blur(10px); animation: breathe 6s ease-in-out infinite; }
 @keyframes breathe { 50% { transform: scale(1.08); opacity: .8; } }
 .phone { position: relative; width: 300px; height: 612px; border-radius: 52px; padding: 12px; background: linear-gradient(145deg, #2A3A33, #0E1813 40%, #1B2924); box-shadow: 0 50px 100px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.08) inset, 0 0 0 2px #050B08; transform: rotate(-3deg); animation: float 7s ease-in-out infinite; }
 @keyframes float { 50% { transform: rotate(-3deg) translateY(-12px); } }
 .screen { position: relative; height: 100%; border-radius: 41px; overflow: hidden; background: #0D1612; }
 .island { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 92px; height: 27px; border-radius: 20px; background: #000; z-index: 9; }
-.sbar { position: absolute; top: 14px; left: 26px; right: 24px; display: flex; justify-content: space-between; font: 600 12.5px var(--font); color: #fff; z-index: 8; }
+.sbar { position: absolute; top: 15px; left: 28px; right: 24px; display: flex; justify-content: space-between; align-items: center; font: 600 12.5px var(--font); color: #fff; z-index: 8; }
+.sbar svg { display: block; height: 11px; width: auto; }
 
 /* сцена 1: камера на чеке */
 .cam { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 40%, #3A3A33, #151512); transition: opacity .6s ease; }
@@ -112,10 +113,10 @@ p { margin: 0; }
 .receipt .r { display: flex; justify-content: space-between; gap: 6px; }
 .receipt .r span:first-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .receipt hr { border: 0; border-top: 1px dashed rgba(42,38,32,.4); margin: 5px 0; }
-.qr { width: 74px; height: 74px; margin: 8px auto 0; display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; }
+.qr { position: relative; width: 74px; height: 74px; margin: 8px auto 0; display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; }
 .qr i { background: var(--paper-ink); border-radius: 1px; }
 .qr i.o { background: transparent; }
-.frame { position: absolute; left: 50%; top: 300px; width: 120px; height: 120px; transform: translate(-50%, 0); }
+.frame { position: absolute; inset: -14px; pointer-events: none; }
 .frame::before { content: ""; position: absolute; inset: 0; border: 3px solid var(--gold); border-radius: 18px;
   -webkit-mask: conic-gradient(#000 0 0) 0 0/28px 28px no-repeat, conic-gradient(#000 0 0) 100% 0/28px 28px no-repeat, conic-gradient(#000 0 0) 0 100%/28px 28px no-repeat, conic-gradient(#000 0 0) 100% 100%/28px 28px no-repeat;
           mask: conic-gradient(#000 0 0) 0 0/28px 28px no-repeat, conic-gradient(#000 0 0) 100% 0/28px 28px no-repeat, conic-gradient(#000 0 0) 0 100%/28px 28px no-repeat, conic-gradient(#000 0 0) 100% 100%/28px 28px no-repeat; }
@@ -151,30 +152,31 @@ p { margin: 0; }
 .chip-float { position: absolute; z-index: 3; padding: 10px 14px; border-radius: 16px; background: rgba(13,22,18,.82); border: 1px solid var(--line-2); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 20px 40px -12px rgba(0,0,0,.6); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
 .chip-float small { display: block; font-size: 11px; color: var(--faint); font-weight: 600; }
 .chip-float .dot { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-size: 15px; }
-.cf1 { top: 300px; left: -34px; animation: bob 6s ease-in-out infinite; }
+.cf1 { top: 150px; left: -44px; animation: bob 6s ease-in-out infinite; }
 .cf2 { bottom: 110px; right: -16px; animation: bob 7s ease-in-out infinite .8s; }
-.cf3 { bottom: 30px; left: 10px; animation: bob 6.5s ease-in-out infinite 1.6s; }
+.cf3 { bottom: 96px; left: -44px; animation: bob 6.5s ease-in-out infinite 1.6s; }
 @keyframes bob { 50% { transform: translateY(-10px); } }
 
+@media (max-width: 960px) and (min-width: 481px) { .cf1, .cf3 { left: max(0px, calc(50% - 340px)); } .cf2 { right: max(0px, calc(50% - 340px)); } }
 @media (max-width: 960px) {
   .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
   .hero { padding-top: calc(104px + env(safe-area-inset-top, 0px)); padding-bottom: 60px; }
   .stage { min-height: 560px; }
 }
 @media (max-width: 480px) {
+  .hero .cta-row .btn { flex: 1 1 100%; justify-content: center; }
   .phone { width: 262px; height: 536px; border-radius: 46px; }
   .screen { border-radius: 36px; }
   .receipt { width: 176px; top: 80px; }
-  .frame { top: 262px; width: 106px; height: 106px; }
-  .cf1 { left: 0; top: 250px; } .cf2 { right: 0; } .cf3 { display: none; }
+  .chip-float { display: none; }
   .stage { min-height: 520px; }
 }
 
 /* ---------- Бегущая строка ---------- */
 .marquee { border-block: 1px solid var(--line); background: rgba(255,255,255,.02); overflow: hidden; padding: 18px 0; }
 .marquee-label { text-align: center; font-size: 12.5px; color: var(--faint); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; padding: 0 20px; }
-.track { display: flex; gap: 48px; width: max-content; animation: roll 38s linear infinite; }
-.track span { font-size: 20px; font-weight: 800; color: rgba(238,245,240,.42); letter-spacing: -.01em; white-space: nowrap; }
+.track { display: flex; width: max-content; animation: roll 38s linear infinite; }
+.track span { padding-right: 48px; font-size: 20px; font-weight: 800; color: rgba(238,245,240,.42); letter-spacing: -.01em; white-space: nowrap; }
 .track span::after { content: "•"; margin-left: 48px; color: var(--gold); opacity: .6; }
 @keyframes roll { to { transform: translateX(-50%); } }
 .marquee:hover .track { animation-play-state: paused; }
@@ -228,7 +230,8 @@ section { padding: 110px 0; position: relative; }
 .chart .area { fill: url(#gArea); opacity: 0; transition: opacity 1s ease 1.2s; }
 .chart .pt { fill: var(--ink); stroke: var(--gold); stroke-width: 2.5; opacity: 0; transition: opacity .3s ease 2s; }
 .chart .grid { stroke: var(--line); stroke-width: 1; }
-.chart text { fill: var(--faint); font: 600 11px var(--font); }
+.chart text { fill: var(--faint); font: 600 13px var(--font); }
+@media (max-width: 620px) { .chart text { font-size: 22px; } }
 .in-view .chart .line { stroke-dashoffset: 0; }
 .in-view .chart .area, .in-view .chart .pt { opacity: 1; }
 .price-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
@@ -327,8 +330,9 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
 .foot a:hover { color: var(--text); }
 
 /* ---------- Появление при прокрутке ---------- */
-.js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
-.js .reveal.in-view { opacity: 1; transform: none; }
+.js .reveal { opacity: 0; }
+.js .reveal.in-view { opacity: 1; animation: rise .8s cubic-bezier(.2,.7,.2,1) var(--d, 0s) backwards; }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -350,7 +354,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <a href="#pro">Pro</a>
       <a href="#faq">Вопросы</a>
     </nav>
-    <a class="btn btn-gold" data-download href="https://testflight.apple.com/join/r9mnDBq1">Скачать</a>
+    <a class="btn btn-gold" data-download href="https://apps.apple.com/app/id6816230990">Скачать</a>
   </div>
 </header>
 
@@ -360,13 +364,13 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="badge reveal"><b data-badge>ТЕСТ</b><span data-badge-text>Открытый тест в TestFlight</span></div>
+      <div class="badge reveal"><b data-badge>НОВОЕ</b><span data-badge-text>Теперь в App Store</span></div>
       <h1 class="reveal" style="--d:.08s" data-cms="f1">Чек в кармане.<br>Ответ — <span class="gold">куда ушли деньги.</span></h1>
       <p class="lead reveal" style="--d:.16s" data-cms="f2">Наведите камеру на QR-код кассового чека — SkarbIQ загрузит покупку и разложит каждый товар по своей категории. Не «продукты на 47 рублей», а молоко, сладости и пакет — построчно.</p>
       <div class="cta-row reveal" style="--d:.24s">
-        <a class="btn btn-gold" data-download href="https://testflight.apple.com/join/r9mnDBq1">
+        <a class="btn btn-gold" data-download href="https://apps.apple.com/app/id6816230990">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.73c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.72-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.59 1.1 8.75.73 1.05 1.6 2.24 2.73 2.2 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.33-3.5zM14.2 6.27c.6-.73 1.01-1.75.9-2.77-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.21z"/></svg>
-          <span data-download-label>Скачать для iPhone</span>
+          <span data-download-label>Скачать в App Store</span>
         </a>
         <a class="btn btn-ghost" href="#how">Как это работает</a>
       </div>
@@ -382,7 +386,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <div class="phone">
         <div class="screen" id="screen">
           <div class="island"></div>
-          <div class="sbar"><span>9:41</span><span>●●● 100%</span></div>
+          <div class="sbar"><span>9:41</span><svg viewBox="0 0 48 12" fill="#fff" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><rect x="24" y="1" width="20" height="10" rx="3" fill="none" stroke="#fff" stroke-opacity=".5"/><rect x="26" y="3" width="16" height="6" rx="1.5"/><rect x="45" y="4" width="2" height="4" rx="1" fill-opacity=".5"/></svg></div>
 
           <div class="cam">
             <div class="receipt">
@@ -396,9 +400,8 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
               <div class="r"><span>Пакет-майка</span><span>0,19</span></div>
               <hr>
               <div class="r" style="font-weight:700"><span>ИТОГО</span><span>10,57</span></div>
-              <div class="qr" id="qr"></div>
+              <div class="qr" id="qr"><div class="frame"><div class="scanline"></div></div></div>
             </div>
-            <div class="frame"><div class="scanline"></div></div>
             <div class="cam-hint"><b>Наведите на QR-код чека</b></div>
           </div>
 
@@ -478,13 +481,13 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
         <h3 data-cms="f13">История цены каждого товара</h3>
         <p data-cms="f14">Как менялась цена молока, кофе или подгузников и в каком магазине они сейчас дешевле.</p>
         <div class="art chart">
-          <svg viewBox="0 0 600 170" role="img" aria-label="Пример графика цены: рост с 2,19 до 2,49 и снижение до 2,05">
+          <svg viewBox="0 0 600 176" role="img" aria-label="Пример графика цены: рост с 2,19 до 2,49 и снижение до 2,05">
             <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8B64A" stop-opacity=".28"/><stop offset="1" stop-color="#E8B64A" stop-opacity="0"/></linearGradient></defs>
             <line class="grid" x1="0" y1="30" x2="600" y2="30"/><line class="grid" x1="0" y1="80" x2="600" y2="80"/><line class="grid" x1="0" y1="130" x2="600" y2="130"/>
-            <path class="area" d="M10 110 L110 110 L110 92 L230 92 L230 60 L350 60 L350 38 L470 38 L470 104 L590 104 L590 150 L10 150 Z"/>
-            <path class="line" d="M10 110 L110 110 L110 92 L230 92 L230 60 L350 60 L350 38 L470 38 L470 104 L590 104"/>
-            <circle class="pt" cx="350" cy="38" r="5"/><circle class="pt" cx="590" cy="104" r="6"/>
-            <text x="10" y="166">май</text><text x="110" y="166">июн</text><text x="230" y="166">июл</text><text x="350" y="166">авг</text><text x="470" y="166">сен</text><text x="560" y="166">окт</text>
+            <path class="area" d="M10 110 L126 110 L126 92 L242 92 L242 60 L358 60 L358 38 L474 38 L474 104 L590 104 L590 150 L10 150 Z"/>
+            <path class="line" d="M10 110 L126 110 L126 92 L242 92 L242 60 L358 60 L358 38 L474 38 L474 104 L590 104"/>
+            <circle class="pt" cx="358" cy="38" r="5"/><circle class="pt" cx="590" cy="104" r="6"/>
+            <text x="10" y="168">май</text><text x="126" y="168" text-anchor="middle">июн</text><text x="242" y="168" text-anchor="middle">июл</text><text x="358" y="168" text-anchor="middle">авг</text><text x="474" y="168" text-anchor="middle">сен</text><text x="590" y="168" text-anchor="end">окт</text>
           </svg>
           <div class="price-meta"><div class="pm">Минимум<b>2,05</b></div><div class="pm">Максимум<b>2,49</b></div><div class="pm best">Сейчас дешевле<b>Копеечка</b></div></div>
         </div>
@@ -522,7 +525,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <article class="tile t-e reveal" style="--d:.2s">
         <h3 data-cms="f21">Виджет</h3>
         <p data-cms="f22">Траты месяца и сканер — прямо на экране «Домой».</p>
-        <div class="art"><div class="widget"><small>Октябрь</small><div class="big" data-count="412.80">412,80</div><small>BYN потрачено</small><div class="wb">Скан чека</div></div></div>
+        <div class="art"><div class="widget"><small id="wMonth">Ноябрь</small><div class="big" data-count="412.80">412,80</div><small>BYN потрачено</small><div class="wb">Скан чека</div></div></div>
       </article>
 
       <article class="tile t-f reveal">
@@ -551,7 +554,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <div>
         <div class="eyebrow">Приватность</div>
         <h2 data-cms="f27">Ваши покупки остаются у вас</h2>
-        <p data-cms="f28">Чеки и покупки хранятся только на вашем iPhone. Своего сервера, куда уходили бы ваши траты, у SkarbIQ нет.</p>
+        <p data-cms="f28">Чеки и покупки хранятся только на вашем телефоне. Своего сервера, куда уходили бы ваши траты, у SkarbIQ нет.</p>
       </div>
       <div class="facts">
         <div class="fact"><div class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><div><b>Без регистрации</b><span>Ни почты, ни пароля, ни аккаунта.</span></div></div>
@@ -616,11 +619,11 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
     </div>
     <div class="faq" data-cms-list="l3">
       <details class="reveal" data-cms-item="i13"><summary data-cms="f49">Какие чеки подходят?</summary><div class="a" data-cms="f50">Любой белорусский кассовый чек с QR-кодом — из магазина, аптеки, кафе или с АЗС. Электронные чеки «Евроопта», «Доброном», «Копеечки», «Маяка», «Санты» и «Соседей» загружаются сразу и не тратят лимит проверок.</div></details>
-      <details class="reveal" data-cms-item="i14"><summary data-cms="f51">Работает за границей или с VPN?</summary><div class="a" data-cms="f52">Нет. Сервис проверки чеков и сервисы сетей открыты только для белорусских сетей. Вне Беларуси приложение покажет понятное сообщение, а посмотреть его возможности можно на встроенных демо-данных.</div></details>
+      <details class="reveal" data-cms-item="i14"><summary data-cms="f51">Работает за границей или с VPN?</summary><div class="a" data-cms="f52">Нет. Сервис проверки чеков и сервисы сетей отвечают только на запросы из Беларуси. Вне Беларуси приложение покажет понятное сообщение, а посмотреть его возможности можно на встроенных демо-данных.</div></details>
       <details class="reveal" data-cms-item="i15"><summary data-cms="f53">Что если QR-кода нет или он помят?</summary><div class="a" data-cms="f54">Код чека можно ввести вручную, а трату без чека — добавить вручную с суммой и категорией.</div></details>
       <details class="reveal" data-cms-item="i16"><summary data-cms="f55">Почему лимит в 10 проверок?</summary><div class="a" data-cms="f56">Так работает сервис проверки чеков инфоцентра: 10 проверок в сутки. В бесплатной версии SkarbIQ — до 6 чеков в день. Когда лимит заканчивается, чек встаёт в очередь: на следующий день откройте очередь на главной и загрузите его одним нажатием.</div></details>
       <details class="reveal" data-cms-item="i17"><summary data-cms="f57">Как перенести данные на новый телефон?</summary><div class="a" data-cms="f58">Настройки → «Данные» → «Сохранить резервную копию». На новом телефоне — «Восстановить из копии».</div></details>
-      <details class="reveal" data-cms-item="i18"><summary data-cms="f59">Есть версия для Android?</summary><div class="a" data-cms="f60">Пока только iPhone, iOS 17.6 и новее.</div></details>
+      <details class="reveal" data-cms-item="i18"><summary data-cms="f59">Есть версия для Android?</summary><div class="a" data-cms="f60">Версия для Android сейчас в тестировании и скоро появится в Google Play. На iPhone SkarbIQ работает с iOS 17.6.</div></details>
     </div>
   </div>
 </section>
@@ -633,7 +636,7 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
       <h2 data-cms="f61">Узнайте, куда уходят<br><span class="gold">ваши</span> деньги</h2>
       <p data-cms="f62">Первый чек — через минуту после установки. Регистрация не нужна.</p>
       <div class="cta-row">
-        <a class="btn btn-gold" data-download href="https://testflight.apple.com/join/r9mnDBq1"><span data-download-label>Скачать для iPhone</span></a>
+        <a class="btn btn-gold" data-download href="https://apps.apple.com/app/id6816230990"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.73c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.72-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.59 1.1 8.75.73 1.05 1.6 2.24 2.73 2.2 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.33-3.5zM14.2 6.27c.6-.73 1.01-1.75.9-2.77-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.21z"/></svg><span data-download-label>Скачать в App Store</span></a>
       </div>
     </div>
   </div>
@@ -659,10 +662,11 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ===== Шапка при прокрутке =====
-  var nav = document.getElementById('nav');
-  function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 20); }
-  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  // Шапка при прокрутке и ссылки «Скачать» — в site.js
+
+  // ===== Виджет: текущий месяц =====
+  var wm = document.getElementById('wMonth');
+  if (wm) wm.textContent = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'][new Date().getMonth()];
 
   // ===== QR на чеке =====
   var qr = document.getElementById('qr');
@@ -690,15 +694,12 @@ footer { padding: 46px 0 calc(46px + env(safe-area-inset-bottom, 0px)); border-t
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
-        e.target.classList.add('in-view');
-        if (e.target.querySelector('#bars')) fillBars();
-        var n = e.target.querySelector('[data-count]'); if (n) countUp(n);
+        if (e.target.id === 'bars') fillBars(); else countUp(e.target);
         io.unobserve(e.target);
       });
-    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('#bars, [data-count]').forEach(function (el) { io.observe(el); });
   } else {
-    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in-view'); });
     fillBars();
   }
 
