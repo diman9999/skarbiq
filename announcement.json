@@ -1,6 +1,6 @@
 {
   "id": "survey-2026-11",
-  "enabled": false,
+  "enabled": true,
   "icon": "list.bullet.clipboard.fill",
   "color": "#E0B12D",
   "title": "Помогите сделать SkarbIQ лучше",
@@ -10,6 +10,5 @@
     "3 минуты"
   ],
   "button": "Пройти опрос",
-  "action": "url:https://diman9999.github.io/skarbiq/survey.html",
-  "audience": "all"
+  "action": "url:https://diman9999.github.io/skarbiq/survey.html"
 }
