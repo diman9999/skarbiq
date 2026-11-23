@@ -10,5 +10,7 @@
     "3 минуты"
   ],
   "button": "Пройти опрос",
-  "action": "url:https://diman9999.github.io/skarbiq/survey.html"
+  "action": "url:https://skarbiq.app/survey.html",
+  "until": "2026-11-30",
+  "minBuild": 21
 }
